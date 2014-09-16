@@ -3,5 +3,29 @@
   "version": "0.0.1",
   "description": "Events aggregator",
   "main": "app.js",
-  "author": "MGrin"
+  "author": "MGrin",
+  "dependencies": {
+    "async": "latest",
+    "body-parser": "latest",
+    "compression": "latest",
+    "connect-flash": "^0.1.1",
+    "connect-mongo": "latest",
+    "cookie": "latest",
+    "cookie-parser": "latest",
+    "crypto": "latest",
+    "express": "~4.6.1",
+    "express-session": "latest",
+    "jade": "latest",
+    "method-override": "latest",
+    "moment": "latest",
+    "mongoose": "latest",
+    "mongoose-schema-extend": "git+https://github.com/voz/mongoose-schema-extend.git",
+    "mongoose-troop": "latest",
+    "morgan": "latest",
+    "passport": "latest",
+    "passport-facebook": "latest",
+    "serve-favicon": "latest",
+    "underscore": "latest",
+    "winston": "latest"
+  }
 }
