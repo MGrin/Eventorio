@@ -1,0 +1,12 @@
+node_modules
+.git
+public/cdn
+public/lib
+public/js/lib
+migrations/_template.js
+public/js/default/dropdown.client.js
+public/js/directives/elastic.client.directive.js
+node_modules
+.git
+public/cdn
+public/lib

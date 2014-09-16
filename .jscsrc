@@ -1,0 +1,95 @@
+/* vim: set ft=javascript: */
+
+{
+  "requireCurlyBraces": ["else", "for", "while", "do", "try", "catch", "case", "default"],
+  "requireSpaceAfterKeywords": [
+    "if",
+    "else",
+    "for", "while", "do", "switch", "return", "try", "catch"
+  ],
+  "requireSpaceBeforeBlockStatements": true,
+  "requireParenthesesAroundIIFE": true,
+  "requireSpacesInConditionalExpression": true,
+  "requireSpacesInFunctionExpression": {
+    "beforeOpeningRoundBrace": true,
+    "beforeOpeningCurlyBrace": true
+  },
+  "requireSpacesInFunctionDeclaration": {
+    "beforeOpeningRoundBrace": true,
+    "beforeOpeningCurlyBrace": true
+  },
+  "disallowMultipleVarDecl": true,
+  "disallowPaddingNewlinesInBlocks": true,
+  "disallowEmptyBlocks": true,
+  "disallowSpacesInsideObjectBrackets": "all",
+  "disallowSpacesInsideArrayBrackets": "all",
+  "disallowSpacesInsideParentheses": true,
+  "disallowQuotedKeysInObjects": true,
+  "disallowSpaceAfterObjectKeys": true,
+  "requireCommaBeforeLineBreak": true,
+  "requireOperatorBeforeLineBreak": [
+    "?",
+    "+",
+    "-",
+    "/",
+    "*",
+    "=",
+    "==",
+    "===",
+    "!=",
+    "!==",
+    ">",
+    ">=",
+    "<",
+    "<="
+  ],
+  "disallowSpaceAfterPrefixUnaryOperators": ["++", "--", "+", "-", "~", "!"],
+  "disallowSpaceBeforePostfixUnaryOperators": ["++", "--"],
+  "requireSpaceBeforeBinaryOperators": [
+    "?"
+  , "+", "-", "/", "*", "=", "==", "===", "!=", "!==", ">", ">=", "<", "<="
+  ],
+  "requireSpaceAfterBinaryOperators": [
+    "?"
+  , "+", "/", "*", ":", "=", "==", "===", "!=", "!==", ">", ">=", "<", "<="
+  ],
+  "disallowSpaceAfterBinaryOperators": ["!"],
+  "disallowImplicitTypeConversion": ["numeric", "boolean", "binary", "string"],
+  "requireCamelCaseOrUpperCaseIdentifiers": "ignoreProperties",
+  "disallowKeywords": ["with"],
+  "disallowMultipleLineStrings": true,
+  "disallowMultipleLineBreaks": true,
+  "validateLineBreaks": "LF",
+  "validateQuoteMarks": true,
+  "validateIndentation": 2,
+  "disallowMixedSpacesAndTabs": true,
+  "disallowTrailingWhitespace": true,
+  "disallowTrailingComma": true,
+  "disallowKeywordsOnNewLine": ["else", "catch"],
+  "requireLineFeedAtFileEnd": true,
+  "maximumLineLength": {
+    "value": 100,
+    "allowUrlComments": true
+  },
+  "requireCapitalizedConstructors": true,
+  "safeContextKeyword": "_this",
+  "requireDotNotation": true,
+
+  "validateJSDoc": {
+    "checkParamNames": true,
+    "checkRedundantParams": true,
+    "requireParamTypes": true
+  },
+  "requireSpaceAfterLineComment": true,
+
+  "excludeFiles": [
+    "node_modules/**", "public/lib/**", "public/cdn/**", "public/js/lib/**",
+    "config/locales/**", "public/js/langs/**",
+    "migrations/_template.js",
+    "public/js/default/dropdown.client.js",
+    "public/js/directives/elastic.client.directive.js",
+    "migrate.js",
+    "migration/**",
+    "lib/migration_utils.js"
+  ]
+}
