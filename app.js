@@ -38,7 +38,14 @@ app.err = function (err, next) {
   // response object given, pass the error to it
   if (_.isObject(next)) {
     // send error to the client
-    return next.jsonp(500, err);
+    return next.format({
+      html: function () {
+        res.render('500', {err: err});
+      },
+      json: function () {
+        res.status(500).send(err);
+      }
+    });
   }
 };
 
@@ -78,7 +85,7 @@ async.series([
       controller.init(app);
 
       var fileName = file.replace(/.server.controller.js$/, '');
-      var controllerName = inflection.camelize(fileName, true);
+      var controllerName = inflection.camelize(fileName);
       app.controllers[controllerName] = controller;
     });
 

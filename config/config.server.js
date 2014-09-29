@@ -12,9 +12,9 @@ var config = {
     serverUrl: 'http://localhost:7000',
     name: 'Eventorio',
     facebook: {
-      clientID: 'APP_ID',
-      clientSecret: 'APP_SECRET',
-      callbackURL: 'http://localhost:8000/auth/facebook/callback'
+      clientID: '1553150044916218',
+      clientSecret: '82f2d464661fdb77be507cfc729cb046',
+      callbackURL: 'http://localhost:7000/auth/facebook/callback'
     }
   },
 
@@ -25,8 +25,8 @@ var config = {
     serverUrl: 'http://localhost:7000',
     name: 'Eventorio',
     facebook: {
-      clientID: 'APP_ID',
-      clientSecret: 'APP_SECRET',
+      clientID: '1553150044916218',
+      clientSecret: '82f2d464661fdb77be507cfc729cb046',
       callbackURL: 'http://localhost:7000/auth/facebook/callback'
     }
   }
