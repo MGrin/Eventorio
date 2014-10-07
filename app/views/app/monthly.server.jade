@@ -1,0 +1,23 @@
+.row-fluid
+  h1.text-center
+    | {{monthStr}}
+
+#monthly-calendar.col-lg-12
+  #prev-month.col-lg-1.text-center.month-control
+    a.clickable(href="#", ng-click="prevMonth()")
+      h1.glyphicon.glyphicon-circle-arrow-left
+
+  .responsive-calendar.col-lg-10(ng-init="initMonthlyCalendar()")
+    .day-headers
+      .day.header Mon
+      .day.header Tue
+      .day.header Wed
+      .day.header Thu
+      .day.header Fri
+      .day.header Sat
+      .day.header Sun
+    .days(data-group='days')
+
+  #next-month.col-lg-1.text-center.month-control
+    a.clickable(href="#", ng-click="nextMonth()")
+      h1.glyphicon.glyphicon-circle-arrow-right

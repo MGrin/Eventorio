@@ -1,0 +1,37 @@
+.row-fluid
+  label.label-info.col-lg-2.col-lg-offset-5.text-center
+    h5 {{dayStr}}
+  a#eventCreationDialogTrigger.clickable.col-lg-1.col-lg-offset-4.text-center(href="#", ng-click="showEventCreationDialog()")
+    h1.glyphicon.glyphicon-plus-sign
+.row-fluid
+  #eventCreationDialog.col-lg-10.col-lg-offset-1(style="display: none;")
+    form.form-horizontal(role="form")
+      .form-group.col-lg-12
+        label.control-label.col-lg-1 Name:
+        .col-lg-3
+          input.form-control(type="text", name="name", placeholder="ex. Trip-Hop Orchestra")
+        label.control-label.col-lg-1 Location:
+        .col-lg-3
+          input.form-control(type="text", name="location", placeholder="ex. Metropole")
+        .col-lg-4
+          label.control-label.col-lg-2.col-lg-offset-2 Date:
+          label.control-label.col-lg-8 {{dayStr}}
+      .form-group.col-lg-12
+        .col-lg-7.col-lg-offset-1
+          textarea.form-control(type="text", name="desc", placeholder="Describe your event")
+        button.btn.btn-info.btn-lg.col-lg-2.col-lg-offset-2(ng-click="createEvent()")
+          | Create Event
+
+.row-fluid
+  #day-events.col-lg-12.col-lg-offset-1
+    .col-lg-10.text-center(ng-if="dayEvents.length === 0")
+      h3(style="color: grey") No events for today =(
+    .table-responsive.col-lg-10
+      table.table.table-hover
+        tr(ng-repeat="event in dayEvents")
+          td
+            a(href="{{event.url}}")
+              | {{event.name}}
+          td {{event.location}}
+          td.text-right {{event.organizator.username}}
+

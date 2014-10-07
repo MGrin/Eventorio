@@ -1,0 +1,18 @@
+include ../layouts/head.server.jade
+include ../layouts/scripts.server.jade
+body
+  include ../layouts/header.server.jade
+  .content-fluid
+    img.img-responsive(src="/img/event_background.png")
+    .row-fluid
+      .jumbotron.event-header
+        .col-lg-2.col-lg-offset-1
+          img.img-responsive.img-thumbnail(src="/img/event_logo.jpg")
+          h3.col-lg-offset-2 #{event.organizator.username}
+        .col-lg-9.event-name
+          h1 #{event.name}
+    .row-fluid
+      .event-description.col-lg-5
+        p #{event.desc}
+      .event-location.col-lg-3
+        h3 #{event.location}
