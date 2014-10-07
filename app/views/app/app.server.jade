@@ -3,14 +3,15 @@ body
   include ../layouts/header.server.jade
   #application-content(ng-controller="ApplicationController")
     .row-fluid
-      #calendars.col-lg-8(ng-controller="CalendarController")
+      #calendars.col-lg-8.col-md-8.col-sm-12.col-xs-12(ng-controller="CalendarController")
         include monthly.server.jade
 
-      #news-feed.col-lg-4.pull-right(ng-controller="NewsFeedController")
+      #news-feed.col-lg-4.col-md-4.hidden-sm.hidden-xs.pull-right(ng-controller="NewsFeedController")
         h1
           | News
 
     .row-fluid
-      #day-events.col-lg-8(ng-controller="DaylyController")
+      #day-events.col-lg-8.col-md-8.col-sm-12.col-xs-12(ng-controller="DaylyController")
         include daily.server.jade
+
 include ../layouts/scripts.server.jade

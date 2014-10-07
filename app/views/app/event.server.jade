@@ -6,10 +6,15 @@ body
     img.img-responsive(src="/img/event_background.png")
     .row-fluid
       .jumbotron.event-header
-        .col-lg-2.col-lg-offset-1
-          img.img-responsive.img-thumbnail(src="/img/event_logo.jpg")
-          h3.col-lg-offset-2 #{event.organizator.username}
-        .col-lg-9.event-name
+        .col-lg-2.event-name.text-center.visible-xs
+          h1 #{event.name}
+        .col-lg-2.col-lg-offset-1.col-md-2.col-md-offset-1.col-sm-2.col-sm-offset-1
+          img.img-responsive.img-thumbnail.hidden-xs(src="/img/event_logo.jpg")
+          img.img-responsive.img-thumbnail.col-xs-3.visible-xs(src="/img/event_logo.jpg")
+          h3.col-lg-offset-2.col-md-offset-3.col-sm-offset-3.hidden-sm.hidden-xs #{event.organizator.username}
+          h3.col-sm-offset-3.visible-sm(style="margin-top: 50px;") #{event.organizator.username}
+          h3.col-xs-6.visible-xs.text-center(style="color: #fff") #{event.organizator.username}
+        .col-lg-9.event-name.hidden-xs
           h1 #{event.name}
     .row-fluid
       .event-description.col-lg-5

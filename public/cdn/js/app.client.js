@@ -1,2 +1,6 @@
+var app = window.exports = angular.module('EventorioApp', ['ngResource']);
 
-var app=window.exports=angular.module('EventorioApp',['ngResource']);$(document).ready(function(){'use strict';});
+$(document).ready(function () {
+  'use strict';
+
+});

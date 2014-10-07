@@ -1,10 +1,11 @@
 .row-fluid
-  label.label-info.col-lg-2.col-lg-offset-5.text-center
+  label.label-info.col-lg-2.col-lg-offset-5.col-md-2.col-md-offset-5.col-sm-2.col-sm-offset-5.col-xs-2.col-xs-offset-5.text-center
     h5 {{dayStr}}
-  a#eventCreationDialogTrigger.clickable.col-lg-1.col-lg-offset-4.text-center(href="#", ng-click="showEventCreationDialog()")
-    h1.glyphicon.glyphicon-plus-sign
+  a#eventCreationDialogTrigger.clickable.col-lg-1.col-lg-offset-4.col-md-1.col-md-offset-4.col-sm-1.col-sm-offset-4.col-xs-1.col-xs-offset-4.text-center(href="#", ng-click="showEventCreationDialog()")
+    h1.glyphicon.glyphicon-plus-sign(style="margin: 0")
+
 .row-fluid
-  #eventCreationDialog.col-lg-10.col-lg-offset-1(style="display: none;")
+  #eventCreationDialog.col-lg-10.col-lg-offset-1.col-md-10.col-md-offset-1.col-sm-10.col-sm-offset-1.col-xs-10.col-xs-offset-1(style="display: none;")
     form.form-horizontal(role="form")
       .form-group.col-lg-12
         label.control-label.col-lg-1 Name:
@@ -19,14 +20,15 @@
       .form-group.col-lg-12
         .col-lg-7.col-lg-offset-1
           textarea.form-control(type="text", name="desc", placeholder="Describe your event")
+        br
         button.btn.btn-info.btn-lg.col-lg-2.col-lg-offset-2(ng-click="createEvent()")
           | Create Event
 
 .row-fluid
-  #day-events.col-lg-12.col-lg-offset-1
-    .col-lg-10.text-center(ng-if="dayEvents.length === 0")
+  #day-events.col-lg-12.col-md-12.col-sm-12.col-xs-12
+    .col-lg-10.col-lg-offset-1.col-md-10.col-md-offset-1.col-sm-10.col-sm-offset-1.col-xs-10.col-xs-offset-1.text-center(ng-if="dayEvents.length === 0")
       h3(style="color: grey") No events for today =(
-    .table-responsive.col-lg-10
+    .table-responsive.col-lg-10.col-md-10.col-sm-10.col-xs-10
       table.table.table-hover
         tr(ng-repeat="event in dayEvents")
           td

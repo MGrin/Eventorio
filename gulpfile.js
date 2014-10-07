@@ -57,7 +57,7 @@ gulp.task('compress', function() {
 
 gulp.task('default', ['compile', 'compress'], function() {
   // place code for your default task here
-  watch('app/', function (files) {
+  watch('*', function (files) {
     nodemon({
       script: 'app.js'
     });

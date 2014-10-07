@@ -16,7 +16,9 @@ nav#header.navbar.navbar-default(role="navigation", ng-controller="HeaderControl
       ul.nav.navbar-nav.navbar-right
         if !user
           li.dropdown
-            button.btn.btn-info.navbar-btn(data-toggle="modal", data-target="#loginModal")
+            button.btn.btn-info.navbar-btn.hidden-xs(data-toggle="modal", data-target="#loginModal")
+              | Login
+            a.show.visible-xs(href="#", data-toggle="modal", data-target="#loginModal")
               | Login
 
         if user
