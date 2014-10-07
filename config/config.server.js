@@ -10,25 +10,15 @@ var config = {
     root: rootPath,
     port: 7000,
     serverUrl: 'http://localhost:7000',
-    name: 'Eventorio',
-    facebook: {
-      clientID: '1553150044916218',
-      clientSecret: '82f2d464661fdb77be507cfc729cb046',
-      callbackURL: 'http://localhost:7000/auth/facebook/callback'
-    }
+    name: 'Eventorio'
   },
 
   production: {
-    db: 'mongodb://localhost/Eventorio',
+    db: 'mongodb://eventorio:Eventorio2014Mongolab@ds063779.mongolab.com:63779/eventorio',
     root: rootPath,
     port: 7000,
-    serverUrl: 'http://localhost:7000',
-    name: 'Eventorio',
-    facebook: {
-      clientID: '1553150044916218',
-      clientSecret: '82f2d464661fdb77be507cfc729cb046',
-      callbackURL: 'http://localhost:7000/auth/facebook/callback'
-    }
+    serverUrl: 'http://eventorio.herokuapp.com',
+    name: 'Eventorio'
   }
 };
 
