@@ -65,7 +65,7 @@ app.controller('DaylyController', ['$scope', 'Global', 'Events', function ($scop
     });
 
     if (validData) {
-      fields.date = $scope.higlightedDay;
+      fields.date = $scope.day;
       var event = new Events(fields);
 
       event.$save(function (res) {
