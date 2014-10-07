@@ -11,7 +11,7 @@
   "dependencies": {
     "async": "latest",
     "body-parser": "latest",
-    "bower": "latest"
+    "bower": "latest",
     "compression": "latest",
     "connect-flash": "latest",
     "connect-mongo": "latest",
