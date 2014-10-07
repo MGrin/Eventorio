@@ -16,7 +16,7 @@ var config = {
   production: {
     db: 'mongodb://eventorio:Eventorio2014Mongolab@ds063779.mongolab.com:63779/eventorio',
     root: rootPath,
-    port: 7000,
+    port: process.env.PORT || 7000,
     serverUrl: 'http://eventorio.herokuapp.com',
     name: 'Eventorio'
   }
