@@ -66,3 +66,7 @@ gulp.task('default', ['compile', 'compress'], function() {
     script: 'app.js'
   });
 });
+
+gulp.task('clean', function () {
+  fs.unlink(scriptsFile);
+});
