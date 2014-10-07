@@ -5,7 +5,9 @@ app.factory('Global', function ($document, $filter, $location) {
     app: app,
     config: {
       appName: 'Eventorio'
-    }
+    },
+    monthNames: [ "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December" ]
   };
 
   app.Global = Global;

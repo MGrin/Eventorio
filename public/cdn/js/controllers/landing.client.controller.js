@@ -34,7 +34,7 @@ app.controller('LandingController', ['$scope', '$location', 'Global', 'Users', f
 
       var user  = new Users(fields);
       user.$save(function (res) {
-        $location.path('/app');
+        window.location = '/app';
       }, function (res) {
         console.log('Error: ' + res.data);
       });
@@ -52,5 +52,5 @@ app.controller('LandingController', ['$scope', '$location', 'Global', 'Users', f
     }
 
     return null;
-  }
+  };
 }]);

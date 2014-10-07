@@ -4,6 +4,10 @@
   "description": "Events aggregator",
   "main": "app.js",
   "author": "MGrin",
+  "scripts": {
+    "start": "gulp",
+    "postinstall": "bower install"
+  },
   "dependencies": {
     "async": "latest",
     "body-parser": "latest",
@@ -29,9 +33,7 @@
     "serve-favicon": "latest",
     "stylus": "latest",
     "underscore": "latest",
-    "winston": "latest"
-  },
-  "devDependencies": {
+    "winston": "latest",
     "findit": "latest",
     "gulp": "^3.8.8",
     "gulp-concat": "^2.4.1",

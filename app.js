@@ -40,10 +40,10 @@ app.err = function (err, next) {
     // send error to the client
     return next.format({
       html: function () {
-        res.render('500', {err: err});
+        next.render('500', {err: err});
       },
       json: function () {
-        res.status(500).send(err);
+        next.status(500).send(err);
       }
     });
   }

@@ -107,6 +107,17 @@ UserSchema.methods = {
     this.password = p;
     this.save(function () {});
     return p;
+  },
+
+  toJSON: function () {
+    var res = this.toObject({virtuals: true});
+    delete res._id;
+    delete res.__v;
+    delete res.modified;
+    delete res.password;
+    delete res.hashPassword;
+    delete res.virtualGravatar;
+    delete res.salt;
   }
 };
 

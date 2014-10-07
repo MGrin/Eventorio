@@ -15,6 +15,7 @@ exports.init = function (myApp) {
 
 // saves a new session for a user if authentication was successful
 exports.login = function (req, res) {
+  app.logger.info(req.body);
   passport.authenticate('local', function(err, user, info) {
     if (err) {
       return app.err(err);
@@ -26,7 +27,7 @@ exports.login = function (req, res) {
       if (err) {
         return app.err(err);
       }
-      return res.redirect('/users/me');
+      return res.redirect('/app');
     });
   })(req, res);
 };
@@ -46,12 +47,23 @@ exports.signup = function (req, res) {
       res.send(200);
     });
   });
+};
+
+exports.me = function (req, res) {
+  res.format({
+    html: function () {
+      res.render(404);
+    },
+    json: function () {
+      res.jsonp(req.user);
+    }
+  })
 }
 
 /**
  * Logout
  */
-exports.signout = function (req, res) {
+exports.logout = function (req, res) {
   req.logout();
   res.redirect('/');
 };
@@ -63,6 +75,6 @@ exports.requiresLogin = function (req, res, next) {
   if (req.isAuthenticated()) {
     next();
   } else {
-    return res.redirect('/');
+    res.status(401).send(new Error('Not authenticated'));
   }
 };

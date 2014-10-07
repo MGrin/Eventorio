@@ -1,38 +1,10 @@
-doctype html
-html(lang="en" ng-app="EventorioApp")
-  include ../layouts/head.server.jade
-  include ../layouts/scripts.server.jade
-  body
-    nav#header.navbar.navbar-default(role="navigation", ng-controller="HeaderController")
-      .container-fluid
-        .navbar-header
-          button.navbar-toggle.collapsed(type="button", data-toggle="collapse", data-target="#navbar")
-            span.sr-only
-            span.icon-bar
-            span.icon-bar
+include ../layouts/head.server.jade
+include ../layouts/scripts.server.jade
+body
+  include ../layouts/header.server.jade
 
-          a.navbar-brand(href="#")
-            | {{global.config.appName}}
-
-        #navbar.collapse.navbar-collapse
-          ul.nav.navbar-nav.navbar-right
-            li.dropdown
-              a.dropdown-toggle(href="#", data-toggle="dropdown")
-                | Login
-                span.caret
-              ul.dropdown-menu(role="menu", style="padding: 17px")
-                li
-                  form.form(role="form")
-                    .form-group
-                      label
-                        | Email:
-                      input.form-control(type="email")
-                    .form-group
-                      label
-                        | Password:
-                      input.form-control(type="password")
-
-    .container-fluid(ng-controller="LandingController")
+  .container-fluid(ng-controller="LandingController")
+    if !user
       #signup-box.col-lg-3.col-lg-offset-8
         .jumbotron
           h2.title
@@ -48,3 +20,11 @@ html(lang="en" ng-app="EventorioApp")
               input.form-control(type="password", name="repeatedPassword", placeholder="Repeat password")
             button.btn.btn-success.pull-right(ng-click="signup()")
               | Create account
+
+    if user
+      .jumbotron.col-lg-4.col-lg-offset-7
+          h1
+            | Hello #{user.username}!
+          h3
+            a(href="/app")
+              | Take a look on what is going on

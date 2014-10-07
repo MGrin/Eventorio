@@ -1,6 +1,32 @@
+.navbar {
+  margin-bottom: 0px;
+}
 #signup-box .jumbotron {
   padding-top: 30px;
 }
 #signup-box .jumbotron form {
   margin-bottom: 30px;
+}
+#monthly-calendar {
+  margin-top: 30px;
+}
+#eventCreationDialog {
+  padding-top: 10px;
+  border: 1px solid #767d80;
+  border-radius: 5px;
+}
+.clickable {
+  color: inherit;
+}
+.clickable:hover {
+  color: #6bb0ba;
+}
+.days .today {
+  background-color: #a1e6f0;
+}
+.event-header {
+  margin-top: -145px;
+}
+.event-header .event-name {
+  color: #fff;
 }

@@ -1,9 +1,16 @@
-doctype html
-html(lang="en")
-  include ../layouts/head.server.jade
+include ../layouts/head.server.jade
+body
+  include ../layouts/header.server.jade
+  #application-content(ng-controller="ApplicationController")
+    .row-fluid
+      #calendars.col-lg-8(ng-controller="CalendarController")
+        include monthly.server.jade
 
-  body
-    h1
-    | App
+      #news-feed.col-lg-4.pull-right(ng-controller="NewsFeedController")
+        h1
+          | News
 
-  include ../layouts/scripts.server.jade
+    .row-fluid
+      #day-events.col-lg-8(ng-controller="DaylyController")
+        include daily.server.jade
+include ../layouts/scripts.server.jade
