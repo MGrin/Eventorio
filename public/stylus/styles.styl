@@ -13,17 +13,48 @@
   border: 1px solid #767D80
   border-radius: 5px
 
-.clickable
+a
   color: inherit
   &:hover
     color: #6BB0BA
+    text-decoration: none
 
 .days
   .today
     background-color: #A1E6F0
 
+.img-event-header
+  margin-top: -20px
+
 .event-header
-  margin-top: -145px
-  background-color: #fff
+  // xs
+  @media (max-width: 768px)
+    padding: 0
+
   .event-name
+    // all screens
+    background-color: rgba(255, 255, 255, 0.4)
     color: #fff
+    p
+      color: #000
+      font-size: 0.7em
+    // xs
+    font-size: 1.5em
+    margin-top: -30px
+    // lg
+    @media (min-width: 1200px)
+      margin-top: -100px
+      font-size: 4em
+  .event-thumbnail
+    // xs
+    padding: 0
+    margin-top: -40px
+    // lg
+    @media (min-width: 1200px)
+      margin-top: -120px
+
+.event-description
+  // lg
+  @media (min-width: 1200px)
+    font-size: 1.5em
+    margin-top: -40px

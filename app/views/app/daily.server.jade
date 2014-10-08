@@ -1,34 +1,37 @@
 .row-fluid
-  label.label-info.col-lg-2.col-lg-offset-5.col-md-2.col-md-offset-5.col-sm-2.col-sm-offset-5.col-xs-2.col-xs-offset-5.text-center
-    h5 {{dayStr}}
-  a#eventCreationDialogTrigger.clickable.col-lg-1.col-lg-offset-4.col-md-1.col-md-offset-4.col-sm-1.col-sm-offset-4.col-xs-1.col-xs-offset-4.text-center(href="#", ng-click="showEventCreationDialog()")
-    h1.glyphicon.glyphicon-plus-sign(style="margin: 0")
+  .col-xs-12.visible-xs(style="height: 15px")
 
-.row-fluid
-  #eventCreationDialog.col-lg-10.col-lg-offset-1.col-md-10.col-md-offset-1.col-sm-10.col-sm-offset-1.col-xs-10.col-xs-offset-1(style="display: none;")
+  label.label-info.col-lg-2.col-lg-offset-5.col-xs-8.col-xs-offset-2.text-center
+    h5 {{dayStr}}
+
+  a#eventCreationDialogTrigger.col-lg-1.col-lg-offset-4.hidden-xs.text-center(href="#", ng-click="showEventCreationDialog()")
+    h1.hidden-xs.glyphicon.glyphicon-plus-sign(style="margin: 0")
+    h2.visible-xs.glyphicon.glyphicon-plus-sign(style="margin: 0")
+
+.row-fluid.hidden-xs
+  #eventCreationDialog.col-lg-10.col-lg-offset-1.col-xs-12(style="display: none; padding-bottom: 10px")
     form.form-horizontal(role="form")
-      .form-group.col-lg-12
-        label.control-label.col-lg-1 Name:
-        .col-lg-3
+      .form-group.col-lg-6
+        label.control-label.col-lg-4 Name:
+        .col-lg-8
           input.form-control(type="text", name="name", placeholder="ex. Trip-Hop Orchestra")
-        label.control-label.col-lg-1 Location:
-        .col-lg-3
+      .form-group.col-lg-6
+        label.control-label.col-lg-4 Location:
+        .col-lg-8
           input.form-control(type="text", name="location", placeholder="ex. Metropole")
-        .col-lg-4
-          label.control-label.col-lg-2.col-lg-offset-2 Date:
-          label.control-label.col-lg-8 {{dayStr}}
-      .form-group.col-lg-12
-        .col-lg-7.col-lg-offset-1
-          textarea.form-control(type="text", name="desc", placeholder="Describe your event")
-        br
-        button.btn.btn-info.btn-lg.col-lg-2.col-lg-offset-2(ng-click="createEvent()")
+      .form-group.col-lg-6
+        label.control-label.col-lg-4 Description:
+        .col-lg-8
+          textarea.form-control(type="text", name="desc", placeholder="ex. Cool event!")
+      .col-lg-6
+        button.btn.btn-info.btn-lg.col-lg-4.col-lg-offset-7.col-xs-12(ng-click="createEvent()")
           | Create Event
 
 .row-fluid
-  #day-events.col-lg-12.col-md-12.col-sm-12.col-xs-12
-    .col-lg-10.col-lg-offset-1.col-md-10.col-md-offset-1.col-sm-10.col-sm-offset-1.col-xs-10.col-xs-offset-1.text-center(ng-if="dayEvents.length === 0")
-      h3(style="color: grey") No events for today =(
-    .table-responsive.col-lg-10.col-md-10.col-sm-10.col-xs-10
+  #day-events.col-lg-12
+    .col-lg-10.col-lg-offset-1.col-xs-12.text-center(ng-if="dayEvents.length === 0")
+      h3(style="color: grey") No events for today.
+    .table-responsive.col-lg-10.col-md-10.col-sm-10.col-xs-10(ng-if="dayEvents.length !== 0")
       table.table.table-hover
         tr(ng-repeat="event in dayEvents")
           td

@@ -79,7 +79,9 @@ app.controller('DaylyController', ['$scope', 'Global', 'Events', function ($scop
 
   var getErrorForField = function (field, value) {
     if (field !== 'desc' && (!value || value === '')) return 'Must not be empty!';
-
+    if (filed === 'name') {
+      if (value.length > 30) return 'The name should not contain more than 30 characters';
+    }
     return null;
   }
 }]);

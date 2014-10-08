@@ -12,19 +12,52 @@
   border: 1px solid #767d80;
   border-radius: 5px;
 }
-.clickable {
+a {
   color: inherit;
 }
-.clickable:hover {
+a:hover {
   color: #6bb0ba;
+  text-decoration: none;
 }
 .days .today {
   background-color: #a1e6f0;
 }
-.event-header {
-  margin-top: -145px;
-  background-color: #fff;
+.img-event-header {
+  margin-top: -20px;
+}
+@media (max-width: 768px) {
+  .event-header {
+    padding: 0;
+  }
 }
 .event-header .event-name {
+  background-color: rgba(255,255,255,0.4);
   color: #fff;
+  font-size: 1.5em;
+  margin-top: -30px;
+}
+.event-header .event-name p {
+  color: #000;
+  font-size: 0.7em;
+}
+@media (min-width: 1200px) {
+  .event-header .event-name {
+    margin-top: -100px;
+    font-size: 4em;
+  }
+}
+.event-header .event-thumbnail {
+  padding: 0;
+  margin-top: -40px;
+}
+@media (min-width: 1200px) {
+  .event-header .event-thumbnail {
+    margin-top: -120px;
+  }
+}
+@media (min-width: 1200px) {
+  .event-description {
+    font-size: 1.5em;
+    margin-top: -40px;
+  }
 }

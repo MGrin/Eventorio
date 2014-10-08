@@ -3,21 +3,34 @@ include ../layouts/scripts.server.jade
 body
   include ../layouts/header.server.jade
   .content-fluid
-    img.img-responsive(src="/img/event_background.png")
     .row-fluid
-      .jumbotron.event-header
-        .col-lg-2.event-name.text-center.visible-xs
-          h1 #{event.name}
-        .col-lg-2.col-lg-offset-1.col-md-2.col-md-offset-1.col-sm-2.col-sm-offset-1
-          img.img-responsive.img-thumbnail.hidden-xs(src="/img/event_logo.jpg")
-          img.img-responsive.img-thumbnail.col-xs-3.visible-xs(src="/img/event_logo.jpg")
-          h3.col-lg-offset-2.col-md-offset-3.col-sm-offset-3.hidden-sm.hidden-xs #{event.organizator.username}
-          h3.col-sm-offset-3.visible-sm(style="margin-top: 50px;") #{event.organizator.username}
-          h3.col-xs-6.visible-xs.text-center(style="color: #fff") #{event.organizator.username}
-        .col-lg-9.event-name.hidden-xs
-          h1 #{event.name}
+      img.img-responsive.img-event-header(src="/img/event_background.png")
+
+      .event-header.col-lg-12.hidden-xs
+        .col-lg-4.col-lg-offset-1
+          .event-thumbnail.col-lg-12
+            img.img-responsive.img-thumbnail.col-lg-8(src="/img/event_logo.jpg")
+          .col-lg-offset-1.hidden-xs.event-organizator
+            p(style="color: grey") Organized by&nbsp;&nbsp;
+              span(style="color: black")
+                a(href="/users/#{event.organizator.id}")(style="font-size: 2em")
+                  | #{event.organizator.username}
+        .event-name.col-lg-7.col-xs-3 #{event.name}
+
+      //- Extra-small screens
+      .event-header.col-xs-12.visible-xs
+        .row-fluid
+          .event-thumbnail.col-xs-4
+            img.img-responsive.img-thumbnail(src="/img/event_logo.jpg")
+          .event-name.col-xs-8
+            | #{event.name}
+            p Organized by&nbsp;&nbsp;
+              a(href="/users/#{event.organizator.id}")(style="font-size: 1.5em")
+                | #{event.organizator.username}
+
     .row-fluid
-      .event-description.col-lg-5
-        p #{event.desc}
-      .event-location.col-lg-3
-        h3 #{event.location}
+      .col-lg-11.col-lg-offset-1.col-xs-12
+        .event-location.col-lg-4.hidden-xs
+          h3 #{event.location}
+        .event-description.col-lg-6.col-xs-12
+          p.big #{event.desc}
