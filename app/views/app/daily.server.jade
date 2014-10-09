@@ -31,7 +31,7 @@
   #day-events.col-lg-12.col-md-12
     .col-lg-10.col-lg-offset-1.col-md-8.col-md-offset-3.col-xs-12.text-center(ng-if="dayEvents.length === 0")
       h3(style="color: grey") No events for today.
-    .table-responsive.col-lg-9.col-lg-offset-2.col-md-9.col-md-offset-2.col-sm-8.col-sm-offset-2.col-xs-10(ng-if="dayEvents.length !== 0")
+    .table-responsive.col-lg-10.col-lg-offset-1.col-md-9.col-md-offset-2.col-sm-8.col-sm-offset-2.col-xs-10(ng-if="dayEvents.length !== 0")
       table.table.table-hover
         tr(ng-repeat="event in dayEvents")
           td
