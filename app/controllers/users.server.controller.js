@@ -75,6 +75,6 @@ exports.requiresLogin = function (req, res, next) {
   if (req.isAuthenticated()) {
     next();
   } else {
-    res.status(401).send(new Error('Not authenticated'));
+    res.redirect('/');
   }
 };

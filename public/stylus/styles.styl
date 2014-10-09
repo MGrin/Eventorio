@@ -13,8 +13,9 @@
   border: 1px solid #767D80
   border-radius: 5px
 
-a
+a, .clickable
   color: inherit
+  cursor: pointer
   &:hover
     color: #6BB0BA
     text-decoration: none
@@ -41,6 +42,10 @@ a
     // xs
     font-size: 1.5em
     margin-top: -30px
+    // md
+    @media (min-width: 992px)
+      margin-top: -70px
+      font-size: 3em
     // lg
     @media (min-width: 1200px)
       margin-top: -100px
@@ -49,11 +54,23 @@ a
     // xs
     padding: 0
     margin-top: -40px
+    // sm
+    @media (min-width: 768px)
+      margin-top: -75px
+    // md
+    @media (min-width: 992px)
+      margin-top: -90px
     // lg
     @media (min-width: 1200px)
       margin-top: -120px
 
 .event-description
+  // sm
+  @media (min-width: 768px)
+    margin-top: -100px
+  // md
+  @media (min-width: 992px)
+    margin-top: 0
   // lg
   @media (min-width: 1200px)
     font-size: 1.5em

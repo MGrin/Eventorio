@@ -12,10 +12,13 @@
   border: 1px solid #767d80;
   border-radius: 5px;
 }
-a {
+a,
+.clickable {
   color: inherit;
+  cursor: pointer;
 }
-a:hover {
+a:hover,
+.clickable:hover {
   color: #6bb0ba;
   text-decoration: none;
 }
@@ -40,6 +43,12 @@ a:hover {
   color: #000;
   font-size: 0.7em;
 }
+@media (min-width: 992px) {
+  .event-header .event-name {
+    margin-top: -70px;
+    font-size: 3em;
+  }
+}
 @media (min-width: 1200px) {
   .event-header .event-name {
     margin-top: -100px;
@@ -50,9 +59,29 @@ a:hover {
   padding: 0;
   margin-top: -40px;
 }
+@media (min-width: 768px) {
+  .event-header .event-thumbnail {
+    margin-top: -75px;
+  }
+}
+@media (min-width: 992px) {
+  .event-header .event-thumbnail {
+    margin-top: -90px;
+  }
+}
 @media (min-width: 1200px) {
   .event-header .event-thumbnail {
     margin-top: -120px;
+  }
+}
+@media (min-width: 768px) {
+  .event-description {
+    margin-top: -100px;
+  }
+}
+@media (min-width: 992px) {
+  .event-description {
+    margin-top: 0;
   }
 }
 @media (min-width: 1200px) {

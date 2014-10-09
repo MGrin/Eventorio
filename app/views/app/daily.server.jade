@@ -1,14 +1,14 @@
 .row-fluid
-  .col-xs-12.visible-xs(style="height: 15px")
+  .col-xs-12(style="height: 15px")
 
-  label.label-info.col-lg-2.col-lg-offset-5.col-xs-8.col-xs-offset-2.text-center
+  label.label-info.col-lg-2.col-lg-offset-5.col-md-9.col-xs-8.col-xs-offset-2.text-center
     h5 {{dayStr}}
 
-  a#eventCreationDialogTrigger.col-lg-1.col-lg-offset-4.hidden-xs.text-center(href="#", ng-click="showEventCreationDialog()")
+  a#eventCreationDialogTrigger.col-lg-1.col-lg-offset-4.hidden-md.hidden-sm.hidden-xs.text-center(href="#", ng-click="showEventCreationDialog()")
     h1.hidden-xs.glyphicon.glyphicon-plus-sign(style="margin: 0")
     h2.visible-xs.glyphicon.glyphicon-plus-sign(style="margin: 0")
 
-.row-fluid.hidden-xs
+.row-fluid.hidden-md.hidden-xs
   #eventCreationDialog.col-lg-10.col-lg-offset-1.col-xs-12(style="display: none; padding-bottom: 10px")
     form.form-horizontal(role="form")
       .form-group.col-lg-6
@@ -28,15 +28,16 @@
           | Create Event
 
 .row-fluid
-  #day-events.col-lg-12
-    .col-lg-10.col-lg-offset-1.col-xs-12.text-center(ng-if="dayEvents.length === 0")
+  #day-events.col-lg-12.col-md-12
+    .col-lg-10.col-lg-offset-1.col-md-8.col-md-offset-3.col-xs-12.text-center(ng-if="dayEvents.length === 0")
       h3(style="color: grey") No events for today.
-    .table-responsive.col-lg-10.col-md-10.col-sm-10.col-xs-10(ng-if="dayEvents.length !== 0")
+    .table-responsive.col-lg-9.col-lg-offset-2.col-md-9.col-md-offset-2.col-sm-8.col-sm-offset-2.col-xs-10(ng-if="dayEvents.length !== 0")
       table.table.table-hover
         tr(ng-repeat="event in dayEvents")
           td
-            a(href="{{event.url}}")
-              | {{event.name}}
-          td {{event.location}}
-          td.text-right {{event.organizator.username}}
+            a(href="{{event.url}}") {{event.name}}
+          td
+            a(href="{{event.url}}") {{event.location}}
+          td.text-right
+            a(href="/users/{{event.organizator.id}}") {{event.organizator.username}}
 

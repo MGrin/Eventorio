@@ -6,16 +6,16 @@ body
     .row-fluid
       img.img-responsive.img-event-header(src="/img/event_background.png")
 
-      .event-header.col-lg-12.hidden-xs
-        .col-lg-4.col-lg-offset-1
-          .event-thumbnail.col-lg-12
-            img.img-responsive.img-thumbnail.col-lg-8(src="/img/event_logo.jpg")
-          .col-lg-offset-1.hidden-xs.event-organizator
+      .event-header.col-lg-12.col-md-12.col-sm-12.hidden-xs
+        .col-lg-4.col-lg-offset-1.col-md-3.col-sm-4
+          .event-thumbnail.col-lg-12.col-md-12.col-sm-12
+            img.img-responsive.img-thumbnail.col-lg-8.col-md-12.col-sm-12(src="/img/event_logo.jpg")
+          .col-lg-offset-1.col-md-offset-1.col-sm-offset-1.hidden-xs.event-organizator
             p(style="color: grey") Organized by&nbsp;&nbsp;
               span(style="color: black")
-                a(href="/users/#{event.organizator.id}")(style="font-size: 2em")
+                a(href="/users/#{event.organizator.id}", style="font-size: 2em")
                   | #{event.organizator.username}
-        .event-name.col-lg-7.col-xs-3 #{event.name}
+        .event-name.col-lg-7.col-md-9.col-sm-8 #{event.name}
 
       //- Extra-small screens
       .event-header.col-xs-12.visible-xs
@@ -25,12 +25,12 @@ body
           .event-name.col-xs-8
             | #{event.name}
             p Organized by&nbsp;&nbsp;
-              a(href="/users/#{event.organizator.id}")(style="font-size: 1.5em")
+              a(href="/users/#{event.organizator.id}", style="font-size: 1.5em")
                 | #{event.organizator.username}
 
     .row-fluid
-      .col-lg-11.col-lg-offset-1.col-xs-12
-        .event-location.col-lg-4.hidden-xs
+      .col-lg-11.col-lg-offset-1.col-md-12.col-sm-12.col-xs-12
+        .event-location.col-lg-4.col-md-4.col-sm-4.hidden-xs
           h3 #{event.location}
-        .event-description.col-lg-6.col-xs-12
+        .event-description.col-lg-6.col-md-6.col-sm-8.col-xs-12
           p.big #{event.desc}
