@@ -1,30 +1,32 @@
-include ../layouts/head.server.jade
-include ../layouts/scripts.server.jade
-body
-  include ../layouts/header.server.jade
+doctype html
+html(lang="en", ng-app="EventorioApp", style="background-image: url(/img/bg.jpg)")
+  include ../layouts/head.server.jade
+  include ../layouts/scripts.server.jade
+  body
+    include ../layouts/header.server.jade
 
-  .container-fluid(ng-controller="LandingController")
-    if !user
-      #signup-box.col-lg-3.col-lg-offset-8
-        .jumbotron
-          h2.title
-            | Sign up!
-          form.form(role="form")
-            .form-group
-              input.form-control(type="text", name="username", placeholder="Username")
-            .form-group
-              input.form-control(type="email", name="email", placeholder="Email")
-            .form-group
-              input.form-control(type="password", name="password", placeholder="Password")
-            .form-group
-              input.form-control(type="password", name="repeatedPassword", placeholder="Repeat password")
-            button.btn.btn-success.pull-right(ng-click="signup()")
-              | Create account
+    .container-fluid(ng-controller="LandingController")
+      if !user
+        #signup-box.col-lg-3.col-lg-offset-8.col-md-4.col-md-offset-7.col-sm-6.col-sm-offset-5.col-xs-12
+          .jumbotron
+            h2.title
+              | Sign up!
+            form.form(role="form")
+              .form-group
+                input.form-control(type="text", name="username", placeholder="Username")
+              .form-group
+                input.form-control(type="email", name="email", placeholder="Email")
+              .form-group
+                input.form-control(type="password", name="password", placeholder="Password")
+              .form-group
+                input.form-control(type="password", name="repeatedPassword", placeholder="Repeat password")
+              button.btn.btn-success.pull-right(ng-click="signup()")
+                | Create account
 
-    if user
-      .jumbotron.col-lg-4.col-lg-offset-7
-          h1
-            | Hello #{user.username}!
-          h3
-            a(href="/app")
-              | Take a look on what is going on
+      if user
+        .jumbotron.col-lg-4.col-lg-offset-7.col-md-4.col-md-offset-7.col-sm-6.col-sm-offset-5.col-xs-12
+            h2
+              | Hello #{user.username}!
+            h4
+              a(href="/app")
+                | Take a look on what is going on

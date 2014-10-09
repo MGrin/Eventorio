@@ -1,17 +1,19 @@
-include ../layouts/head.server.jade
-body
-  include ../layouts/header.server.jade
-  #application-content(ng-controller="ApplicationController")
-    .row-fluid
-      #calendars.col-lg-8.col-md-6.col-sm-6.col-xs-12(ng-controller="CalendarController")
-        include monthly.server.jade
+doctype html
+html(lang="en", ng-app="EventorioApp")
+  include ../layouts/head.server.jade
+  body
+    include ../layouts/header.server.jade
+    #application-content(ng-controller="ApplicationController")
+      .row-fluid
+        #calendars.col-lg-8.col-md-6.col-sm-6.col-xs-12(ng-controller="CalendarController")
+          include monthly.server.jade
 
-      #news-feed.col-lg-4.hidden-md.hidden-sm.hidden-xs.pull-right(ng-controller="NewsFeedController")
-        h1
-          | News
+        #news-feed.col-lg-4.hidden-md.hidden-sm.hidden-xs.pull-right(ng-controller="NewsFeedController")
+          h1
+            | News
 
-    .row-fluid
-      #day-events.col-lg-8.col-md-6.col-sm-6.col-xs-12(ng-controller="DaylyController")
-        include daily.server.jade
+      .row-fluid
+        #day-events.col-lg-8.col-md-6.col-sm-6.col-xs-12(ng-controller="DaylyController")
+          include daily.server.jade
 
-include ../layouts/scripts.server.jade
+  include ../layouts/scripts.server.jade
