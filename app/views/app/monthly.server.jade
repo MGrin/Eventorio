@@ -2,19 +2,19 @@
   h1.hidden-xs.text-center
     | {{monthStr}}
 
-  .visible-xs.col-xs-1.text-center.month-control
+  .visible-xs.col-xs-1.text-right.month-control
     a(href="#", ng-click="prevMonth()")
       h1.glyphicon.glyphicon-circle-arrow-left
 
   h3.visible-xs.col-xs-8.col-xs-offset-1.text-center
     | {{monthStr}}
 
-  .visible-xs.col-xs-1.text-center.month-control
+  .visible-xs.col-xs-1.text-left.month-control
     a(href="#", ng-click="nextMonth()")
       h1.glyphicon.glyphicon-circle-arrow-right
 
 #monthly-calendar.col-lg-12.col-md-12.col-sm-12.col-xs-12
-  .col-lg-1.col-md-1.col-sm-1.hidden-xs.text-center.month-control
+  .col-lg-1.col-md-1.col-sm-1.hidden-xs.text-right.month-control
     a(href="#", ng-click="prevMonth()")
       h1.glyphicon.glyphicon-circle-arrow-left
 
@@ -29,6 +29,6 @@
       .day.header Sun
     .days(data-group='days')
 
-  .col-lg-1.col-md-1.col-sm-1.hidden-xs.text-center.month-control
+  .col-lg-1.col-md-1.col-sm-1.hidden-xs.text-left.month-control
     a.clickable(href="#", ng-click="nextMonth()")
       h1.glyphicon.glyphicon-circle-arrow-right

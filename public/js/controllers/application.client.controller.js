@@ -15,7 +15,7 @@ app.controller('ApplicationController', ['$scope', 'Global', 'Events', function 
         res[calendarDate] = {};
         res[calendarDate].dayEvents = [];
         res[calendarDate].number = 0;
-        res[calendarDate].badgeClass = 'badge-success';
+        res[calendarDate].badgeClass = 'eventorio-badge';
       }
 
       res[calendarDate].number++;

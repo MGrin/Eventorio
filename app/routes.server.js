@@ -17,8 +17,9 @@ module.exports = function (app, passport) {
     .post(users.signup);
   app.route('/logout')
     .get(users.logout);
-  app.route('/users/me')
-    .get(users.requiresLogin, users.me);
+  app.route('/users/:username')
+    .get(users.requiresLogin, users.show);
+  app.param('username', users.loadByUsername);
 
   app.route('/events')
     .get(users.requiresLogin, events.query)

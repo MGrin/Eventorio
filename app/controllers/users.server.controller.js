@@ -49,15 +49,25 @@ exports.signup = function (req, res) {
   });
 };
 
-exports.me = function (req, res) {
-  res.format({
+exports.loadByUsername = function (req, res, next, username) {
+  app.User.loadByUsername(username, function (err, user) {
+    if (err) return app.err(err, res);
+    if (!user) return app.err(new Error('No user found: ' + username), res);
+
+    req.user = user;
+    return next();
+  })
+};
+
+exports.show = function (req, res) {
+  return res.format({
     html: function () {
-      res.render(404);
+      res.render('app/user.server.jade', {user: req.user});
     },
     json: function () {
-      res.jsonp(req.user);
+      return res.jsonp(req.user.toJSON());
     }
-  })
+  });
 }
 
 /**

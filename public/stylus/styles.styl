@@ -1,5 +1,30 @@
 body
   background: transparent
+// Sidebar styles
+.menu
+  width: 100%
+  height: 100%
+  background-color: #000
+  color: #fff
+  position: fixed;
+  -webkit-transition: all 1s
+  transition: all 1s
+  left: 0
+  z-index: 1
+  overflow-y: auto
+  padding-bottom: 100px
+  &.closed
+    left: -100%
+
+#toggle
+  z-index: 1
+  background-color: inherit !important
+  height: 35px
+  position: fixed
+  top: 0px
+  left: -5px
+  button
+    margin: 0
 
 #signup-box
   .jumbotron
@@ -23,12 +48,41 @@ a, .clickable
     color: #6BB0BA
     text-decoration: none
 
+// Calendar styles
+.eventorio-badge
+  opacity: 0.7
+  background-color: orange
+  z-index: -1 !important
+  width: 85%
+  height: 85%
+  text-align: right
+  // lg
+  @media (min-width: 1200px)
+    background-color: #5a90de
+    opacity: 1
+    z-index: 1 !important
+    width: 100%
+    height: inherit
+    left: 0
+    top: 0
+    text-align: center
+    &:after
+      content: ' ev.'
+
 .days
   .today
     background-color: #A1E6F0
-
-.img-event-header
-  margin-top: -20px
+  .day
+    a
+      &:hover
+        background-color: #D2DAFF !important
+  .active
+    a
+      background-color: inherit !important
+      color: inherit !important
+      &:hover
+        color: inherit !important
+// Done...
 
 .event-header
   // xs

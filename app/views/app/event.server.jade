@@ -15,7 +15,7 @@ html(lang="en", ng-app="EventorioApp")
             .col-lg-offset-1.col-md-offset-1.col-sm-offset-1.hidden-xs.event-organizator
               p(style="color: grey") Organized by&nbsp;&nbsp;
                 span(style="color: black")
-                  a(href="/users/#{event.organizator.id}", style="font-size: 2em")
+                  a(href="/users/#{event.organizator.username}", style="font-size: 2em")
                     | #{event.organizator.username}
           .event-name.col-lg-7.col-md-9.col-sm-8 #{event.name}
 
@@ -27,7 +27,7 @@ html(lang="en", ng-app="EventorioApp")
             .event-name.col-xs-8
               | #{event.name}
               p Organized by&nbsp;&nbsp;
-                a(href="/users/#{event.organizator.id}", style="font-size: 1.5em")
+                a(href="/users/#{event.organizator.username}", style="font-size: 1.5em")
                   | #{event.organizator.username}
 
       .row-fluid

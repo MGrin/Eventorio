@@ -37,6 +37,12 @@ app.controller('HeaderController', ['$scope', '$location', 'Global', 'Users', fu
     }
   }
 
+  $scope.toggleSidebarMenu = function () {
+    var closed = $('.menu').hasClass('closed');
+    if(closed) return $('.menu').removeClass('closed')
+    else return $('.menu').addClass('closed')
+  }
+
   var getErrorForField = function (field, value) {
     if (!value || value === '') return 'Must not be empty!';
 

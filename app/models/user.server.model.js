@@ -122,6 +122,16 @@ UserSchema.methods = {
 };
 
 UserSchema.statics = {
+  loadByUsername: function (username, cb) {
+    app.User.find({username: new RegExp('^' + username +'$', 'i')}, function (err, users) {
+      if (err) return cb(err);
+      if (!users || users.length === 0) return cb();
+      if (users.length > 1) return cb(new Error('More than one user for following username: ' + username));
+
+      return cb(null, users[0]);
+    });
+  },
+
   create: function (fields, cb) {
     var email = fields.email;
     var username = fields.username;
@@ -137,7 +147,7 @@ UserSchema.statics = {
           return next();
         });
       }, function (next) {
-        app.User.count({username: username}, function (err, count) {
+        app.User.count({username: new RegExp('^' + username +'$', 'i')}, function (err, count) {
           if (err) return next(err);
           if (count > 0) return next(new Error('User with username \"' + username + '\" already registered.'));
           return next();

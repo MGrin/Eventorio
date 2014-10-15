@@ -1,5 +1,11 @@
-app.factory('Global', function ($document, $filter, $location) {
+app.factory('Global', function () {
   'use strict';
+
+  var screenSize;
+  if ($(window).width() > 1200) screenSize = 'lg';
+  else if ($(window).width() > 992) screenSize = 'md';
+  else if ($(window).width() > 768) screenSize = 'sm';
+  else screenSize = 'xs';
 
   var Global = {
     app: app,
@@ -7,7 +13,8 @@ app.factory('Global', function ($document, $filter, $location) {
       appName: 'Eventorio'
     },
     monthNames: [ "January", "February", "March", "April", "May", "June",
-      "July", "August", "September", "October", "November", "December" ]
+      "July", "August", "September", "October", "November", "December" ],
+    screenSize: screenSize
   };
 
   app.Global = Global;

@@ -1,32 +1,62 @@
-nav#header.navbar.navbar-default(role="navigation", ng-controller="HeaderController")
-  .container-fluid
-    .navbar-header
-      button.navbar-toggle.collapsed(type="button", data-toggle="collapse", data-target="#navbar")
-        span.sr-only
-        span.icon-bar
-        span.icon-bar
+div(ng-controller="HeaderController")
+  //- Only for large and medium screens
+  .hidden-xs
+    nav#header.navbar.navbar-default(role="navigation")
+      .container-fluid
+        .navbar-header
+          button.navbar-toggle.collapsed(type="button", data-toggle="collapse", data-target="#navbar")
+            span.sr-only
+            span.icon-bar
+            span.icon-bar
 
-      a.navbar-brand(href="/app")
-        | {{global.config.appName}}
+          a.navbar-brand(href="/app")
+            | {{global.config.appName}}
 
-    #navbar.collapse.navbar-collapse
-      ul.nav.navbar-nav.navbar-right
-        if !user
-          li.dropdown
-            button.btn.btn-info.navbar-btn.hidden-xs(data-toggle="modal", data-target="#loginModal")
-              | Login
-            a.show.visible-xs(href="#", data-toggle="modal", data-target="#loginModal")
-              | Login
+        #navbar.collapse.navbar-collapse
+          ul.nav.navbar-nav.navbar-right
+            if !user
+              li.dropdown
+                button.btn.btn-info.navbar-btn(data-toggle="modal", data-target="#loginModal")
+                  | Login
 
-        if user
-          li.dropdown
-            a.dropdown-toggle(href="#", data-toggle="dropdown")
-              | #{user.username}
-              span.caret
-            ul.dropdown-menu(role="menu", style="padding: 17px")
-              li
-                a(href="/logout")
-                  | Logout
+            if user
+              li.dropdown
+                a.dropdown-toggle(href="#", data-toggle="dropdown")
+                  | #{user.username}
+                  span.caret
+                ul.dropdown-menu(role="menu", style="padding: 17px")
+                  li
+                    a(href="/logout")
+                      | Logout
+
+  //- For extra small screens
+  .visible-xs
+    .navbar-default
+      .container-fluid#toggle(ng-click="toggleSidebarMenu()")
+        .navbar-header
+          button.navbar-toggle.collapsed(type="button", data-toggle="collapse", data-target="#navbar")
+            span.icon-bar
+            span.icon-bar
+            span.icon-bar
+    .menu.closed
+      .container-fluid
+        .row
+          .col-xs-10
+            ul
+              if user
+                li #{user.username}
+                li
+                  a(href="/logout")
+                    | Logout
+              if !user
+                li
+                  a.show.visible-xs(href="#", data-toggle="modal", data-target="#loginModal")
+                    | Login
+          .pull-right.col-xs-2(ng-click="toggleSidebarMenu()")
+            a(href="#") ×
+
+
+
 
   #loginModal.modal.fade(tabindex="-1", role="dialog", aria-hidden="true")
     .modal-dialog
