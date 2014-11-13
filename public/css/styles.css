@@ -1,33 +1,6 @@
 body {
   background: transparent;
 }
-.menu {
-  width: 100%;
-  height: 100%;
-  background-color: #000;
-  color: #fff;
-  position: fixed;
-  -webkit-transition: all 1s;
-  transition: all 1s;
-  left: 0;
-  z-index: 1;
-  overflow-y: auto;
-  padding-bottom: 100px;
-}
-.menu.closed {
-  left: -100%;
-}
-#toggle {
-  z-index: 1;
-  background-color: inherit !important;
-  height: 35px;
-  position: fixed;
-  top: 0px;
-  left: -5px;
-}
-#toggle button {
-  margin: 0;
-}
 #signup-box .jumbotron {
   padding-top: 30px;
 }
@@ -36,6 +9,12 @@ body {
 }
 #monthly-calendar {
   margin-top: 30px;
+}
+#news-feed {
+  min-height: 600px;
+}
+#currentDay {
+  font-size: 2em;
 }
 #eventCreationDialog {
   padding-top: 10px;
@@ -88,6 +67,9 @@ a:hover,
 .days .active a:hover {
   color: inherit !important;
 }
+/**
+ * Event page styles
+ */
 @media (max-width: 768px) {
   .event-header {
     padding: 0;

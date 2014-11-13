@@ -26,14 +26,8 @@ app.controller('DaylyController', ['$scope', 'Global', 'Events', function ($scop
   });
 
   $scope.showEventCreationDialog = function () {
-    $('#eventCreationDialog').slideToggle();
-    if ($('#eventCreationDialogTrigger h1').hasClass('glyphicon-plus-sign')) {
-      $('#eventCreationDialogTrigger h1').removeClass('glyphicon-plus-sign');
-      $('#eventCreationDialogTrigger h1').addClass('glyphicon-minus-sign');
-    } else if ($('#eventCreationDialogTrigger h1').hasClass('glyphicon-minus-sign')) {
-      $('#eventCreationDialogTrigger h1').removeClass('glyphicon-minus-sign');
-      $('#eventCreationDialogTrigger h1').addClass('glyphicon-plus-sign');
-    }
+    // TODO
+    alert('Implement it!!!');
   }
 
   $scope.createEvent = function () {

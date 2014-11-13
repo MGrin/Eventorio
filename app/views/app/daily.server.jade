@@ -1,31 +1,9 @@
 .row-fluid
   .col-xs-12(style="height: 15px")
 
-  label.label-info.col-lg-2.col-lg-offset-5.col-md-9.col-xs-8.col-xs-offset-2.text-center
-    h5 {{dayStr}}
-
-  a#eventCreationDialogTrigger.col-lg-1.col-lg-offset-4.hidden-md.hidden-sm.hidden-xs.text-center(href="#", ng-click="showEventCreationDialog()")
-    h1.hidden-xs.glyphicon.glyphicon-plus-sign(style="margin: 0")
-    h2.visible-xs.glyphicon.glyphicon-plus-sign(style="margin: 0")
-
-.row-fluid.hidden-md.hidden-xs
-  #eventCreationDialog.col-lg-10.col-lg-offset-1.col-xs-12(style="display: none; padding-bottom: 10px")
-    form.form-horizontal(role="form")
-      .form-group.col-lg-6
-        label.control-label.col-lg-4 Name:
-        .col-lg-8
-          input.form-control(type="text", name="name", placeholder="ex. Trip-Hop Orchestra")
-      .form-group.col-lg-6
-        label.control-label.col-lg-4 Location:
-        .col-lg-8
-          input.form-control(type="text", name="location", placeholder="ex. Metropole")
-      .form-group.col-lg-6
-        label.control-label.col-lg-4 Description:
-        .col-lg-8
-          textarea.form-control(type="text", name="desc", placeholder="ex. Cool event!")
-      .col-lg-6
-        button.btn.btn-info.btn-lg.col-lg-4.col-lg-offset-7.col-xs-12(ng-click="createEvent()")
-          | Create Event
+  label#currentDay.col-lg-12.col-md-10.col-xs-10
+    span.col-lg-10.col-lg-offset-1.col-md-10.col-sm-10.col-xs-10 {{dayStr}}:
+    a#eventCreationDialogTrigger.glyphicon.glyphicon-plus-sign.col-lg-1.col-md-1.col-sm-1.col-xs-1.pull-right(style="margin-top: 3px;", href="#", ng-click="showEventCreationDialog()")
 
 .row-fluid
   #day-events.col-lg-12.col-md-12

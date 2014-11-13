@@ -1,30 +1,5 @@
 body
   background: transparent
-// Sidebar styles
-.menu
-  width: 100%
-  height: 100%
-  background-color: #000
-  color: #fff
-  position: fixed;
-  -webkit-transition: all 1s
-  transition: all 1s
-  left: 0
-  z-index: 1
-  overflow-y: auto
-  padding-bottom: 100px
-  &.closed
-    left: -100%
-
-#toggle
-  z-index: 1
-  background-color: inherit !important
-  height: 35px
-  position: fixed
-  top: 0px
-  left: -5px
-  button
-    margin: 0
 
 #signup-box
   .jumbotron
@@ -35,6 +10,12 @@ body
 
 #monthly-calendar
   margin-top: 30px
+
+#news-feed
+  min-height: 600px
+
+#currentDay
+  font-size: 2em
 
 #eventCreationDialog
   padding-top: 10px
@@ -48,7 +29,7 @@ a, .clickable
     color: #6BB0BA
     text-decoration: none
 
-// Calendar styles
+// Calendar widget styles
 .eventorio-badge
   opacity: 0.7
   background-color: orange
@@ -82,8 +63,11 @@ a, .clickable
       color: inherit !important
       &:hover
         color: inherit !important
-// Done...
 
+
+/**
+ * Event page styles
+ */
 .event-header
   // xs
   @media (max-width: 768px)
