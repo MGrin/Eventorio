@@ -26,21 +26,14 @@ app.controller('DaylyController', ['$scope', 'Global', 'Events', function ($scop
   });
 
   $scope.showEventCreationDialog = function () {
-    $('#eventCreationDialog').slideToggle();
-    if ($('#eventCreationDialogTrigger h1').hasClass('glyphicon-plus-sign')) {
-      $('#eventCreationDialogTrigger h1').removeClass('glyphicon-plus-sign');
-      $('#eventCreationDialogTrigger h1').addClass('glyphicon-minus-sign');
-    } else if ($('#eventCreationDialogTrigger h1').hasClass('glyphicon-minus-sign')) {
-      $('#eventCreationDialogTrigger h1').removeClass('glyphicon-minus-sign');
-      $('#eventCreationDialogTrigger h1').addClass('glyphicon-plus-sign');
-    }
+
   }
 
   $scope.createEvent = function () {
     var fields = {};
     var validData = true;
 
-    $('#eventCreationDialog :input').each(function () {
+    $('#eventCreationForm :input').each(function () {
       var elem = this;
 
       var field = $(elem).attr('name');
@@ -79,7 +72,7 @@ app.controller('DaylyController', ['$scope', 'Global', 'Events', function ($scop
 
   var getErrorForField = function (field, value) {
     if (field !== 'desc' && (!value || value === '')) return 'Must not be empty!';
-    if (filed === 'name') {
+    if (field === 'name') {
       if (value.length > 30) return 'The name should not contain more than 30 characters';
     }
     return null;

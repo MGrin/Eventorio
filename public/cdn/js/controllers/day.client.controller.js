@@ -26,15 +26,14 @@ app.controller('DaylyController', ['$scope', 'Global', 'Events', function ($scop
   });
 
   $scope.showEventCreationDialog = function () {
-    // TODO
-    alert('Implement it!!!');
+
   }
 
   $scope.createEvent = function () {
     var fields = {};
     var validData = true;
 
-    $('#eventCreationDialog :input').each(function () {
+    $('#eventCreationForm :input').each(function () {
       var elem = this;
 
       var field = $(elem).attr('name');
@@ -73,7 +72,7 @@ app.controller('DaylyController', ['$scope', 'Global', 'Events', function ($scop
 
   var getErrorForField = function (field, value) {
     if (field !== 'desc' && (!value || value === '')) return 'Must not be empty!';
-    if (filed === 'name') {
+    if (field === 'name') {
       if (value.length > 30) return 'The name should not contain more than 30 characters';
     }
     return null;

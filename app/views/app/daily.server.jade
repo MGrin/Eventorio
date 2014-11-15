@@ -3,7 +3,11 @@
 
   label#currentDay.col-lg-12.col-md-10.col-xs-10
     span.col-lg-10.col-lg-offset-1.col-md-10.col-sm-10.col-xs-10 {{dayStr}}:
-    a#eventCreationDialogTrigger.glyphicon.glyphicon-plus-sign.col-lg-1.col-md-1.col-sm-1.col-xs-1.pull-right(style="margin-top: 3px;", href="#", ng-click="showEventCreationDialog()")
+    a#eventCreationDialogTrigger.glyphicon.glyphicon-plus-sign.col-lg-1.col-md-1.col-sm-1.col-xs-1.pull-right(
+      style="margin-top: 3px;"
+      href="#"
+      data-toggle="modal"
+      data-target="#eventCreationModal")
 
 .row-fluid
   #day-events.col-lg-12.col-md-12
@@ -19,3 +23,28 @@
           td.text-right
             a(href="/users/{{event.organizator.id}}") {{event.organizator.username}}
 
+#eventCreationModal.modal.fade(tabindex='-1', role='dialog', aria-hidden='true')
+  .modal-dialog
+    .modal-content
+      .modal-header
+        button.close(type='button', data-dismiss='modal')
+          span(aria-hidden='true') ×
+          span.sr-only Close
+        h4.modal-title Create a new Event!
+      .modal-body
+        form#eventCreationForm.form-horizontal(role="form")
+          .form-group
+            label.col-lg-3.control-label Name:
+            .col-lg-9
+              input.form-control(type="text", name="name", placeholder="ex. Trip-Hop Orchestra")
+          .form-group
+            label.control-label.col-lg-3 Location:
+            .col-lg-9
+              input.form-control(type="text", name="location", placeholder="ex. Metropole")
+          .form-group
+            label.control-label.col-lg-3 Description:
+            .col-lg-9
+              textarea.form-control(type="text", name="desc", placeholder="ex. Cool event!")
+      .modal-footer
+        button.btn.btn-default(type='button', data-dismiss='modal') Close
+        button.btn.btn-primary(type='button', ng-click="createEvent()") Create
