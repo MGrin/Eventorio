@@ -6,6 +6,7 @@
     "angular-resource": "latest",
     "bootstrap": "latest",
     "jquery": "latest",
-    "underscore": "latest"
+    "underscore": "latest",
+    "moment": "~2.8.3"
   }
 }

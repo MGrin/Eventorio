@@ -10,7 +10,11 @@ var config = {
     root: rootPath,
     port: 7000,
     serverUrl: 'http://localhost:7000',
-    name: 'Eventorio'
+    name: 'Eventorio',
+    gravatar: {
+      s: '400',
+      d: 'http://www.wpsymposiumpro.com/wp-content/uploads/2014/04/iStock_000033523696Small.jpg'
+    }
   },
 
   production: {
@@ -18,7 +22,11 @@ var config = {
     root: rootPath,
     port: process.env.PORT || 7000,
     serverUrl: 'http://eventorio.herokuapp.com',
-    name: 'Eventorio'
+    name: 'Eventorio',
+    gravatar: {
+      s: '400',
+      d: 'http://www.wpsymposiumpro.com/wp-content/uploads/2014/04/iStock_000033523696Small.jpg'
+    }
   }
 };
 

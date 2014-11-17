@@ -7,6 +7,7 @@ exports.init = function (myApp) {
 };
 
 exports.load = function (req, res, next, id) {
+  if (id === 'new') return next();
   app.Event.load(id, function (err, event) {
     if (err) return app.err(err, res);
     if (!event) return app.err(new Error('Event not found!'), res);
@@ -21,14 +22,19 @@ exports.create = function (req, res) {
     name: req.body.name,
     desc: req.body.desc,
     location: req.body.location,
-    date: req.body.date
+    date: req.body.date,
+    isAllDay: req.body.allDay
   };
   var creator = req.user;
   app.Event.create(fields, creator, function (err, event) {
     if (err) return app.err(err, res);
-    res.jsonp({redirect: '/events/' + event.id});
+    res.jsonp(event.toJSON());
   });
 };
+
+exports.createPage = function (req, res) {
+  return res.render('app/event.server.jade', {event: {edit: true}});
+}
 
 exports.query = function (req, res) {
   var date = new Date();
@@ -57,7 +63,7 @@ exports.query = function (req, res) {
 exports.show = function (req, res) {
   res.format({
     html: function () {
-      return res.render('app/event.server.jade', {event: req.event, user: req.user});
+      return res.render('app/event.server.jade', {event: req.event});
     },
     json: function () {
       return res.jsonp(req.event);

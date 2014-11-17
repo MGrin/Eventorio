@@ -17,7 +17,7 @@ module.exports = function (app) {
     app.logger.error(err.stack);
 
     // error page
-    res.status(500).render('500.server.jade', {error: err.stack});
+    res.status(500).render('404.server.jade', {error: err.stack});
   });
 
   // assume 404 since no middleware responded

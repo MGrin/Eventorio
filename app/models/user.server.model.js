@@ -11,6 +11,7 @@ var Schema = mongoose.Schema;
 var _ = require('underscore');
 var async = require('async');
 var ObjectId = Schema.ObjectId;
+var gravatar = require('gravatar');
 
 /**
  * Models
@@ -31,9 +32,7 @@ var UserSchema = exports.Schema = new Schema({
   gender: String, // male or female
 
   hashPassword: String,
-  salt: String,
-
-  picture: String,       // picture uploaded by user
+  salt: String
 });
 
 /**
@@ -50,15 +49,15 @@ UserSchema
   });
 
 UserSchema
-  .virtual('virtualGravatar')
-  .get(function () {
-    return crypto.createHash('md5').update(this.email).digest('hex');
-  });
-
-UserSchema
   .virtual('id')
   .get(function () {
     return this._id.toString();
+  });
+
+UserSchema
+  .virtual('picture')
+  .get(function () {
+    return gravatar.url(this.email, app.config.gravatar);
   });
 
 UserSchema.index({name: 'text', username: 'text'}); // for fulltext search
@@ -116,8 +115,13 @@ UserSchema.methods = {
     delete res.modified;
     delete res.password;
     delete res.hashPassword;
-    delete res.virtualGravatar;
     delete res.salt;
+    return res;
+  },
+
+  update: function (field, value, cb) {
+    this[field] = value;
+    return this.save(cb);
   }
 };
 

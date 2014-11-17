@@ -7,6 +7,14 @@ body {
 #signup-box .jumbotron form {
   margin-bottom: 30px;
 }
+#big-logo {
+  border: solid 2px #fff;
+  border-radius: 50%;
+  margin-top: 20%;
+}
+.landing-text {
+  background: rgba(255,255,255,0.7);
+}
 #monthly-calendar {
   margin-top: 30px;
 }
@@ -31,6 +39,9 @@ a:hover,
   color: #6bb0ba;
   text-decoration: none;
 }
+.big-text {
+  font-size: 1.5em;
+}
 .eventorio-badge {
   opacity: 0.7;
   background-color: #ffa500;
@@ -43,7 +54,7 @@ a:hover,
   .eventorio-badge {
     background-color: #5a90de;
     opacity: 1;
-    z-index: 1 !important;
+    z-index: 0 !important;
     width: 100%;
     height: inherit;
     left: 0;
@@ -58,7 +69,9 @@ a:hover,
   background-color: #a1e6f0;
 }
 .days .day a:hover {
-  background-color: #d2daff !important;
+  background-color: inherit !important;
+  border: 1px solid #d2daff;
+  border-radius: 5px;
 }
 .days .active a {
   background-color: inherit !important;
@@ -67,68 +80,105 @@ a:hover,
 .days .active a:hover {
   color: inherit !important;
 }
-/**
- * Event page styles
- */
 @media (max-width: 768px) {
-  .event-header {
+  .event-header,
+  .user-header {
     padding: 0;
   }
 }
-.event-header .event-name {
+.event-header .event-name,
+.user-header .event-name,
+.event-header .user-username,
+.user-header .user-username {
   background-color: rgba(255,255,255,0.4);
   color: #fff;
   font-size: 1.5em;
   margin-top: -30px;
 }
-.event-header .event-name p {
+.event-header .event-name p,
+.user-header .event-name p,
+.event-header .user-username p,
+.user-header .user-username p {
   color: #000;
   font-size: 0.7em;
 }
 @media (min-width: 992px) {
-  .event-header .event-name {
+  .event-header .event-name,
+  .user-header .event-name,
+  .event-header .user-username,
+  .user-header .user-username {
     margin-top: -70px;
     font-size: 3em;
   }
 }
 @media (min-width: 1200px) {
-  .event-header .event-name {
+  .event-header .event-name,
+  .user-header .event-name,
+  .event-header .user-username,
+  .user-header .user-username {
     margin-top: -100px;
     font-size: 4em;
   }
 }
-.event-header .event-thumbnail {
+.event-header .event-thumbnail,
+.user-header .event-thumbnail,
+.event-header .user-thumbnail,
+.user-header .user-thumbnail {
   padding: 0;
   margin-top: -40px;
 }
 @media (min-width: 768px) {
-  .event-header .event-thumbnail {
+  .event-header .event-thumbnail,
+  .user-header .event-thumbnail,
+  .event-header .user-thumbnail,
+  .user-header .user-thumbnail {
     margin-top: -75px;
   }
 }
 @media (min-width: 992px) {
-  .event-header .event-thumbnail {
+  .event-header .event-thumbnail,
+  .user-header .event-thumbnail,
+  .event-header .user-thumbnail,
+  .user-header .user-thumbnail {
     margin-top: -90px;
   }
 }
 @media (min-width: 1200px) {
-  .event-header .event-thumbnail {
+  .event-header .event-thumbnail,
+  .user-header .event-thumbnail,
+  .event-header .user-thumbnail,
+  .user-header .user-thumbnail {
     margin-top: -120px;
   }
 }
-@media (min-width: 768px) {
-  .event-description {
-    margin-top: -100px;
-  }
+.event-description {
+  font-size: 1.5em;
 }
-@media (min-width: 992px) {
-  .event-description {
-    margin-top: 0;
-  }
+.event-details ul {
+  list-style-type: none;
 }
-@media (min-width: 1200px) {
-  .event-description {
-    font-size: 1.5em;
-    margin-top: -40px;
-  }
+.event-details ul li {
+  padding: 40px;
+  padding-left: 0;
+  padding-top: 0;
+}
+.editable {
+  opacity: 0.8;
+  border-bottom: 1px dashed;
+}
+.has-error {
+  color: #a94442;
+}
+.editable-buttons {
+  float: right;
+}
+.editable-popup {
+  color: #000;
+  font-size: 0.5em !important;
+}
+#eventButtons {
+  position: fixed;
+  bottom: 50px;
+  right: 50px;
+  z-index: 3;
 }

@@ -4,6 +4,46 @@ html(lang="en", ng-app="EventorioApp")
   include ../layouts/scripts.server.jade
   body
     include ../layouts/header.server.jade
-    .content-fluid
-      p
-        | #{user}
+    .content-fluid(ng-controller="UserController", ng-init="loggedUserId = '#{user.id}'")
+      .row-fluid
+        img.img-responsive.img-user-header(src="/img/user_background.png")
+
+        .user-header.col-lg-12.col-md-12.col-sm-12.hidden-xs
+          .row-fluid
+            .col-lg-4.col-lg-offset-1.col-md-3.col-sm-4
+              .user-thumbnail.col-lg-12.col-md-12.col-sm-12
+                img.img-responsive.img-thumbnail.col-lg-8.col-md-12.col-sm-12(src="#{user.picture}")
+              .col-lg-offset-1.col-md-offset-1.col-sm-offset-1.hidden-xs.user-name
+                if user.name
+                  a.editable(ng-if="editable", style="font-size: 2em;") #{user.name}
+                  p(ng-if="!editable", style="font-size: 2em;") #{user.name}
+                else
+                  a.editable(ng-if="editable", style="color: grey; font-size: 1.7em; opacity: 0.5;") Enter your name
+                  p(ng-if="!editable", style="color: grey; font-size: 1.7em;") No name
+            .user-username.col-lg-7.col-md-9.col-sm-8 #{user.username}
+          .row-fluid
+            .user-description.col-lg-7.col-md-9.col-sm-8
+              if user.desc
+                a.editable(ng-if="editable", style="font-size: 2em") #{user.desc}
+                p(ng-if="!editable", style="font-size: 2em") #{user.desc}
+              else
+                a.editable(ng-if="editable", style="font-size: 1.7em; opacity: 0.5;") Tell us something about you
+                p(ng-if="!editable", style="font-size: 2em") No description
+
+        //- Extra-small screens
+        .user-header.col-xs-12.visible-xs
+          .row-fluid
+            .user-thumbnail.col-xs-4
+              img.img-responsive.img-thumbnail(src="#{user.picture}")
+            .user-name.col-xs-8
+              | #{user.username}
+              if user.name
+                p #{user.name}
+              else
+                p(style="color: grey; opacity: 0.5;") Enter your name
+          .row-fluid
+            .user-description.col-xs-12
+              if user.desc
+                p #{user.desc}
+              else
+                p(style="color: grey; opacity: 0.5;") Tell us something about you

@@ -7,15 +7,6 @@ app.factory('Global', function () {
   else if ($(window).width() > 768) screenSize = 'sm';
   else screenSize = 'xs';
 
-  if (screenSize !== 'xs') {
-    $('#eventCreationDialogTrigger').hide();
-    $('#currentDay').mouseenter(function () {
-      $('#eventCreationDialogTrigger').show();
-    });
-    $('#currentDay').mouseleave(function () {
-      $('#eventCreationDialogTrigger').hide();
-    });
-  }
   var Global = {
     app: app,
     config: {

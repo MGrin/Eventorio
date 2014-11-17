@@ -1,6 +1,8 @@
 app.controller('HeaderController', ['$scope', '$location', 'Global', 'Users', function ($scope, $location, Global, Users) {
   $scope.global = Global;
 
+  Users.getCurrentUser(function () {});
+
   $scope.login = function () {
     var fields = {};
     var validData = true;

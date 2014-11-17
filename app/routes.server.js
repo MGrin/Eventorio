@@ -18,12 +18,15 @@ module.exports = function (app, passport) {
   app.route('/logout')
     .get(users.logout);
   app.route('/users/:username')
-    .get(users.requiresLogin, users.show);
+    .get(users.requiresLogin, users.show)
+    .put(users.requiresLogin, users.update);
   app.param('username', users.loadByUsername);
 
   app.route('/events')
     .get(users.requiresLogin, events.query)
     .post(users.requiresLogin, events.create);
+  app.route('/events/new')
+    .get(users.requiresLogin, events.createPage);
   app.route('/events/:eventId')
     .get(users.requiresLogin, events.show);
 

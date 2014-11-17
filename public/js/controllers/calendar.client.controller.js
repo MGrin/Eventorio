@@ -20,6 +20,7 @@ app.controller('CalendarController', ['$scope', 'Global', 'Events', function ($s
       time: $scope.today.getFullYear() + '-' + ($scope.today.getMonth() + 1),
       allRows: false,
       events: $scope.$parent.events,
+      monthChangeAnimation: false,
       onInit: function () {
 
       },

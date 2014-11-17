@@ -5,7 +5,7 @@
  */
 var app; // all application-wide things like ENV, config, logger, etc
 var mongoose = require('mongoose');
-var troop = require('mongoose-troop');
+var moment = require('moment');
 var Schema = mongoose.Schema;
 var _ = require('underscore');
 var async = require('async');
@@ -30,6 +30,7 @@ var EventSchema = exports.Schema = new Schema({
     ref: 'User'
   },
   date: Date,
+  isAllDay: Boolean,
   picture: String,       // picture uploaded by user
 });
 
@@ -40,22 +41,19 @@ EventSchema
   });
 
 EventSchema
-  .virtual('day')
+  .virtual('readableDate')
   .get(function () {
-    return this.date.getDate();
+    return moment(this.date).format('Do MMM YYYY');
   });
 
 EventSchema
-  .virtual('month')
+  .virtual('readableTime')
   .get(function () {
-    return this.date.getMonth();
+    if (this.isAllDay) return 'All day';
+
+    return moment(this.date).format('HH:mm');
   });
 
-EventSchema
-  .virtual('year')
-  .get(function () {
-    return this.date.getFullYear();
-  });
 
 EventSchema.methods = {
   toJSON: function () {
@@ -99,7 +97,3 @@ EventSchema.statics = {
     event.save(cb);
   }
 }
-
-EventSchema.plugin(troop.timestamp, {
-  useVirtual: false
-});

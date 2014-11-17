@@ -49,12 +49,35 @@ exports.signup = function (req, res) {
   });
 };
 
+exports.update = function (req, res) {
+  var field = req.body.name;
+  var value = req.body.value;
+  var user = req.user;
+
+  if (req.user.id !== req.userToShow.id) return app.err('Not authorized!', res);
+
+  user.update(field, value, function (err) {
+    if (err) return app.err(err, res);
+    return res.jsonp(200);
+  })
+}
+
 exports.loadByUsername = function (req, res, next, username) {
+  if (username === 'me') {
+    return res.format({
+      html: function () {
+        res.redirect('/users/'+req.user.username);
+      },
+      json: function () {
+        res.jsonp(req.user.toJSON());
+      }
+    });
+  }
   app.User.loadByUsername(username, function (err, user) {
     if (err) return app.err(err, res);
     if (!user) return app.err(new Error('No user found: ' + username), res);
 
-    req.user = user;
+    req.userToShow = user;
     return next();
   })
 };
@@ -62,10 +85,10 @@ exports.loadByUsername = function (req, res, next, username) {
 exports.show = function (req, res) {
   return res.format({
     html: function () {
-      res.render('app/user.server.jade', {user: req.user});
+      res.render('app/user.server.jade', {user: req.userToShow.toJSON()});
     },
     json: function () {
-      return res.jsonp(req.user.toJSON());
+      return res.jsonp(req.userToShow.toJSON());
     }
   });
 }
