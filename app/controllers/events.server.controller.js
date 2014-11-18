@@ -23,7 +23,8 @@ exports.create = function (req, res) {
     desc: req.body.desc,
     location: req.body.location,
     date: req.body.date,
-    isAllDay: req.body.allDay
+    isAllDay: req.body.allDay,
+    picture: req.body.picture
   };
   var creator = req.user;
   app.Event.create(fields, creator, function (err, event) {

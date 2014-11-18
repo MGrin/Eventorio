@@ -2,14 +2,13 @@
   "name": "Eventorio",
   "version": "0.0.1",
   "dependencies": {
-    "angular": "latest",
-    "angular-resource": "latest",
-    "bootstrap": "latest",
-    "jquery": "latest",
-    "underscore": "latest",
-    "moment": "latest",
-    "wysihtml5": "latest",
-    "x-editable": "latest",
-    "angular-bootstrap-calendar": "latest"
+    "angular": "~1.3.3",
+    "angular-resource": "~1.3.3",
+    "bootstrap": "~3.3.1",
+    "jquery": "~2.1.1",
+    "underscore": "~1.7.0",
+    "moment": "~2.8.3",
+    "wysihtml5": "~0.3.0",
+    "x-editable": "~1.5.1"
   }
 }

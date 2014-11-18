@@ -60,8 +60,8 @@ app.controller('LandingController', ['$scope', '$location', 'Global', 'Users', f
 
     var usernameRE = /^[^\s\/\\\?\%\*\:\|\"<>\.]+$/;
     if (field === 'username') {
-      if (!usernameRE.test(value) || value.length < 4) {
-        return 'Username should be more than 4 symbols, and should not contain following symbols: /\|?:*".<>% and space'
+      if (!usernameRE.test(value) || value.length < 4 || value.length > 20) {
+        return 'Username should be more than 4 symbols and less than 20, and should not contain following symbols: /\|?:*".<>% and space'
       }
     }
 

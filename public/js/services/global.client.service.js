@@ -14,7 +14,10 @@ app.factory('Global', function () {
     },
     monthNames: [ "January", "February", "March", "April", "May", "June",
       "July", "August", "September", "October", "November", "December" ],
-    screenSize: screenSize
+    screenSize: screenSize,
+    showError: function (err) {
+      alert(err);
+    }
   };
 
   app.Global = Global;

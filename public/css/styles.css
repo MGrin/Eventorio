@@ -15,9 +15,6 @@ body {
 .landing-text {
   background: rgba(255,255,255,0.7);
 }
-#monthly-calendar {
-  margin-top: 30px;
-}
 #news-feed {
   min-height: 600px;
 }
@@ -41,42 +38,6 @@ a:hover,
 }
 .big-text {
   font-size: 1.5em;
-}
-.eventorio-badge {
-  opacity: 0.7;
-  background-color: #ffa500;
-  z-index: 0 !important;
-  text-align: right;
-}
-@media (min-width: 1200px) {
-  .eventorio-badge {
-    background-color: #5a90de;
-    opacity: 1;
-    z-index: 0 !important;
-    width: 100%;
-    height: inherit;
-    left: 0;
-    top: 0;
-    text-align: center;
-  }
-  .eventorio-badge:after {
-    content: ' ev.';
-  }
-}
-.days .today {
-  background-color: #a1e6f0;
-}
-.days .day a:hover {
-  background-color: inherit !important;
-  border: 1px solid #d2daff;
-  border-radius: 5px;
-}
-.days .active a {
-  background-color: inherit !important;
-  color: inherit !important;
-}
-.days .active a:hover {
-  color: inherit !important;
 }
 @media (max-width: 768px) {
   .event-header,
@@ -160,6 +121,12 @@ a:hover,
   padding-left: 0;
   padding-top: 0;
 }
+#eventButtons {
+  position: fixed;
+  bottom: 50px;
+  right: 50px;
+  z-index: 3;
+}
 .editable {
   opacity: 0.8;
   border-bottom: 1px dashed;
@@ -167,16 +134,7 @@ a:hover,
 .has-error {
   color: #a94442;
 }
-.editable-buttons {
-  float: right;
-}
-.editable-popup {
-  color: #000;
-  font-size: 0.5em !important;
-}
-#eventButtons {
-  position: fixed;
-  bottom: 50px;
-  right: 50px;
-  z-index: 3;
+.event-line {
+  margin-top: 10px;
+  border-top: 1px solid #808080;
 }

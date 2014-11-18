@@ -126,6 +126,7 @@ app.controller('EventController', ['$scope', 'Global', 'Users', 'Events', functi
 
   var validateEventName = function (name) {
     if (!name || name.length === 0 || name === '') return 'Name should not be empty!';
+    if (name.length > 20) return 'Name should not be larger than 20 characters';
     return null;
   }
 
