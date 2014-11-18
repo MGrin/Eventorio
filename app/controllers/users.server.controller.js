@@ -18,14 +18,14 @@ exports.login = function (req, res) {
   app.logger.info(req.body);
   passport.authenticate('local', function(err, user, info) {
     if (err) {
-      return app.err(err);
+      return app.err(err, res);
     }
     if (!user) {
-      return app.err(new Error('No user found'));
+      return app.err(new Error('No user found'), res);
     }
     req.logIn(user, function(err) {
       if (err) {
-        return app.err(err);
+        return app.err(err, res);
       }
       return res.redirect('/app');
     });
@@ -64,14 +64,25 @@ exports.update = function (req, res) {
 
 exports.loadByUsername = function (req, res, next, username) {
   if (username === 'me') {
-    return res.format({
-      html: function () {
-        res.redirect('/users/'+req.user.username);
-      },
-      json: function () {
-        res.jsonp(req.user.toJSON());
-      }
-    });
+    if (req.user) {
+      return res.format({
+        html: function () {
+          res.redirect('/users/'+req.user.username);
+        },
+        json: function () {
+          res.jsonp(req.user.toJSON());
+        }
+      });
+    } else {
+      return res.format({
+        html: function () {
+          res.redirect('/');
+        },
+        json: function () {
+          res.send(500);
+        }
+      });
+    }
   }
   app.User.loadByUsername(username, function (err, user) {
     if (err) return app.err(err, res);

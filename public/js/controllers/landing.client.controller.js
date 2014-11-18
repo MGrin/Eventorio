@@ -18,16 +18,22 @@ app.controller('LandingController', ['$scope', '$location', 'Global', 'Users', f
         if (!$(elem).parent().hasClass('has-error')) {
           $(elem).parent().addClass('has-error');
         }
-        // TODO Show error
-        console.log(field + ': ' + fieldError);
+        $(this).popover({
+          content: fieldError,
+          placement: 'left',
+          trigger: 'manual'
+        });
+        $(this).popover('show');
       } else {
         if ($(elem).parent().hasClass('has-error')) {
           $(elem).parent().removeClass('has-error');
+          $(this).popover('hide');
         }
       }
     });
 
     if (validData) {
+      $('#signup-box button').popover('destroy');
       fields.hashedPassword = fields.password;
       delete fields.password;
       delete fields.repeatedPassword;
@@ -36,7 +42,15 @@ app.controller('LandingController', ['$scope', '$location', 'Global', 'Users', f
       user.$save(function (res) {
         window.location = '/app';
       }, function (res) {
-        console.log('Error: ' + res.data);
+        $('#signup-box button').popover({
+          content: res.data,
+          placement: 'left',
+          trigger: 'manual'
+        });
+        $('#signup-box button').popover('show');
+        setTimeout(function () {
+          $('#signup-box button').popover('hide');
+        }, 3000);
       });
     }
   }
@@ -44,10 +58,10 @@ app.controller('LandingController', ['$scope', '$location', 'Global', 'Users', f
   var getErrorForField = function (field, value) {
     if (!value || value === '') return 'Must not be empty!';
 
-    var usernameRE = /^[^\/\\\?\%\*\:\|\"<>\.]+$/;
+    var usernameRE = /^[^\s\/\\\?\%\*\:\|\"<>\.]+$/;
     if (field === 'username') {
       if (!usernameRE.test(value) || value.length < 4) {
-        return 'Usernaem should be more than 4 symbols, and should not contain following symbols: /\|?:*".<>%'
+        return 'Username should be more than 4 symbols, and should not contain following symbols: /\|?:*".<>% and space'
       }
     }
 

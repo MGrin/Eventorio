@@ -1,7 +1,7 @@
 app.factory('Users', ['$resource', '$http', 'Global', function ($resource, $http, Global) {
   'use strict';
 
-  var user = $resource('/:userId', {userId: '@_id'}, {update: {method: 'POST'}});
+  var user = $resource('/users/:userId', {userId: '@_id'}, {update: {method: 'POST'}});
 
   user.getCurrentUser = function (cb) {
     if (Global.me) return cb();
@@ -21,7 +21,7 @@ app.factory('Users', ['$resource', '$http', 'Global', function ($resource, $http
       .success(function (response) {
         return cb();
       }).error(function (response) {
-        return cb(response.data);
+        return cb(response);
       })
   }
 

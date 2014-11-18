@@ -17,7 +17,7 @@ app.controller('UserController', ['$scope', 'Global', 'Users', function ($scope,
       mode: 'popup',
       name: 'name',
       title: 'Enter your name',
-      showbuttons: false
+      showbuttons: 'right'
     });
 
     $('.user-description .editable').editable({
@@ -31,7 +31,7 @@ app.controller('UserController', ['$scope', 'Global', 'Users', function ($scope,
       mode: 'popup',
       name: 'desc',
       title: 'Describe yourself',
-      showbuttons: false
+      showbuttons: 'right'
     });
   };
 

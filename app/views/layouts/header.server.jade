@@ -18,7 +18,7 @@ div(ng-controller="HeaderController")
 
         ul.nav.navbar-nav.navbar-right
           li.dropdown(ng-if="!global.me")
-            button.btn.btn-info.navbar-btn(data-toggle="modal", data-target="#loginModal")
+            button.btn.btn-default.navbar-btn(data-toggle="modal", data-target="#loginModal")
               | Login
 
           li.dropdown(ng-if="global.me")
@@ -51,4 +51,4 @@ div(ng-controller="HeaderController")
 
         .modal-footer
           button.btn.btn-default(type='button', data-dismiss='modal') Cancel
-          button.btn.btn-success(type='button', ng-click="login()") Login
+          button#loginButton.btn.btn-success(type='button', ng-click="login()") Login

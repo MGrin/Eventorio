@@ -20,11 +20,16 @@ app.controller('HeaderController', ['$scope', '$location', 'Global', 'Users', fu
         if (!$(elem).parent().hasClass('has-error')) {
           $(elem).parent().addClass('has-error');
         }
-        console.log('Error: ' + fieldError);
+        $(this).popover({
+          content: fieldError,
+          trigger: 'manual'
+        });
+        $(this).popover('show');
       } else {
-        console.log(field);
         if ($(elem).parent().hasClass('has-error')) {
           $(elem).parent().removeClass('has-error');
+          $(this).popover('hide');
+          $(this).popover('destroy');
         }
       }
     });
@@ -32,17 +37,20 @@ app.controller('HeaderController', ['$scope', '$location', 'Global', 'Users', fu
     if (validData) {
       Users.login(fields.username, fields.password, function (err) {
         if (err) {
-          return console.log('Error: ' + err);
+          $('#loginButton').popover({
+            content: err,
+            trigger: 'manual',
+            placement: 'left'
+          });
+          $('#loginButton').popover('show');
+          setTimeout(function () {
+            $('#loginButton').popover('hide');
+          }, 2000);
+          return;
         }
         window.location = '/app';
       });
     }
-  }
-
-  $scope.toggleSidebarMenu = function () {
-    var closed = $('.menu').hasClass('closed');
-    if(closed) return $('.menu').removeClass('closed')
-    else return $('.menu').addClass('closed')
   }
 
   var getErrorForField = function (field, value) {
