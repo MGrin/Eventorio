@@ -7,6 +7,9 @@
     "bootstrap": "latest",
     "jquery": "latest",
     "underscore": "latest",
-    "moment": "~2.8.3"
+    "moment": "latest",
+    "wysihtml5": "latest",
+    "x-editable": "latest",
+    "angular-bootstrap-calendar": "latest"
   }
 }
