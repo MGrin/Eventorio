@@ -8,6 +8,7 @@
     "jquery": "~2.1.1",
     "underscore": "~1.7.0",
     "moment": "~2.8.3",
-    "x-editable": "~1.5.1"
+    "x-editable": "~1.5.1",
+    "bootstrap3-wysiwyg": "~0.3.3"
   }
 }

@@ -77,7 +77,7 @@ html(lang="en", ng-app="EventorioApp")
 
         .event-description.col-lg-7.col-md-7.col-sm-8
           if event.edit
-            a.editable Description
+            textarea.col-lg-10
           else
-            p #{event.desc}
+            p !{event.desc}
 

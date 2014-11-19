@@ -9,7 +9,7 @@ app.controller('EventController', ['$scope', 'Global', 'Users', 'Events', functi
     if (status) {
       $scope.newEvent = {};
 
-      $('.event-name .editable').editable({
+      $('.event-name').editable({
         type: 'text',
         mode: 'inline',
         placeholder: 'Event title',
@@ -17,6 +17,7 @@ app.controller('EventController', ['$scope', 'Global', 'Users', 'Events', functi
         title: 'Enter event title',
         onblur: 'cancel',
         send: 'always',
+        selector: '.editable',
         highlight: false,
         validate: validateEventName,
         success: function (response, newValue) {
@@ -25,25 +26,14 @@ app.controller('EventController', ['$scope', 'Global', 'Users', 'Events', functi
         }
       });
 
-      $('.event-description .editable').editable({
-        type: 'wysihtml5',
-        mode: 'inline',
-        placeholder: 'Event description',
-        value: '',
-        title: 'Describe your event',
-        send: 'always',
-        highlight: false,
-        success: function (response, newValue) {
-          $scope.newEvent.desc = newValue;
-          $('.event-description .editable').removeClass('has-error');
-        }
-      });
+      $('.event-description textarea').wysihtml5();
 
-      $('.event-date .editable').editable({
+      $('.event-date').editable({
         type: 'combodate',
-        mode: 'popup',
+        mode: 'inline',
         title: 'Event date',
         send: 'always',
+        selector: '.editable',
         highlight: false,
         placement: 'right',
         template: 'DD MMMM YYYY',
@@ -60,11 +50,12 @@ app.controller('EventController', ['$scope', 'Global', 'Users', 'Events', functi
         }
       });
 
-      $('.event-time .editable').editable({
+      $('.event-time').editable({
         type: 'combodate',
-        mode: 'popup',
+        mode: 'inline',
         title: 'Event date',
         send: 'always',
+        selector: '.editable',
         highlight: false,
         placement: 'right',
         template: 'H:mm',
@@ -112,7 +103,9 @@ app.controller('EventController', ['$scope', 'Global', 'Users', 'Events', functi
     }
 
     if (!event.allDay) event.allDay = false;
+
     event.name = event.title;
+    event.desc = $('.event-description textarea').val();
 
     delete event.title;
     delete event.time;
