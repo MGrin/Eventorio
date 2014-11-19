@@ -11,7 +11,7 @@ app.controller('EventController', ['$scope', 'Global', 'Users', 'Events', functi
 
       $('.event-name .editable').editable({
         type: 'text',
-        mode: 'popup',
+        mode: 'inline',
         placeholder: 'Event title',
         value: '',
         title: 'Enter event title',
@@ -26,7 +26,7 @@ app.controller('EventController', ['$scope', 'Global', 'Users', 'Events', functi
       });
 
       $('.event-description .editable').editable({
-        type: 'textarea',
+        type: 'wysihtml5',
         mode: 'popup',
         placeholder: 'Event description',
         value: '',
