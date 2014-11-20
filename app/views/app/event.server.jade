@@ -117,6 +117,5 @@ html(lang="en", ng-app="EventorioApp")
           div(ng-show="mode === 'Create' || mode === 'Edit'")
             h2 Description:
             textarea.col-lg-10
-              | {{event.desc || ''}}
           p(ng-if="mode === 'Normal'", ng-bind-html="event.desc")
 
