@@ -127,6 +127,11 @@ a:hover,
   right: 50px;
   z-index: 3;
 }
+#editButton {
+  position: fixed;
+  right: 30px;
+  top: 80px;
+}
 .editable {
   opacity: 0.8;
   border-bottom: 1px dashed;

@@ -22,7 +22,7 @@ exports.initModel = function (myApp) {
 var ActionSchema = exports.Schema = new Schema({
   userId: {
     type: ObjectId,
-    ref: 'Users'
+    ref: 'User'
   },
   type: String
 });

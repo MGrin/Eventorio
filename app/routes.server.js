@@ -28,7 +28,8 @@ module.exports = function (app, passport) {
   app.route('/events/new')
     .get(users.requiresLogin, events.createPage);
   app.route('/events/:eventId')
-    .get(users.requiresLogin, events.show);
+    .get(users.requiresLogin, events.show)
+    .post(users.requiresLogin, events.update);
 
   app.param('eventId', events.load);
 };

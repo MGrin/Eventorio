@@ -11,6 +11,7 @@ var _ = require('underscore');
 var async = require('async');
 var ObjectId = Schema.ObjectId;
 
+var visLevels = ['public', 'followers', 'invitations'];
 /**
  * Models
  */
@@ -32,6 +33,20 @@ var EventSchema = exports.Schema = new Schema({
   date: Date,
   isAllDay: Boolean,
   picture: String,       // picture uploaded by user
+  permissions: {
+    visibility: {
+      type: String,
+      enum:  visLevels
+    },
+    attendance: {
+      type: String,
+      enum: visLevels
+    }
+  },
+  attendees: [{
+    type: ObjectId,
+    ref: 'User'
+  }]
 });
 
 EventSchema
@@ -56,6 +71,25 @@ EventSchema
 
 
 EventSchema.methods = {
+  modify: function (fields, organizator, cb) {
+    if (this.organizator.id !== organizator.id) return cb(new Error('Not authorized'));
+
+    fields.permissions = {
+      visibility: fields.visibility || visLevels[0],
+      attendance: fields.attendance || visLevels[0]
+    }
+
+    delete fields.visibility;
+    delete fields.attendance;
+
+    var that = this;
+    _.each(_.keys(fields), function (key) {
+      that[key] = fields[key];
+    });
+
+    return that.save(cb);
+  },
+
   toJSON: function () {
     var resEvent = this.toObject({virtuals: true});
     delete resEvent._id;
@@ -92,6 +126,15 @@ EventSchema.statics = {
   },
 
   create: function (fields, creator, cb) {
+    var permissions = {
+      visibility: fields.visibility || visLevels[0],
+      attendance: fields.attendance || visLevels[0]
+    }
+
+    delete fields.visibility;
+    delete fields.attendance;
+    fields.permissions = permissions;
+
     var event = new app.Event(fields);
     event.organizator = creator;
     event.save(cb);

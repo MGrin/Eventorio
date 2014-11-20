@@ -5,15 +5,18 @@ app.controller('EventController', ['$scope', 'Global', 'Users', 'Events', functi
 
   });
 
-  $scope.setEditable = function (status) {
+  $scope.event = Events.get({eventId: window.location.pathname.split('/')[2]})
+
+  $scope.setEditable = function (status, mode) {
     if (status) {
+      $scope.mode = mode;
+
       $scope.newEvent = {};
 
       $('.event-name').editable({
         type: 'text',
         mode: 'inline',
         placeholder: 'Event title',
-        value: '',
         title: 'Enter event title',
         onblur: 'cancel',
         send: 'always',
@@ -68,6 +71,43 @@ app.controller('EventController', ['$scope', 'Global', 'Users', 'Events', functi
           $('.event-time .editable').removeClass('has-error');
         }
       });
+
+      $('.event-visibility').editable({
+        type: 'select',
+        mode: 'inline',
+        title: 'Event visibility',
+        send: 'always',
+        selector: '.editable',
+        highlight: false,
+        placement: 'right',
+        source: [
+          {value: 'public', text: 'Event is visible to everyone'},
+          {value: 'followers', text: 'Event is visible only to your followers'},
+          {value: 'invitations', text: 'Event is visible only to invited people'}
+        ],
+        success: function (response, newValue) {
+          $scope.newEvent.visibility = newValue;
+        }
+      });
+
+      $('.event-attendance').editable({
+        type: 'select',
+        mode: 'inline',
+        title: 'Event attendance',
+        send: 'always',
+        selector: '.editable',
+        highlight: false,
+        placement: 'right',
+        source: [
+          {value: 'public', text: 'Everyone can attend this event'},
+          {value: 'followers', text: 'Only your followers can attend this event'},
+          {value: 'invitations', text: 'Only invited people can attend this event'}
+        ], success: function (response, newValue) {
+          $scope.newEvent.attendance = newValue;
+        }
+      });
+    } else {
+      $scope.mode = 'Normal';
     }
   }
 
@@ -93,16 +133,16 @@ app.controller('EventController', ['$scope', 'Global', 'Users', 'Events', functi
     if (eventNameError || eventDateError || eventTimeError) return;
 
     var event = new Events($scope.newEvent);
-    event.date = moment().set('year', $scope.newEvent.date.get('year'));
-    event.date = moment().set('month', $scope.newEvent.date.get('month'));
-    event.date = moment().set('date', $scope.newEvent.date.get('date'));
+    event.date = moment()
+                  .set('year', $scope.newEvent.date.get('year'))
+                  .set('month', $scope.newEvent.date.get('month'))
+                  .set('date', $scope.newEvent.date.get('date'));
 
     if (!event.allDay) {
-      event.date = moment(event.date).set('hour', $scope.newEvent.time.get('hour'));
-      event.date = moment(event.date).set('minute', $scope.newEvent.time.get('minute'));
+      event.date = event.date.set('hour', $scope.newEvent.time.get('hour'))
+                              .set('minute', $scope.newEvent.time.get('minute'));
+      event.allDay = false;
     }
-
-    if (!event.allDay) event.allDay = false;
 
     event.name = event.title;
     event.desc = $('.event-description textarea').val();
@@ -114,6 +154,52 @@ app.controller('EventController', ['$scope', 'Global', 'Users', 'Events', functi
       window.location.pathname = "/events/" + res.id;
     }, function (res) {
       alert(res.data);
+    });
+  }
+
+  $scope.modifyEvent = function () {
+    var modifications = $scope.newEvent;
+
+    if (!modifications.title) modifications.title = $scope.event.name;
+    if (!modifications.date) modifications.date = moment($scope.event.date);
+    if (!modifications.time) modifications.time = moment($scope.event.date);
+    if (!modifications.allDay) modifications.allDay = $scope.event.isAllDay;
+    if (!modifications.visibility) modifications.visibility = $scope.event.visibility;
+    if (!modifications.attendance) modifications.attendance = $scope.event.attendance;
+
+    var eventNameError = validateEventName(modifications.title);
+    var eventDateError = validateEventDate(modifications.date);
+    var eventTimeError = validateEventTime(modifications.time, modifications.allDay);
+
+    if (eventNameError) {
+      $('.event-name .editable').addClass('has-error');
+    }
+    if (eventDateError) {
+      $('.event-date .editable').addClass('has-error');
+    }
+    if (eventTimeError) {
+      $('.event-time .editable').addClass('has-error');
+    }
+
+    if (eventNameError || eventDateError || eventTimeError) return;
+    modifications.date = moment()
+                          .set('year', modifications.date.get('year'))
+                          .set('month', modifications.date.get('month'))
+                          .set('date', modifications.date.get('date'));
+    if (!modifications.allDay) {
+      modifications.date = modifications.date.set('hour', modifications.time.get('hour'))
+                                              .set('minute', modifications.time.get('minute'));
+      modifications.allDay = false;
+    }
+
+    modifications.name = modifications.title;
+    modifications.desc = $('.event-description textarea').val();
+
+    delete modifications.title;
+    delete modifications.time;
+
+    $scope.event = Events.update({eventId: $scope.event.id}, modifications, function () {
+      window.location.reload();
     });
   }
 

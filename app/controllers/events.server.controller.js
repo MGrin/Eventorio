@@ -12,7 +12,7 @@ exports.load = function (req, res, next, id) {
     if (err) return app.err(err, res);
     if (!event) return app.err(new Error('Event not found!'), res);
 
-    req.event = event.toJSON();
+    req.event = event;
     return next();
   });
 };
@@ -24,7 +24,9 @@ exports.create = function (req, res) {
     location: req.body.location,
     date: req.body.date,
     isAllDay: req.body.allDay,
-    picture: req.body.picture
+    picture: req.body.picture,
+    visibility: req.body.visibility,
+    attendance: req.body.attendance
   };
   var creator = req.user;
   app.Event.create(fields, creator, function (err, event) {
@@ -32,6 +34,23 @@ exports.create = function (req, res) {
     res.jsonp(event.toJSON());
   });
 };
+
+exports.update = function (req, res) {
+  var fields = {
+    name: req.body.name,
+    desc: req.body.desc,
+    location: req.body.location,
+    date: req.body.date,
+    isAllDay: req.body.allDay,
+    picture: req.body.picture,
+    visibility: req.body.visibility,
+    attendance: req.body.attendance
+  };
+  req.event.modify(fields, req.user, function (err, event) {
+    if (err) return app.err(err, res);
+    return res.jsonp(event.toJSON());
+  });
+}
 
 exports.createPage = function (req, res) {
   return res.render('app/event.server.jade', {event: {edit: true}});
