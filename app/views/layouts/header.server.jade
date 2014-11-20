@@ -16,7 +16,7 @@ div(ng-controller="HeaderController")
           li
             a(href="/") Home
 
-        ul.nav.navbar-nav.navbar-right
+        ul.nav.navbar-nav.navbar-right(ng-show="show")
           li.dropdown(ng-if="!global.me")
             button.btn.btn-default.navbar-btn(data-toggle="modal", data-target="#loginModal")
               | Login

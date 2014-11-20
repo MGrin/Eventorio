@@ -5,7 +5,7 @@ html(lang="en", ng-app="EventorioApp")
   body
     include ../layouts/header.server.jade
     .content-fluid(ng-controller="UserController")
-      .row-fluid
+      .row-fluid(ng-show="show")
         img.img-responsive.img-user-header(src="/img/user_background.png")
 
         .user-header.col-lg-12.col-md-12.col-sm-12.hidden-xs
@@ -13,7 +13,7 @@ html(lang="en", ng-app="EventorioApp")
             .col-lg-4.col-lg-offset-1.col-md-3.col-sm-4
               .row-fluid
                 .user-thumbnail.col-lg-12.col-md-12.col-sm-12
-                  img.img-responsive.img-thumbnail.col-lg-8.col-md-12.col-sm-12(src="#{user.picture}")
+                  img.img-responsive.img-thumbnail.col-lg-8.col-md-12.col-sm-12(ng-src="{{user.picture}}")
               .row-fluid
                 .col-lg-offset-1.col-md-offset-1.col-sm-offset-1.hidden-xs.user-name
                   div(ng-if="user.name")
@@ -65,7 +65,7 @@ html(lang="en", ng-app="EventorioApp")
         .user-header.col-xs-12.visible-xs
           .row-fluid
             .user-thumbnail.col-xs-4
-              img.img-responsive.img-thumbnail(src="#{user.picture}")
+              img.img-responsive.img-thumbnail(ng-src="{{user.picture}}")
             .user-name.col-xs-8
               | {{user.username}}
               p(ng-if="user.name") {{user.name}}

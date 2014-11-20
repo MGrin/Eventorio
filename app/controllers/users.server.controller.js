@@ -128,7 +128,7 @@ exports.loadByUsername = function (req, res, next, username) {
 exports.show = function (req, res) {
   return res.format({
     html: function () {
-      res.render('app/user.server.jade', {user: req.userToShow.toJSON()});
+      res.render('app/user.server.jade');
     },
     json: function () {
       return res.jsonp(req.userToShow.toJSON());

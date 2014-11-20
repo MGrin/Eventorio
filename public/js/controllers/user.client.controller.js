@@ -5,6 +5,7 @@ app.controller('UserController', ['$scope', 'Global', 'Users', function ($scope,
     $scope.user = Users.get({username: window.location.pathname.split('/')[2]}, function () {
       $scope.editable = (Global.me.username === $scope.user.username);
       $scope.setupEditable();
+      $scope.show = true;
     });
   });
 

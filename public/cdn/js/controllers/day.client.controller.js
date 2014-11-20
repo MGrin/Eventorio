@@ -10,5 +10,4 @@ app.controller('DaylyController', ['$scope', 'Global', 'Events', function ($scop
     $scope.dayStr = moment($scope.day).format('Do MMMM YYYY');
     $scope.$apply();
   });
-
 }]);
