@@ -1,7 +1,7 @@
 app.factory('Users', ['$resource', '$http', 'Global', function ($resource, $http, Global) {
   'use strict';
 
-  var user = $resource('/users/:userId', {userId: '@_id'}, {update: {method: 'POST'}});
+  var user = $resource('/users/:username', {username: '@_id'}, {update: {method: 'POST'}});
 
   user.getCurrentUser = function (cb) {
     if (Global.me) return cb();
@@ -23,6 +23,24 @@ app.factory('Users', ['$resource', '$http', 'Global', function ($resource, $http
       }).error(function (response) {
         return cb(response);
       })
+  }
+
+  user.follow = function (userId, cb) {
+    $http.post('/api/follow', {userId: userId})
+      .success(function (response) {
+        return cb();
+      }).error(function (response) {
+        return cb(response);
+      })
+  }
+
+  user.unfollow = function (userId, cb) {
+    $http.post('/api/unfollow', {userId: userId})
+      .success(function (response) {
+        return cb();
+      }).error(function (response) {
+        return cb(response);
+      });
   }
 
   return user;

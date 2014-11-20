@@ -31,5 +31,10 @@ module.exports = function (app, passport) {
     .get(users.requiresLogin, events.show)
     .post(users.requiresLogin, events.update);
 
+  app.route('/api/follow')
+    .post(users.requiresLogin, users.follow);
+  app.route('/api/unfollow')
+    .post(users.requiresLogin, users.unfollow);
+
   app.param('eventId', events.load);
 };

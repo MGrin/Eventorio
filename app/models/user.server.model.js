@@ -32,7 +32,17 @@ var UserSchema = exports.Schema = new Schema({
   gender: String, // male or female
 
   hashPassword: String,
-  salt: String
+  salt: String,
+
+  following: [{
+    type: ObjectId,
+    ref: 'User'
+  }],
+
+  followers: [{
+    type: ObjectId,
+    ref: 'User'
+  }]
 });
 
 /**
@@ -122,18 +132,57 @@ UserSchema.methods = {
   update: function (field, value, cb) {
     this[field] = value;
     return this.save(cb);
+  },
+
+  follow: function (user, cb) {
+    if (this.following.indexOf(user._id) === -1) {
+      this.following.push(user._id);
+      this.save(cb);
+      user.acceptFollower(this);
+    } else {
+      return cb(new Error('Already following'));
+    }
+  },
+
+  unfollow: function (user, cb) {
+    var index = this.following.indexOf(user._id);
+    if (index !== -1) {
+      this.following.splice(index, 1);
+      this.save(cb);
+
+      index = user.followers.indexOf(this._id);
+      if (index !== -1) {
+        user.followers.splice(index, 1);
+        user.save(function (err) {
+          if (err) app.err(err);
+        });
+      }
+    } else {
+      return cb(null, this);
+    }
+  },
+
+  acceptFollower: function (user, cb) {
+    if (this.followers.indexOf(user._id) === -1) {
+      this.followers.push(user._id);
+      this.save(function (err) {
+        if (err) return app.err(err);
+      });
+    }
   }
 };
 
 UserSchema.statics = {
   loadByUsername: function (username, cb) {
-    app.User.find({username: new RegExp('^' + username +'$', 'i')}, function (err, users) {
-      if (err) return cb(err);
-      if (!users || users.length === 0) return cb();
-      if (users.length > 1) return cb(new Error('More than one user for following username: ' + username));
+    app.User.find({username: new RegExp('^' + decodeURI(username) +'$', 'i')})
+      .populate('following followers')
+      .exec(function (err, users) {
+        if (err) return cb(err);
+        if (!users || users.length === 0) return cb();
+        if (users.length > 1) return cb(new Error('More than one user for following username: ' + username));
 
-      return cb(null, users[0]);
-    });
+        return cb(null, users[0]);
+      });
   },
 
   create: function (fields, cb) {

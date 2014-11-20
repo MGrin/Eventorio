@@ -62,6 +62,38 @@ exports.update = function (req, res) {
   })
 }
 
+exports.follow = function (req, res) {
+  var currentUser = req.user;
+  var userId = req.body.userId;
+  if (!userId) return app.err('No user to follow was given!', res);
+
+  app.User.findById(userId, function (err, user) {
+    if (err) return app.err(err, res);
+    if (!user) return app.err(new Error('No user found for given id!'), res);
+
+    currentUser.follow(user, function (err) {
+      if (err) return app.err(err, res);
+      return res.jsonp(200);
+    });
+  })
+}
+
+exports.unfollow = function (req, res) {
+  var currentUser = req.user;
+  var userId = req.body.userId;
+  if (!userId) return app.err('No user to unfollow was given!', res);
+
+  app.User.findById(userId, function (err, user) {
+    if (err) return app.err(err, res);
+    if (!user) return app.err(new Error('No user found for given id!'), res);
+
+    currentUser.unfollow(user, function (err) {
+      if (err) return app.err(err, res);
+      return res.jsonp(200);
+    });
+  });
+}
+
 exports.loadByUsername = function (req, res, next, username) {
   if (username === 'me') {
     if (req.user) {
