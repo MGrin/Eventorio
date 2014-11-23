@@ -1,5 +1,8 @@
 'use strict';
 
+var moment = require('moment');
+var _ = require('underscore');
+
 var app;
 
 exports.init = function (myApp) {
@@ -52,29 +55,44 @@ exports.update = function (req, res) {
   });
 }
 
+exports.invite = function (req, res) {
+  var user = req.user;
+  var emails = req.body;
+  var event = req.event;
+
+  _.each(emails, function (email) {
+    app.User.findOne({email: email}, function (err, _user) {
+      if (err) return app.err(err);
+      if (!_user) {
+        if (event.invitedEmails.indexOf(email) === -1) {
+          event.invitedEmails.push(email);
+          event.save(function (err) {
+            if (err) return app.err(err);
+          });
+          return app.email.sendInvitationMail(user, {email: email, username: email}, event);
+        }
+      }
+
+      if (event.invitedUsers.indexOf(_user._id) === -1) {
+        event.invitedUsers.push(_user._id);
+        event.save();
+      }
+
+      app.email.sendInvitationMail(user, _user, event);
+    });
+  });
+}
+
 exports.createPage = function (req, res) {
   return res.render('app/event.server.jade', {event: {edit: true}});
 }
 
 exports.query = function (req, res) {
-  var date = new Date();
+  var user = req.user;
+  var startDate = moment(parseInt(req.query.startDate));
+  var stopDate = moment(parseInt(req.query.stopDate));
 
-  date.setHours(0);
-  date.setMinutes(0);
-  date.setSeconds(0);
-  date.setDate(1);
-  date.setMonth(0);
-  date.setYear(0);
-
-  if (req.query.d) date.setDate(req.query.d);
-  if (req.query.m) date.setMonth(req.query.m);
-  if (req.query.y) date.setFullYear(req.query.y);
-
-  var query = {
-    date: {$gte: date}
-  };
-
-  app.Event.query(query, function (err, events) {
+  app.Event.query(startDate, stopDate, user, function (err, events) {
     if (err) return app.err(err, res);
     return res.jsonp(events);
   });
@@ -83,10 +101,54 @@ exports.query = function (req, res) {
 exports.show = function (req, res) {
   res.format({
     html: function () {
-      return res.render('app/event.server.jade', {event: req.event});
+      return res.render('app/event.server.jade', {event: {}});
     },
     json: function () {
-      return res.jsonp(req.event);
+      var jsonEvent = req.event.toJSON();
+      jsonEvent.canAttend = req.user.canAttend(req.event);
+      return res.jsonp(jsonEvent);
     }
   });
 };
+
+exports.isAccessible = function (req, res, next) {
+  var user = req.user;
+  var event = req.event;
+
+  if (event.permissions.visibility === 'public') {
+    return next();
+  } else {
+    if (!user) return res.redirect('/');
+    if (user.id === event.organizator.id) return next();
+
+    if (event.permissions.visibility === 'followers'
+        && (!event.organizator.followers || event.organizator.followers.indexOf(user._id)) === -1) return res.redirect('/');
+    if (event.permissions.visibility === 'invitations'
+        && event.invitedUsers.indexOf(user._id) === -1) return res.redirect('/');
+
+    return next();
+  }
+}
+
+exports.isAttandable = function (req, res, next) {
+  var user = req.user;
+  var event = req.event;
+
+  if (event.permissions.attendance === 'public') {
+    return next();
+  } else {
+    if (!user) return app.err(new Error('Please, login'), res);
+    if (user.id === event.organizator.id) return next();
+
+    if (event.permissions.attendance === 'followers'
+        && (!event.organizator.followers || event.organizator.followers.indexOf(user._id)) === -1) {
+        return app.err(new Error('You should follow ' + event.organizator.username + ' to be able to attend this event'), res);
+    }
+    if (event.permissions.attendance === 'invitations'
+        && event.invitedUsers.indexOf(user._id) === -1) {
+      return app.err(new Error('This event requires invitations'), res);
+    }
+
+    return next();
+  }
+}

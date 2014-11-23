@@ -12,6 +12,7 @@ var _ = require('underscore');
 var async = require('async');
 var ObjectId = Schema.ObjectId;
 var gravatar = require('gravatar');
+var randomstring = require('randomstring');
 
 /**
  * Models
@@ -42,7 +43,9 @@ var UserSchema = exports.Schema = new Schema({
   followers: [{
     type: ObjectId,
     ref: 'User'
-  }]
+  }],
+
+  activationCode: String,
 });
 
 /**
@@ -126,6 +129,7 @@ UserSchema.methods = {
     delete res.password;
     delete res.hashPassword;
     delete res.salt;
+    delete res.activationCode;
     return res;
   },
 
@@ -162,6 +166,14 @@ UserSchema.methods = {
     }
   },
 
+  hasFollower: function (user) {
+    return this.followers.indexOf(user._id) !== -1;
+  },
+
+  isFollowing: function (user) {
+    return this.following.indexOf(user._id) !== -1;
+  },
+
   acceptFollower: function (user, cb) {
     if (this.followers.indexOf(user._id) === -1) {
       this.followers.push(user._id);
@@ -169,6 +181,34 @@ UserSchema.methods = {
         if (err) return app.err(err);
       });
     }
+  },
+
+  canAttend: function (event) {
+    return event.organizator.id !== this.id && (event.permissions.attendance === 'public'
+            || (event.permissions.attendance === 'followers' && this.isFollowing(event.organizator))
+            || (event.permissions.attendance === 'invitations' && this.isInvitedTo(event)));
+  },
+
+  attendEvent: function (event, cb) {
+    event.attendees.push(this._id);
+    if (event.invitedUsers.indexOf(this._id) !== -1) {
+      event.invitedUsers.splice(event.invitedUsers.indexOf(this._id), 1);
+    }
+    event.save(cb);
+  },
+
+  quitEvent: function (event, cb) {
+    if (event.attendees.indexOf(this._id) !== -1) {
+      event.attendees.splice(event.attendees.indexOf(this._id), 1);
+    }
+    if (event.invitedUsers.indexOf(this._id) === -1) {
+      event.invitedUsers.push(this._id);
+    }
+    event.save(cb);
+  },
+
+  isInvitedTo: function (event) {
+    return (event.invitedUsers.indexOf(this._id) !== -1) || (event.attendees.indexOf(this._id) !== -1);
   }
 };
 
@@ -215,10 +255,14 @@ UserSchema.statics = {
         });
 
         user.password = password;
+        user.activationCode = randomstring.generate(10);
+
         user.save(function (err, _savedUser) {
           savedUser = _savedUser;
           return next(err);
         });
+      }, function (next) {
+        app.Event.replaceInvitations(savedUser, next);
       }
     ], function (err) {
       return cb(err, savedUser);

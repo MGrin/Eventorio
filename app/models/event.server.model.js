@@ -43,6 +43,16 @@ var EventSchema = exports.Schema = new Schema({
       enum: visLevels
     }
   },
+
+  invitedUsers: [{
+    type: ObjectId,
+    ref: 'User'
+  }],
+
+  invitedEmails: [{
+    type: String
+  }],
+
   attendees: [{
     type: ObjectId,
     ref: 'User'
@@ -53,6 +63,12 @@ EventSchema
   .virtual('id')
   .get(function () {
     return this._id.toString();
+  });
+
+EventSchema
+  .virtual('participants')
+  .get(function () {
+    return this.invitedUsers.concat(this.attendees).concat(this.invitedEmails);
   });
 
 EventSchema
@@ -96,6 +112,11 @@ EventSchema.methods = {
     delete resEvent.__v;
     delete resEvent.modified;
     delete resEvent.organizator._id;
+    delete resEvent.organizator.__v;
+    delete resEvent.organizator.modified;
+    delete resEvent.organizator.password;
+    delete resEvent.organizator.hashPassword;
+    delete resEvent.organizator.salt;
     return resEvent;
   }
 };
@@ -104,24 +125,133 @@ EventSchema.statics = {
   load: function (id, cb) {
     app.Event
       .findById(id)
-      .populate('organizator', 'name desc email username provider gender picture')
+      .populate('organizator')
       .exec(cb);
   },
 
-  query: function (query, cb) {
-    app.Event
-      .find(query)
-      .populate('organizator', 'name desc email username provider gender picture')
-      .exec(function (err, events) {
-        if (err) return cb(err);
-        if (!events) return cb(err, []);
+  replaceInvitations: function (user, cb) {
+    app.Event.find({invitedEmails: user.email}, function (err, events) {
+      if (err) return cb(err);
+      if (!events || events.length === 0) return cb();
 
-        var result = [];
-        _.each(events, function (event) {
-          var resEvent = event.toJSON();
-          result.push(resEvent);
+      async.eachSeries(events, function (event, next) {
+        event.invitedEmails.splice(event.invitedEmails.indexOf(user.email), 1);
+        event.invitedUsers.push(user._id);
+        event.save(next);
+      }, function (err) {
+        return cb(err);
+      });
+    });
+  },
+
+  getUserInvitedTo: function (startDate, stopDate, user, cb) {
+    app.Event.find({
+      $and: [
+        {
+          date: {$gte: startDate.toDate()}
+        }, {
+          date: {$lte: stopDate.toDate()}
+        }, {
+          invitedUsers: user._id // TODO not sure that this is right
+        }
+      ]
+    }, cb);
+  },
+
+  getUserAttendingOn: function (startDate, stopDate, user, cb) {
+    app.Event.find({
+      $and: [
+        {
+          date: {$gte: startDate.toDate()}
+        }, {
+          date: {$lte: stopDate.toDate()}
+        }, {
+          attendees: user._id // TODO not sure that this is right
+        }
+      ]
+    }, cb);
+  },
+
+  query: function (startDate, stopDate, user, cb) {
+    var invitedToEvents = [];
+    var attendingEvents = [];
+    var resultingEventsList = [];
+
+    async.series([
+      function (next) {
+        app.Event.getUserInvitedTo(startDate, stopDate, user, function (err, events) {
+          if (err) return next(err);
+          _.each(events, function (event) {
+            invitedToEvents.push(event._id);
+          });
+          return next();
         });
-        return cb(err, result);
+      }, function (next) {
+        app.Event.getUserAttendingOn(startDate, stopDate, user, function (err, events) {
+          if (err) return next(err);
+          _.each(events, function (event) {
+            attendingEvents.push(event._id);
+          });
+          return next();
+        });
+      }, function (next) {
+        var andStartDate = {
+          date: {$gte: startDate.toDate()}
+        };
+        var andStopDate = {
+          date: {$lte: stopDate.toDate()}
+        };
+
+        var publicEvents = {
+          organizator: {$in: user.following},
+          'permissions.visibility': 'public'
+        };
+
+        var followersEvents = {
+          organizator: {$in: user.following},
+          'permissions.visibility': 'followers'
+        };
+
+        var invitationsEvents = {
+          _id: {$in: invitedToEvents}
+        };
+
+        var attendEvents = {
+          _id: {$in: attendingEvents}
+        };
+
+        var myEvents = {
+          organizator: user._id
+        };
+
+        var andPermissions = {
+          $or: [
+            myEvents,
+            attendEvents,
+            invitationsEvents,
+            followersEvents,
+            publicEvents
+          ]
+        };
+
+        var query = {
+          $and: [andStartDate, andStopDate, andPermissions]
+        };
+        app.Event
+          .find(query)
+          .populate('organizator', 'name desc email username provider gender picture')
+          .exec(function (err, events) {
+            if (err) return next(err);
+
+            _.each(events, function (event) {
+              var resEvent = event.toJSON();
+              resultingEventsList.push(resEvent);
+            });
+            return next();
+        });
+      }
+    ], function (err) {
+      return cb(err, resultingEventsList);
     });
   },
 

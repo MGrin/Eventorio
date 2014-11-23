@@ -18,9 +18,13 @@ module.exports = function (app, passport) {
   app.route('/logout')
     .get(users.logout);
   app.route('/users/:username')
-    .get(users.requiresLogin, users.show)
+    .get(users.show)
     .put(users.requiresLogin, users.update);
   app.param('username', users.loadByUsername);
+
+  app.route('/activation/:activationCode')
+    .get(users.activate);
+  app.param('activationCode', users.loadByActivationCode);
 
   app.route('/events')
     .get(users.requiresLogin, events.query)
@@ -28,13 +32,18 @@ module.exports = function (app, passport) {
   app.route('/events/new')
     .get(users.requiresLogin, events.createPage);
   app.route('/events/:eventId')
-    .get(users.requiresLogin, events.show)
+    .get(events.isAccessible, events.show)
     .post(users.requiresLogin, events.update);
 
   app.route('/api/follow')
     .post(users.requiresLogin, users.follow);
   app.route('/api/unfollow')
     .post(users.requiresLogin, users.unfollow);
-
+  app.route('/api/attend/:eventId')
+    .post(users.requiresLogin, events.isAttandable, users.attend);
+  app.route('/api/quit/:eventId')
+    .post(users.requiresLogin, users.quit);
+  app.route('/api/invite/:eventId')
+    .post(users.requiresLogin, events.invite);
   app.param('eventId', events.load);
 };

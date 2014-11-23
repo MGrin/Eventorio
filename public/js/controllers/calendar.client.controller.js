@@ -33,14 +33,18 @@ app.controller('CalendarController', ['$rootScope', '$scope', 'Global', 'Events'
   }
 
   $scope.prevMonth = function () {
-    $('.responsive-calendar').responsiveCalendar('prev');
     $scope.month.subtract(1, 'month');
+    Events.updateMonthlyList($scope.month, function () {
+      $('.responsive-calendar').responsiveCalendar('prev');
+    });
   }
 
   $scope.nextMonth = function () {
-    $('.responsive-calendar').responsiveCalendar('next');
     $scope.month.add(1, 'month');
+    Events.updateMonthlyList($scope.month, function () {
+      $('.responsive-calendar').responsiveCalendar('next');
+    });
   }
 
-  $scope.$on('events', $scope.updateCalendar);
+  $scope.$on('monthlyEvents', $scope.updateCalendar);
 }]);

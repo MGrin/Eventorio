@@ -45,9 +45,11 @@ html(lang="en", ng-app="EventorioApp")
                   div(ng-repeat="us in user.following")
                     a(href="/users/{{us.username}}") {{us.username}}
 
-              .row-fluid(ng-if="!editable")
+              .row-fluid(ng-if="global.me && !editable")
                 .col-lg-8.text-center
-                  button.btn.btn-success.col-lg-12(ng-if="global.me.following.indexOf(user.id) === -1", ng-click="follow()") Follow
+                  button.btn.btn-success.col-lg-12(
+                    ng-if="global.me.following.indexOf(user.id) === -1"
+                    ng-click="follow()") Follow
                   button.btn.btn-default.btn-sm.col-lg-6.col-lg-offset-3(
                     ng-if="global.me.following.indexOf(user.id) !== -1"
                     ng-click="unfollow()") Unfollow

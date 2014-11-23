@@ -3,23 +3,19 @@ app.factory('Events', ['$rootScope', '$resource', '$http', function ($rootScope,
 
   var event = $resource('/events/:eventId', {eventId: '@_id'}, {update: {method: 'POST'}});
 
-  event.getByMonth = function (month, year, cb) {
-    $http.get('/events?month=' + month + '&year=' + year)
+  event.updateMonthlyList = function (date, cb) {
+    var startDate = moment(date).subtract(1, 'month');
+    startDate.set('date', 15);
+    var stopDate = moment(date).add(1, 'month');
+    stopDate.set('date', 15);
+
+    $http.get('/events?startDate=' + startDate + '&stopDate=' + stopDate)
       .success(function (res) {
-        return cb(null, res);
+        $rootScope.$broadcast('monthlyEvents', res);
+        if (cb) cb(res);
       }).error(function (res) {
-        return cb(res);
+        return Global.showError(err);
       });
-  }
-
-
-  event.updateList = function (date, cb) {
-    event.getByMonth(moment(date).get('month'), moment(date).get('year'), function (err, res) {
-      if (err) return Global.showError(err);
-
-      $rootScope.$broadcast('events', res);
-      if (cb) cb(res);
-    })
   }
   return event;
 }]);

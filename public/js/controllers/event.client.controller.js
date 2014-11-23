@@ -2,10 +2,11 @@ app.controller('EventController', ['$scope', 'Global', 'Users', 'Events', functi
   $scope.global = Global;
 
   Users.getCurrentUser(function () {
-
+    $scope.event = Events.get({eventId: window.location.pathname.split('/')[2]}, function () {
+      $scope.show = true;
+      $scope.setEditable($scope.edit, ($scope.edit)?'Create':'Normal');
+    });
   });
-
-  $scope.event = Events.get({eventId: window.location.pathname.split('/')[2]})
 
   $scope.setEditable = function (status, mode) {
     if (status) {
@@ -78,6 +79,7 @@ app.controller('EventController', ['$scope', 'Global', 'Users', 'Events', functi
         title: 'Event visibility',
         send: 'always',
         selector: '.editable',
+        value: 'public',
         highlight: false,
         placement: 'right',
         source: [
@@ -96,6 +98,7 @@ app.controller('EventController', ['$scope', 'Global', 'Users', 'Events', functi
         title: 'Event attendance',
         send: 'always',
         selector: '.editable',
+        value: 'public',
         highlight: false,
         placement: 'right',
         source: [
@@ -113,6 +116,51 @@ app.controller('EventController', ['$scope', 'Global', 'Users', 'Events', functi
 
   $scope.goBack = function () {
     window.history.back();
+  }
+
+  $scope.attendTheEvent = function () {
+    Users.attend($scope.event, function (err) {
+      $scope.event.attendees.push(Global.me.id);
+      if ($scope.event.invitedUsers.indexOf(Global.me.id) !== -1) {
+        $scope.event.invitedUsers.splice($scope.event.invitedUsers.indexOf(Global.me.id), 1);
+      }
+      if ($scope.event.participants.indexOf(Global.me.id) === -1) {
+        $scope.event.participants.push(Global.me.id);
+      }
+    });
+  }
+
+  $scope.quitTheEvent = function () {
+    Users.quit($scope.event, function (err) {
+      $scope.event.attendees.splice($scope.event.attendees.indexOf(Global.me), 1);
+      // $scope.event.participants.splice($scope.event.participants.indexOf(Global.me.id), 1);
+    });
+  }
+
+  $scope.invite = function () {
+    $('#emailsToInvite').removeClass('has-error');
+    $('#emailsToInvite label').text('');
+
+    var text = $('#emailsToInvite textarea').val();
+    if (!text || text === '') {
+      $('#emailsToInvite').addClass('has-error');
+      $('#emailsToInvite label').text('Please enter at least one email');
+    }
+
+    text = text.replace(/\s/g, '');
+    var emails = text.split(',');
+    _.each(emails, function (email) {
+      // TODO verify emails
+    });
+
+    Users.invite(emails, $scope.event, function (err) {
+      if (err) {
+        $('#emailsToInvite').addClass('has-error');
+        $('#emailsToInvite label').text(err);
+      } else {
+        $('#invitationModal').toggle();
+      }
+    });
   }
 
   $scope.createEvent = function () {

@@ -3,7 +3,11 @@ app.controller('UserController', ['$scope', 'Global', 'Users', function ($scope,
 
   Users.getCurrentUser(function () {
     $scope.user = Users.get({username: window.location.pathname.split('/')[2]}, function () {
-      $scope.editable = (Global.me.username === $scope.user.username);
+      if (Global.me) {
+        $scope.editable = (Global.me.username === $scope.user.username);
+      } else {
+        $scope.editable = false
+      }
       $scope.setupEditable();
       $scope.show = true;
     });

@@ -19,6 +19,7 @@ var color = {
 var app = express();
 app.config = require('./config/config.server');
 require('./config/logger.server')(app);
+require('./lib/email')(app);
 
 app.err = function (err, next) {
   // error object passed and not a string

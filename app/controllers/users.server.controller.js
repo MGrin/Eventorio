@@ -42,12 +42,22 @@ exports.signup = function (req, res) {
   app.User.create(fields, function (err, user) {
     if (err) return app.err(err, res);
 
+    app.email.sendWelcomeMessage(user);
     req.logIn(user, function (err) {
       if (err) return app.err(err, res);
       res.send(200);
     });
   });
 };
+
+exports.activate = function (req, res) {
+  if (!req.userToActivate) return res.redirect('/');
+  req.userToActivate.activationCode = undefined;
+  res.userToActivate.save(function (err) {
+    if (err) return app.err(err, res);
+    return res.redirect('/app');
+  });
+}
 
 exports.update = function (req, res) {
   var field = req.body.name;
@@ -94,6 +104,26 @@ exports.unfollow = function (req, res) {
   });
 }
 
+exports.attend = function (req, res) {
+  var user = req.user;
+  var event = req.event;
+
+  user.attendEvent(event, function (err) {
+    if (err) return app.err(err, res);
+    return res.jsonp(200);
+  });
+}
+
+exports.quit = function (req, res) {
+  var user = req.user;
+  var event = req.event;
+
+  user.quitEvent(event, function (err) {
+    if (err) return app.err(err, res);
+    return res.jsonp(200);
+  });
+}
+
 exports.loadByUsername = function (req, res, next, username) {
   if (username === 'me') {
     if (req.user) {
@@ -121,6 +151,16 @@ exports.loadByUsername = function (req, res, next, username) {
     if (!user) return app.err(new Error('No user found: ' + username), res);
 
     req.userToShow = user;
+    return next();
+  })
+};
+
+exports.loadByActivationCode = function (req, res, next, activationCode) {
+  app.User.findOne({activationCode: activationCode}, function (err, user) {
+    if (err) return app.err(err, res);
+    if (!user) return res.redirect('/');
+
+    req.userToActivate = user;
     return next();
   })
 };

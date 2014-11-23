@@ -9,11 +9,14 @@ var config = {
     db: 'mongodb://localhost/Eventorio-dev',
     root: rootPath,
     port: 7000,
-    serverUrl: 'http://localhost:7000',
+    serverUrl: 'http://eventorio.uk.to/',
     name: 'Eventorio',
     gravatar: {
       s: '400',
       d: 'http://www.wpsymposiumpro.com/wp-content/uploads/2014/04/iStock_000033523696Small.jpg'
+    },
+    mandrill: {
+      API_KEY: 'wdyAQM7hpNcKB0XU_QjvEQ'
     }
   },
 
@@ -21,11 +24,14 @@ var config = {
     db: 'mongodb://eventorio:Eventorio2014Mongolab@ds063779.mongolab.com:63779/eventorio',
     root: rootPath,
     port: process.env.PORT || 7000,
-    serverUrl: 'http://eventorio.herokuapp.com',
+    serverUrl: 'http://eventorio.uk.to/',
     name: 'Eventorio',
     gravatar: {
       s: '400',
       d: 'http://www.wpsymposiumpro.com/wp-content/uploads/2014/04/iStock_000033523696Small.jpg'
+    },
+    mandrill: {
+      API_KEY: 'wdyAQM7hpNcKB0XU_QjvEQ'
     }
   }
 };
