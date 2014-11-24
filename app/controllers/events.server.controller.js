@@ -89,13 +89,22 @@ exports.createPage = function (req, res) {
 
 exports.query = function (req, res) {
   var user = req.user;
-  var startDate = moment(parseInt(req.query.startDate));
-  var stopDate = moment(parseInt(req.query.stopDate));
+  if (req.query.startDate && req.query.stopDate) {
+    var startDate = moment(parseInt(req.query.startDate));
+    var stopDate = moment(parseInt(req.query.stopDate));
 
-  app.Event.query(startDate, stopDate, user, function (err, events) {
-    if (err) return app.err(err, res);
-    return res.jsonp(events);
-  });
+    app.Event.queryByDateRange(startDate, stopDate, user, function (err, events) {
+      if (err) return app.err(err, res);
+      return res.jsonp(events);
+    });
+  } else if (req.query.userId) {
+    var offset = req.query.offset || 0;
+    var quantity = req.query.quantity || 10;
+    app.Event.queryByUser(req.query.userId, offset, quantity, function (err, events) {
+      if (err) return app.err(err, res);
+      return res.jsonp(events);
+    });
+  }
 };
 
 exports.show = function (req, res) {

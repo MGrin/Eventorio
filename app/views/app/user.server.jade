@@ -11,10 +11,10 @@ html(lang="en", ng-app="EventorioApp")
         .user-header.col-lg-12.col-md-12.col-sm-12.hidden-xs
           .row-fluid
             .col-lg-4.col-lg-offset-1.col-md-3.col-sm-4
-              .row-fluid
+              .row
                 .user-thumbnail.col-lg-12.col-md-12.col-sm-12
                   img.img-responsive.img-thumbnail.col-lg-8.col-md-12.col-sm-12(ng-src="{{user.picture}}")
-              .row-fluid
+              .row
                 .col-lg-offset-1.col-md-offset-1.col-sm-offset-1.hidden-xs.user-name
                   div(ng-if="user.name")
                     a.editable(ng-if="editable", style="font-size: 2em;") {{user.name}}
@@ -22,28 +22,41 @@ html(lang="en", ng-app="EventorioApp")
                   div(ng-if="!user.name")
                     a.editable(ng-if="editable", style="color: grey; font-size: 1.7em; opacity: 0.5;") Enter your name
                     p(ng-if="!editable", style="color: grey; font-size: 1.7em;") No name
-              .row-fluid
+              .row#userTabs
                 .col-lg-8.text-center
                   table.table
                     tr
-                      td
-                        a(href="#", ng-click="showPeople='followers'")
+                      td#followersTab
+                        a(href="#", ng-click="showTab('#followersTab');")
                           | {{user.followers.length || 0}}
                           br
                           | Followers
-                      td
-                        a(href="#", ng-click="showPeople='following'")
+                      td#followingTab
+                        a(href="#", ng-click="showTab('#followingTab');")
                           | {{user.following.length || 0}}
                           br
                           | Following
-              .row-fluid
-                .col-lg-12(ng-show="showPeople === 'followers'")
-                  div(ng-repeat="us in user.followers")
-                    a(href="/users/{{us.username}}") {{us.username}}
+              .row
+                .col-lg-8(ng-show="tab === '#followersTab'")
+                  p.text-center(style="color: gray", ng-if="user.followers.length === 0") No followers
+                  .table.table(ng-repeat="us in user.followers")
+                    tr
+                      td
+                        img.img.img-responsive.img-thumbnail(ng-src="{{us.picture}}")
+                      td
+                        a(href="/users/{{us.username}}") {{us.username}}
+                      td
+                        a(href="/users/{{us.username}}") {{us.name}}
 
-                .col-lg-12(ng-show="showPeople === 'following'")
-                  div(ng-repeat="us in user.following")
-                    a(href="/users/{{us.username}}") {{us.username}}
+                .col-lg-8(ng-show="tab === '#followingTab'")
+                  table.table(ng-repeat="us in user.following")
+                    tr
+                      td
+                        img.img.img-responsive.img-thumbnail(ng-src="{{us.picture}}")
+                      td
+                        a(href="/users/{{us.username}}") {{us.username}}
+                      td
+                        a(href="/users/{{us.username}}") {{us.name}}
 
               .row-fluid(ng-if="global.me && !editable")
                 .col-lg-8.text-center
@@ -63,16 +76,18 @@ html(lang="en", ng-app="EventorioApp")
                 a.editable(ng-if="editable", style="font-size: 1.7em; opacity: 0.5;") Tell us something about you
                 p(ng-if="!editable", style="font-size: 2em") No description
 
-        //- Extra-small screens
-        .user-header.col-xs-12.visible-xs
-          .row-fluid
-            .user-thumbnail.col-xs-4
-              img.img-responsive.img-thumbnail(ng-src="{{user.picture}}")
-            .user-name.col-xs-8
-              | {{user.username}}
-              p(ng-if="user.name") {{user.name}}
-              p(ng-if="!user.name", style="color: grey; opacity: 0.5;") Enter your name
-          .row-fluid
-            .user-description.col-xs-12
-              p(ng-if="user.desc") {{user.desc}}
-              p(ng-if="!user.desc", style="color: grey; opacity: 0.5;") Tell us something about you
+            .user-events.col-lg-7(ng-if="user.events")
+              h3 {{user.username}}'s events:
+              .col-lg-6(ng-repeat="event in user.events")
+                a(href="/events/{{event.id}}")
+                  table.table
+                    tr
+                      td.col-lg-3
+                        img.img-responsive.img-thumbnail(ng-if="event.picture", ng-src="/pictures/{{event.picture}}")
+                        img.img-responsive.img-thumbnail(ng-if="!event.picture", src="/img/event_logo.jpg")
+                      td
+                        a(href="/events/{{event.id}}")
+                          span {{event.name}}
+                      td
+                        a(href="/users/{{event.organizator.username}}")
+                          span {{event.organizator.username}}

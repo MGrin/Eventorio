@@ -1,4 +1,4 @@
-app.controller('UserController', ['$scope', 'Global', 'Users', function ($scope, Global, Users) {
+app.controller('UserController', ['$scope', 'Global', 'Users', 'Events', function ($scope, Global, Users, Events) {
   $scope.global = Global;
 
   Users.getCurrentUser(function () {
@@ -8,7 +8,16 @@ app.controller('UserController', ['$scope', 'Global', 'Users', function ($scope,
       } else {
         $scope.editable = false
       }
-      $scope.setupEditable();
+      $scope.userEventsOffset = 0;
+
+      Events.getUserEvents($scope.user, 0, function (err, events) {
+        if (err) return alert(err);
+        $scope.user.events = events;
+        $scope.showTab('#followersTab');
+      });
+      setTimeout(function () {
+        $scope.setupEditable();
+      }, 1000);
       $scope.show = true;
     });
   });
@@ -42,6 +51,12 @@ app.controller('UserController', ['$scope', 'Global', 'Users', function ($scope,
       showbuttons: 'right'
     });
   };
+
+  $scope.showTab = function (tab) {
+    $scope.tab = tab;
+    $('td').removeClass('info');
+    $(tab).addClass('info');
+  }
 
   $scope.follow = function () {
     Users.follow($scope.user.id, function (err) {

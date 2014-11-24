@@ -12,15 +12,14 @@
     .col-lg-10.col-lg-offset-1.col-md-8.col-md-offset-3.col-xs-12.text-center(ng-if="events.length === 0")
       h3(style="color: grey") No events for today.
     .col-lg-12.col-md-12.col-sm-12.col-xs-12(ng-if="events.length !== 0")
-      div(ng-repeat="event in events")
-        .row.event-line
-          a(href="/events/{{event.id}}")
-            .col-lg-4
-                img.img-responsive.img-thumbnail(ng-if="event.picture", ng-src="/pictures/{{event.picture}}")
-                img.img-responsive.img-thumbnail(ng-if="!event.picture", src="/img/event_logo.jpg")
-            .col-lg-5
-              h3
-               a(href="/events/{{event.id}}") {{event.name}}
-            .col-lg-3.text-right
-              h4
-                a(href="/users/{{event.organizator.username}}") {{event.organizator.username}}
+      .row.event-line(ng-repeat="event in events")
+        a(href="/events/{{event.id}}")
+          .col-lg-4
+              img.img-responsive.img-thumbnail(ng-if="event.picture", ng-src="/pictures/{{event.picture}}")
+              img.img-responsive.img-thumbnail(ng-if="!event.picture", src="/img/event_logo.jpg")
+          .col-lg-5
+            h3
+             a(href="/events/{{event.id}}") {{event.name}}
+          .col-lg-3.text-right
+            h4
+              a(href="/users/{{event.organizator.username}}") {{event.organizator.username}}

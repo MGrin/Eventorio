@@ -172,7 +172,25 @@ EventSchema.statics = {
     }, cb);
   },
 
-  query: function (startDate, stopDate, user, cb) {
+  queryByUser: function (userId, offset, quantity, cb) {
+    app.Event
+      .find({$or: [{organizator: userId}, {people: userId}]})
+      .sort({created: -1})
+      .skip(offset * quantity)
+      .limit(quantity)
+      .populate('organizator', 'name desc email username provider gender picture')
+      .exec(function (err, events) {
+        if (err) return cb(err);
+        var res = [];
+        _.each(events, function (event) {
+          var resEvent = event.toJSON();
+          res.push(resEvent);
+        });
+        return cb(null, res);
+      });
+  },
+
+  queryByDateRange: function (startDate, stopDate, user, cb) {
     var invitedToEvents = [];
     var attendingEvents = [];
     var resultingEventsList = [];

@@ -12,9 +12,18 @@ app.factory('Events', ['$rootScope', '$resource', '$http', function ($rootScope,
     $http.get('/events?startDate=' + startDate + '&stopDate=' + stopDate)
       .success(function (res) {
         $rootScope.$broadcast('monthlyEvents', res);
-        if (cb) cb(res);
+        if (cb) cb(null, res);
       }).error(function (res) {
-        return Global.showError(err);
+        return cb(err);
+      });
+  }
+
+  event.getUserEvents = function (user, offset, cb) {
+    $http.get('/events?userId=' + user.id + '&offset=' + offset)
+      .success(function (res) {
+        return cb(null, res);
+      }).error(function (res) {
+        return cb(res);
       });
   }
   return event;
