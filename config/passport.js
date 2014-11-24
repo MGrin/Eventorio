@@ -32,10 +32,10 @@ module.exports = function (myApp, passport) {
   // Use loca strategy
   passport.use(new LocalStrategy(
     function(username, password, done) {
-      app.User.findOne({ email: username }, function(err, user) {
+      app.User.findOne({username: new RegExp('^' + username +'$', 'i')}, function(err, user) {
         if (err) { return done(err); }
         if (!user) {
-          return done(null, false, { message: 'Incorrect email.' });
+          return done(null, false, { message: 'Incorrect username.' });
         }
         if (!user.authenticate(password)) {
           return done(null, false, { message: 'Incorrect password.' });

@@ -15,7 +15,6 @@ exports.init = function (myApp) {
 
 // saves a new session for a user if authentication was successful
 exports.login = function (req, res) {
-  app.logger.info(req.body);
   passport.authenticate('local', function(err, user, info) {
     if (err) {
       return app.err(err, res);
