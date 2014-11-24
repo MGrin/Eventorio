@@ -20,7 +20,7 @@ exports.login = function (req, res) {
       return app.err(err, res);
     }
     if (!user) {
-      return app.err(new Error('No user found'), res);
+      return app.err(info, res);
     }
     req.logIn(user, function(err) {
       if (err) {
