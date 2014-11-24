@@ -16,6 +16,16 @@ app.factory('Users', ['$resource', '$http', 'Global', function ($resource, $http
       });
   }
 
+  user.getNews = function (cb) {
+    $http.get('/api/news')
+      .success(function (response) {
+        console.log(response);
+        return cb(null, response);
+      }).error(function (response) {
+        return cb(response);
+      })
+  }
+
   user.login = function (email, password, cb) {
     $http.post('/login', {username: email, password: password})
       .success(function (response) {

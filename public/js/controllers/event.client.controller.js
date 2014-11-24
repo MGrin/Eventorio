@@ -1,7 +1,7 @@
 app.controller('EventController', ['$scope', 'Global', 'Users', 'Events', function ($scope, Global, Users, Events) {
   $scope.global = Global;
 
-  Users.getCurrentUser(function () {
+  $scope.$on('me', function () {
     $scope.event = Events.get({eventId: window.location.pathname.split('/')[2]}, function () {
       $scope.show = true;
       $scope.setEditable($scope.edit, ($scope.edit)?'Create':'Normal');

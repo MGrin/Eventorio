@@ -123,6 +123,17 @@ exports.quit = function (req, res) {
   });
 }
 
+exports.news = function (req, res) {
+  var user = req.user;
+  var offset = req.query.offset || 0;
+  var quantity = req.query.quantity || 20;
+
+  app.Action.getUserNewsFeed(user, offset, quantity, function (err, news) {
+    if (err) return app.err(err, res);
+    return res.jsonp(news);
+  });
+}
+
 exports.loadByUsername = function (req, res, next, username) {
   if (username === 'me') {
     if (req.user) {

@@ -51,6 +51,23 @@ ActionSchema.statics = {
     action.save(function (err) {
       if (err) return app.err(err);
     });
+  },
+
+  getUserNewsFeed: function (user, offset, quantity, cb) {
+    app.Action
+      .find({concerningUsers: user._id})
+      .sort({created: -1})
+      .skip(offset)
+      .limit(quantity)
+      .populate('concerningUsers', 'name id username email')
+      .exec(function (err, news) {
+        if (err) return cb(err);
+        var res = [];
+        _.each(news, function (action) {
+          res.push(action.toObject({virtuals: true}));
+        });
+        return cb(null, res);
+      });
   }
 }
 ActionSchema.plugin(troop.timestamp, {

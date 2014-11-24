@@ -1,2 +1,7 @@
 .row-fluid(style="height: 100%")
-  h1 News
+  .row.col-lg-10(ng-repeat="action in actions")
+    .panel.panel-info
+      .panel-body(ng-bind-html="action.message")
+        //- {{action.message}}
+      .panel-footer.text-right
+        .small {{action.readableTimestamp}}

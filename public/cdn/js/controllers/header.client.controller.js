@@ -1,8 +1,10 @@
-app.controller('HeaderController', ['$scope', '$location', 'Global', 'Users', function ($scope, $location, Global, Users) {
+app.controller('HeaderController', ['$scope', '$rootScope', '$location', 'Global', 'Users',
+  function ($scope, $rootScope, $location, Global, Users) {
   $scope.global = Global;
 
   Users.getCurrentUser(function () {
     $scope.show = true;
+    $rootScope.$broadcast('me');
   });
 
   $scope.login = function () {

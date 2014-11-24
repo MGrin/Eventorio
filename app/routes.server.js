@@ -45,5 +45,8 @@ module.exports = function (app, passport) {
     .post(users.requiresLogin, users.quit);
   app.route('/api/invite/:eventId')
     .post(users.requiresLogin, events.invite);
+  app.route('/api/news')
+    .get(users.requiresLogin, users.news);
+
   app.param('eventId', events.load);
 };
