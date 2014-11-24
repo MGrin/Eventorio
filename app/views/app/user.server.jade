@@ -77,17 +77,21 @@ html(lang="en", ng-app="EventorioApp")
                 p(ng-if="!editable", style="font-size: 2em") No description
 
             .user-events.col-lg-7(ng-if="user.events")
-              h3 {{user.username}}'s events:
+              h3(ng-if="!editable") {{user.username}}'s upcoming events:
+              h3(ng-if="editable") Your upcoming events:
               .col-lg-6(ng-repeat="event in user.events")
                 a(href="/events/{{event.id}}")
                   table.table
                     tr
-                      td.col-lg-3
+                      td.col-lg-4
                         img.img-responsive.img-thumbnail(ng-if="event.picture", ng-src="/pictures/{{event.picture}}")
                         img.img-responsive.img-thumbnail(ng-if="!event.picture", src="/img/event_logo.jpg")
                       td
-                        a(href="/events/{{event.id}}")
-                          span {{event.name}}
+                        h3 {{event.name}}
+                        .text-left
+                          span {{event.readableDate}}
+                          br
+                          span {{event.readableTime}}
                       td
                         a(href="/users/{{event.organizator.username}}")
                           span {{event.organizator.username}}

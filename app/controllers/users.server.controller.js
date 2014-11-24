@@ -42,7 +42,6 @@ exports.signup = function (req, res) {
   app.User.create(fields, function (err, user) {
     if (err) return app.err(err, res);
 
-    app.email.sendWelcomeMessage(user);
     req.logIn(user, function (err) {
       if (err) return app.err(err, res);
       res.send(200);

@@ -152,7 +152,7 @@ EventSchema.statics = {
         }, {
           date: {$lte: stopDate.toDate()}
         }, {
-          invitedUsers: user._id // TODO not sure that this is right
+          invitedUsers: user._id
         }
       ]
     }, cb);
@@ -166,7 +166,7 @@ EventSchema.statics = {
         }, {
           date: {$lte: stopDate.toDate()}
         }, {
-          attendees: user._id // TODO not sure that this is right
+          attendees: user._id
         }
       ]
     }, cb);
@@ -174,8 +174,8 @@ EventSchema.statics = {
 
   queryByUser: function (userId, offset, quantity, cb) {
     app.Event
-      .find({$or: [{organizator: userId}, {people: userId}]})
-      .sort({created: -1})
+      .find({date: {$gte: moment()}, $or: [{organizator: userId}, {invitedUsers: userId}, {attendees: userId}]})
+      .sort({date: -1})
       .skip(offset * quantity)
       .limit(quantity)
       .populate('organizator', 'name desc email username provider gender picture')

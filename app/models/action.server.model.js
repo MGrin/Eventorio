@@ -20,13 +20,39 @@ exports.initModel = function (myApp) {
 };
 
 var ActionSchema = exports.Schema = new Schema({
-  userId: {
+  concerningUsers: [{
     type: ObjectId,
     ref: 'User'
-  },
-  type: String
+  }],
+  concerningEvents: [{
+    type: ObjectId,
+    ref: 'Event'
+  }],
+  message: String
 });
 
+ActionSchema.statics = {
+  signup: function (user) {
+    var action = new app.Action({
+      concerningUsers: [user._id],
+      message: 'Welcome to Eventorio!'
+    });
+    action.save(function (err) {
+      if (err) return app.err(err);
+    });
+  },
+
+  followship: function (user, follower) {
+    var action = new app.Action({
+      concerningUsers: [user._id, follower._id],
+      message: '<a href="/users/' + follower.username + '">@' + follower.username + '</a>'
+                + ' follows <a href="/users/' + user.username + '">@' + user.username +'</a>'
+    });
+    action.save(function (err) {
+      if (err) return app.err(err);
+    });
+  }
+}
 ActionSchema.plugin(troop.timestamp, {
   useVirtual: false
 });

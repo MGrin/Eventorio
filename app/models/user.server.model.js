@@ -177,8 +177,9 @@ UserSchema.methods = {
   acceptFollower: function (user, cb) {
     if (this.followers.indexOf(user._id) === -1) {
       this.followers.push(user._id);
-      this.save(function (err) {
+      this.save(function (err, savedUser) {
         if (err) return app.err(err);
+        app.Action.followship(savedUser, user);
       });
     }
   },
@@ -262,6 +263,8 @@ UserSchema.statics = {
           return next(err);
         });
       }, function (next) {
+        app.email.sendWelcomeMessage(savedUser);
+        app.Action.signup(savedUser);
         app.Event.replaceInvitations(savedUser, next);
       }
     ], function (err) {
