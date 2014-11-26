@@ -20,6 +20,7 @@ app.controller('EventController', ['$scope', 'Global', 'Users', 'Events', functi
         placeholder: 'Event title',
         title: 'Enter event title',
         onblur: 'cancel',
+        value: (mode === 'Create')?'':$scope.event.name,
         send: 'always',
         selector: '.editable',
         highlight: false,
@@ -31,6 +32,7 @@ app.controller('EventController', ['$scope', 'Global', 'Users', 'Events', functi
       });
 
       $('.event-description textarea').wysihtml5();
+      $('.event-description textarea').val($scope.event.desc);
 
       $('.event-date').editable({
         type: 'combodate',
@@ -38,6 +40,7 @@ app.controller('EventController', ['$scope', 'Global', 'Users', 'Events', functi
         title: 'Event date',
         send: 'always',
         selector: '.editable',
+        value: (mode === 'Create')?'':moment($scope.event.date).format('DD MMMM YYYY'),
         highlight: false,
         placement: 'right',
         template: 'DD MMMM YYYY',
@@ -60,9 +63,10 @@ app.controller('EventController', ['$scope', 'Global', 'Users', 'Events', functi
         title: 'Event date',
         send: 'always',
         selector: '.editable',
+        value: (mode === 'Create')?'':moment($scope.event.date).format('HH:mm'),
         highlight: false,
         placement: 'right',
-        template: 'H:mm',
+        template: 'HH:mm',
         format: 'HH:mm',
         combodate: {
           value: moment().toDate()
@@ -116,6 +120,9 @@ app.controller('EventController', ['$scope', 'Global', 'Users', 'Events', functi
 
   $scope.goBack = function () {
     window.history.back();
+  }
+  $scope.cancel = function () {
+    window.location.reload();
   }
 
   $scope.attendTheEvent = function () {
