@@ -2,7 +2,7 @@ app.controller('ApplicationController', ['$rootScope', '$scope', 'Global', 'Even
   $scope.global = Global;
   $scope.now = moment();
 
-  Events.updateMonthlyList($scope.now, function (events) {
+  Events.updateMonthlyList($scope.now, function (err, events) {
     $rootScope.$broadcast('day', $scope.now, _.filter(events, function (event) {
       return moment(event.date).format('YYYYMMDD') === $scope.now.format('YYYYMMDD');
     }));
