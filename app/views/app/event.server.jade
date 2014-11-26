@@ -9,7 +9,8 @@ html(lang="en", ng-app="EventorioApp")
         button.btn.btn-info.btn-lg(ng-if="mode === 'Create'", type="button", ng-click="createEvent()") Create!
         button.btn.btn-info.btn-lg(ng-if="mode === 'Edit'", type="button", ng-click="modifyEvent()") Save
         span(style="margin-left: 10px")
-        button.btn.btn-default(type="button", ng-click="goBack()") Cancel
+        button.btn.btn-default.btn-lg(ng-if="mode === 'Create'", type="button", ng-click="goBack()") Cancel
+        button.btn.btn-default.btn-lg(ng-if="mode === 'Edit'", type="button", ng-click="cancel()") Cancel
 
       #editButton(ng-if="mode === 'Normal' && global.me.id === event.organizator.id"
                   ng-click="setEditable(true, 'Edit')")
