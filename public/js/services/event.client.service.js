@@ -12,7 +12,7 @@ app.factory('Events', ['$rootScope', '$resource', '$http', function ($rootScope,
     $http.get('/events?startDate=' + startDate + '&stopDate=' + stopDate)
       .success(function (res) {
         $rootScope.$broadcast('monthlyEvents', res);
-        if (cb) cb(null, res);
+        return cb(null, res);
       }).error(function (res) {
         return cb(err);
       });

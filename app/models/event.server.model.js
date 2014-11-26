@@ -282,7 +282,7 @@ EventSchema.statics = {
     delete fields.visibility;
     delete fields.attendance;
     fields.permissions = permissions;
-
+    fields.date = moment(fields.date).utc();
     var event = new app.Event(fields);
     event.organizator = creator;
     event.save(cb);

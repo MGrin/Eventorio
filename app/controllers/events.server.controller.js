@@ -13,7 +13,7 @@ exports.load = function (req, res, next, id) {
   if (id === 'new') return next();
   app.Event.load(id, function (err, event) {
     if (err) return app.err(err, res);
-    if (!event) return app.err(new Error('Event not found!'), res);
+    if (!event) return res.redirect('/');
 
     req.event = event;
     return next();
@@ -90,8 +90,8 @@ exports.createPage = function (req, res) {
 exports.query = function (req, res) {
   var user = req.user;
   if (req.query.startDate && req.query.stopDate) {
-    var startDate = moment(parseInt(req.query.startDate));
-    var stopDate = moment(parseInt(req.query.stopDate));
+    var startDate = moment(parseInt(req.query.startDate)).utc();
+    var stopDate = moment(parseInt(req.query.stopDate)).utc();
 
     app.Event.queryByDateRange(startDate, stopDate, user, function (err, events) {
       if (err) return app.err(err, res);
