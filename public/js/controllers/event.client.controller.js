@@ -131,8 +131,8 @@ app.controller('EventController', ['$scope', 'Global', 'Users', 'Events', functi
       if ($scope.event.invitedUsers.indexOf(Global.me.id) !== -1) {
         $scope.event.invitedUsers.splice($scope.event.invitedUsers.indexOf(Global.me.id), 1);
       }
-      if ($scope.event.participants.indexOf(Global.me.id) === -1) {
-        $scope.event.participants.push(Global.me.id);
+      if ($scope.event.participants.indexOf(Global.me) === -1 && $scope.event.participants.length < 6) {
+        $scope.event.participants.push(Global.me);
       }
     });
   }
@@ -140,7 +140,14 @@ app.controller('EventController', ['$scope', 'Global', 'Users', 'Events', functi
   $scope.quitTheEvent = function () {
     Users.quit($scope.event, function (err) {
       $scope.event.attendees.splice($scope.event.attendees.indexOf(Global.me), 1);
-      // $scope.event.participants.splice($scope.event.participants.indexOf(Global.me.id), 1);
+      $scope.event.participants.splice($scope.event.participants.indexOf(Global.me), 1);
+    });
+  }
+
+  $scope.showAllParticipants = function () {
+    Events.getParticipants($scope.event, function (err, data) {
+      $scope.attendees = data.attendees;
+      $scope.invited = data.invited;
     });
   }
 

@@ -26,5 +26,14 @@ app.factory('Events', ['$rootScope', '$resource', '$http', function ($rootScope,
         return cb(res);
       });
   }
+
+  event.getParticipants = function (event, cb) {
+    $http.get('/api/participants/' + event.id)
+      .success(function (res) {
+        return cb(null, res);
+      }).error(function (res) {
+        return cb(res);
+      });
+  }
   return event;
 }]);

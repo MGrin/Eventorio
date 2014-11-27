@@ -106,6 +106,60 @@ EventSchema.methods = {
     return that.save(cb);
   },
 
+  populateParticipantsForUser: function (user, cb) {
+    // TODO make an intelligent algorithm to show event's participants based on the current user;
+    app.User
+    .find({_id: {$in: this.attendees}})
+    .limit(6)
+    .exec(function (err, users) {
+      if (err) return cb(err);
+      var res = [];
+      _.each(users, function (u) {
+        res.push(u.toJSON());
+      });
+      return cb(null, res);
+    });
+  },
+
+  getParticipants: function (cb) {
+    var resObject = {
+      attendees: [],
+      invited: []
+    };
+
+    var that = this;
+
+    async.series([
+      function (next) {
+        if (!that.attendees || that.attendees.length === 0) {
+          return next();
+        }
+
+        app.User.find({_id: {$in: that.attendees}}, function (err, attendees) {
+          if (err) return next(err);
+          _.each(attendees, function (us) {
+            resObject.attendees.push(us.toJSON());
+          });
+          return next();
+        });
+      }, function (next) {
+        if (!that.invitedUsers || that.invitedUsers.length === 0) {
+          return next();
+        }
+
+        app.User.find({_id: {$in: that.invitedUsers}}, function (err, invited) {
+          if (err) return next(err);
+          _.each(invited, function (us) {
+            resObject.invited.push(us.toJSON());
+          });
+          return next();
+        });
+      }
+    ], function (err) {
+      return cb(err, resObject);
+    });
+  },
+
   toJSON: function () {
     var resEvent = this.toObject({virtuals: true});
     delete resEvent._id;
