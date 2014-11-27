@@ -39,7 +39,7 @@ html(lang="en", ng-app="EventorioApp")
               .row
                 .col-lg-8(ng-show="tab === '#followersTab'")
                   p.text-center(style="color: gray", ng-if="user.followers.length === 0") No followers
-                  .table.table(ng-repeat="us in user.followers")
+                  table.table(ng-repeat="us in user.followers")
                     tr
                       td
                         img.img.img-responsive.img-thumbnail(ng-src="{{us.picture}}")

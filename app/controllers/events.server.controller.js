@@ -83,6 +83,14 @@ exports.invite = function (req, res) {
   });
 }
 
+exports.getParticipants = function (req, res) {
+  var event = req.event;
+  event.getParticipants(function (err, participants) {
+    if (err) return app.err(err, res);
+    return res.jsonp(participants);
+  });
+}
+
 exports.createPage = function (req, res) {
   return res.render('app/event.server.jade', {event: {edit: true}});
 }
@@ -115,7 +123,10 @@ exports.show = function (req, res) {
     json: function () {
       var jsonEvent = req.event.toJSON();
       jsonEvent.canAttend = req.user.canAttend(req.event);
-      return res.jsonp(jsonEvent);
+      req.event.populateParticipantsForUser(req.user, function (err, participants) {
+        jsonEvent.participants = participants;
+        return res.jsonp(jsonEvent);
+      });
     }
   });
 };

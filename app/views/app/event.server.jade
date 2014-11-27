@@ -39,6 +39,41 @@ html(lang="en", ng-app="EventorioApp")
               button.btn.btn-default(type='button', data-dismiss='modal') Cancel
               button.btn.btn-success(type='button', ng-click="invite()") Invite
 
+      #participantsModal.modal.fade(tabindex="-1", role="dialog", aria-hidden="true", ng-init="participantsTab = 'attendees'")
+        .modal-dialog
+          .modal-content
+            .modal-header
+              button.close(type='button', data-dismiss='modal')
+                span(aria-hidden='true') ×
+                span.sr-only Close
+              h4.modal-title "{{event.name}}" participants!
+            .modal-body
+              table.table
+                tr
+                  td.clickable(ng-click="participantsTab = 'attendees'") Attendees
+                  td.clickable(ng-click="participantsTab = 'invited'") Invited
+              div(ng-show="participantsTab === 'attendees'")
+                table.table(ng-repeat="us in attendees")
+                  tr
+                    td(style="border: none")
+                      img.img.img-responsive.img-thumbnail.col-lg-3(ng-src="{{us.picture}}")
+                    td(style="border: none")
+                      a(href="/users/{{us.username}}") {{us.username}}
+                    td(style="border: none")
+                      a(href="/users/{{us.username}}") {{us.name}}
+              div(ng-show="participantsTab === 'invited'")
+                table.table(ng-repeat="us in invited")
+                  tr
+                    td(style="border: none")
+                      img.img.img-responsive.img-thumbnail(ng-src="{{us.picture}}")
+                    td(style="border: none")
+                      a(href="/users/{{us.username}}") {{us.username}}
+                    td(style="border: none")
+                      a(href="/users/{{us.username}}") {{us.name}}
+
+            .modal-footer
+              button.btn.btn-default(type='button', data-dismiss='modal') Cancel
+
       .row-fluid
         img.img-responsive.img-event-header(src="/img/event_background.png")
 
@@ -85,7 +120,7 @@ html(lang="en", ng-app="EventorioApp")
                     span All day
             li(style="color: grey")
               .row-fluid
-                .event-visibility.col-lg-12.col-md-12.col-sm-12
+                .event-visibility.col-lg-12
                   a.editable(ng-if="mode === 'Create'") Event is visible to everyone
                   a.editable(ng-if="mode === 'Edit' && (event.permissions.visibility === 'public' || !event.permissions.visibility)")
                     | Event is visible to everyone
@@ -101,7 +136,7 @@ html(lang="en", ng-app="EventorioApp")
                   span(ng-if="mode === 'Normal' && event.permissions.visibility === 'invitations'")
                     | Event is visible only to invited people
               .row-fluid
-                .event-attendance.col-lg-12.col-md-12.col-sm-12
+                .event-attendance.col-lg-12
                   a.editable(ng-if="mode === 'Create'") Everyone can attend this event
                   a.editable(ng-if="mode === 'Edit' && (event.permissions.attendance === 'public' || !event.permissions.attendance)")
                     | Everyone can attend this event
@@ -116,6 +151,7 @@ html(lang="en", ng-app="EventorioApp")
                     | Only your followers can attend this event
                   span(ng-if="mode === 'Normal' && event.permissions.attendance === 'invitations'")
                     | Only invited people can attend this event
+            li
               .row-fluid(ng-if="mode === 'Normal' && event.canAttend")
                 h3.event-user-attendance.col-lg-8
                   button.btn.btn-info.col-lg-12(
@@ -124,9 +160,19 @@ html(lang="en", ng-app="EventorioApp")
                   button.btn.btn-default.col-lg-12(
                     ng-if="event.attendees.indexOf(global.me.id) !== -1"
                     ng-click="quitTheEvent()") I will not go
+            li
               .row-fluid(ng-if="mode === 'Normal'")
-                .event-people.col-lg-12.col-md-12.col-sm-12
-                  h1 People: {{event.participants.length}}
+                .event-people.col-lg-8
+                  .col-lg-4.text-center(ng-repeat="us in event.participants")
+                    a(ng-href="/users/{{us.username}}")
+                      img.img.img-responsive.img-thumbnail(ng-src="{{us.picture}}")
+                      span {{us.username}}
+              .row-fluid(ng-if="mode === 'Normal'")
+                .col-lg-8.text-right
+                  a(ng-click="showAllParticipants()"
+                    data-toggle="modal"
+                    data-target="#participantsModal") Show everybody on this event
+            li
               .row-fluid(ng-if="mode === 'Normal' && global.me.id === event.organizator.id")
                 .col-lg-8.text-center
                   button.btn.btn-info.col-lg-12(data-toggle="modal", data-target="#invitationModal") Invite!

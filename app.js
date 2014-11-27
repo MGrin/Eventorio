@@ -44,7 +44,7 @@ app.err = function (err, next) {
         next.render('500', {err: err});
       },
       json: function () {
-        next.jsonp(500, err);
+        next.status(500).jsonp(err);
       }
     });
   }
