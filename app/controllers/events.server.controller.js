@@ -64,18 +64,20 @@ exports.invite = function (req, res) {
     app.User.findOne({email: email}, function (err, _user) {
       if (err) return app.err(err);
       if (!_user) {
+        app.email.sendInvitationMail(user, {email: email, username: email}, event);
+
         if (event.invitedEmails.indexOf(email) === -1) {
           event.invitedEmails.push(email);
           event.save(function (err) {
             if (err) return app.err(err);
           });
-          return app.email.sendInvitationMail(user, {email: email, username: email}, event);
         }
-      }
-
-      if (event.invitedUsers.indexOf(_user._id) === -1) {
-        event.invitedUsers.push(_user._id);
-        event.save();
+      } else {
+        app.email.sendInvitationMail(user, _user, event);
+        if (event.invitedUsers.indexOf(_user._id) === -1) {
+          event.invitedUsers.push(_user._id);
+          event.save();
+        }
       }
 
       app.email.sendInvitationMail(user, _user, event);
