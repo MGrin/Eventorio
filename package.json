@@ -34,7 +34,7 @@
     "method-override": "latest",
     "moment": "^2.8.3",
     "mongoose": "latest",
-    "mongoose-schema-extend": "git+https://github.com/voz/mongoose-schema-extend.git",
+    "mongoose-schema-extend": "^0.1.7",
     "mongoose-troop": "latest",
     "morgan": "latest",
     "passport": "latest",
