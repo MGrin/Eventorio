@@ -69,7 +69,7 @@ exports.invite = function (req, res) {
         if (event.invitedEmails.indexOf(email) === -1) {
           event.invitedEmails.push(email);
           event.save(function (err) {
-            if (err) return app.err(err);
+            if (err) return app.err(err, res);
           });
         }
       } else {
@@ -79,8 +79,6 @@ exports.invite = function (req, res) {
           event.save();
         }
       }
-
-      app.email.sendInvitationMail(user, _user, event);
     });
   });
 }
