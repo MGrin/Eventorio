@@ -24,6 +24,7 @@ var ActionSchema = exports.Schema = new Schema({
     type: ObjectId,
     ref: 'User'
   }],
+  //lalala
   concerningEvents: [{
     type: ObjectId,
     ref: 'Event'
