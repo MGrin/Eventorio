@@ -167,12 +167,10 @@ app.controller('EventController', ['$scope', 'Global', 'Users', 'Events', functi
       // TODO verify emails
     });
 
+    $('#invitationModal').toggle();
     Users.invite(emails, $scope.event, function (err) {
       if (err) {
-        $('#emailsToInvite').addClass('has-error');
-        $('#emailsToInvite label').text(err);
-      } else {
-        $('#invitationModal').toggle();
+        Global.showError(err);
       }
     });
   }
@@ -215,7 +213,7 @@ app.controller('EventController', ['$scope', 'Global', 'Users', 'Events', functi
     event.$save(function (res) {
       window.location.pathname = "/events/" + res.id;
     }, function (res) {
-      alert(res.data);
+      Global.showError(res.data);
     });
   }
 

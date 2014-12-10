@@ -59,26 +59,28 @@ exports.invite = function (req, res) {
   var user = req.user;
   var emails = req.body;
   var event = req.event;
+  var organizator = event.organizator;
 
   _.each(emails, function (email) {
     app.User.findOne({email: email}, function (err, _user) {
       if (err) return app.err(err);
       if (!_user) {
+        app.email.sendInvitationMail(organizator, {email: email, username: email}, event);
+
         if (event.invitedEmails.indexOf(email) === -1) {
           event.invitedEmails.push(email);
           event.save(function (err) {
-            if (err) return app.err(err);
+            if (err) return app.err(err, res);
           });
-          return app.email.sendInvitationMail(user, {email: email, username: email}, event);
         }
+      } else {
+        app.email.sendInvitationMail(organizator, _user, event);
+        if (event.invitedUsers.indexOf(_user._id) === -1) {
+          event.invitedUsers.push(_user._id);
+          event.save();
+        }
+        app.email.sendInvitationMail(organizator, _user, event);
       }
-
-      if (event.invitedUsers.indexOf(_user._id) === -1) {
-        event.invitedUsers.push(_user._id);
-        event.save();
-      }
-
-      app.email.sendInvitationMail(user, _user, event);
     });
   });
 }
