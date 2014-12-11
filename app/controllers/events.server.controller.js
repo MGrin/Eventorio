@@ -113,11 +113,15 @@ exports.show = function (req, res) {
     },
     json: function () {
       var jsonEvent = req.event.toJSON();
-      if (req.user) jsonEvent.canAttend = req.user.canAttend(req.event);
-      req.event.populateParticipantsForUser(req.user, function (err, participants) {
-        jsonEvent.participants = participants;
-        return res.jsonp(jsonEvent);
-      });
+      if (req.user || req.event.permissions.visibility === 'public') {
+        jsonEvent.canAttend = req.user.canAttend(req.event);
+        req.event.populateParticipantsForUser(req.user, function (err, participants) {
+          jsonEvent.participants = participants;
+          return res.jsonp(jsonEvent);
+        });
+      } else {
+        return res.jsonp(404);
+      }
     }
   });
 };
