@@ -160,6 +160,28 @@ EventSchema.methods = {
     });
   },
 
+  invite: function (actor, email, cb) {
+    var event = this;
+    app.User.findOne({$or: [{email: email}, {username: email}]}, function (err, user) {
+      if (err) return cb(err);
+      if (!user) {
+        app.email.sendInvitationMail(actor, {email: email, username: email}, event);
+
+        if (event.invitedEmails.indexOf(email) === -1) {
+          event.invitedEmails.push(email);
+          event.save();
+        }
+      } else {
+        app.email.sendInvitationMail(actor, user, event);
+        app.Action.newInviteAction(user, actor);
+        if (event.invitedUsers.indexOf(user._id) === -1) {
+          event.invitedUsers.push(user._id);
+          event.save();
+        }
+      }
+    });
+  },
+
   toJSON: function () {
     var resEvent = this.toObject({virtuals: true});
     delete resEvent._id;
@@ -339,6 +361,9 @@ EventSchema.statics = {
     fields.date = moment(fields.date).utc();
     var event = new app.Event(fields);
     event.organizator = creator;
-    event.save(cb);
+    event.save(function (err, createdEvent) {
+      if (!err) app.Action.newCreateEventAction(createdEvent);
+      return cb(err, createdEvent);
+    });
   }
 }

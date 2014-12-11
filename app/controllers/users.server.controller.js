@@ -127,10 +127,7 @@ exports.news = function (req, res) {
   var offset = req.query.offset || 0;
   var quantity = req.query.quantity || 20;
 
-  app.Action.getUserNewsFeed(user, offset, quantity, function (err, news) {
-    if (err) return app.err(err, res);
-    return res.jsonp(news);
-  });
+  return res.jsonp([]);
 }
 
 exports.loadByUsername = function (req, res, next, username) {

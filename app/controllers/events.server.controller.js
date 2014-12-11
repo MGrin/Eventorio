@@ -2,6 +2,7 @@
 
 var moment = require('moment');
 var _ = require('underscore');
+var async = require('async');
 
 var app;
 
@@ -61,26 +62,15 @@ exports.invite = function (req, res) {
   var event = req.event;
   var organizator = event.organizator;
 
+  var parallelTasks = [];
   _.each(emails, function (email) {
-    app.User.findOne({email: email}, function (err, _user) {
-      if (err) return app.err(err);
-      if (!_user) {
-        app.email.sendInvitationMail(user, {email: email, username: email}, event);
-
-        if (event.invitedEmails.indexOf(email) === -1) {
-          event.invitedEmails.push(email);
-          event.save(function (err) {
-            if (err) return app.err(err, res);
-          });
-        }
-      } else {
-        app.email.sendInvitationMail(user, _user, event);
-        if (event.invitedUsers.indexOf(_user._id) === -1) {
-          event.invitedUsers.push(_user._id);
-          event.save();
-        }
-      }
+    parallelTasks.push(function (next) {
+      event.invite(user, email, next);
     });
+  });
+  async.parallel(parallelTasks, function (err) {
+    if (err) return app.err(err, res);
+    return res.send(200);
   });
 }
 
