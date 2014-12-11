@@ -33,25 +33,18 @@ var actorSchema = new Schema({
   _type: {
     type: String,
     enum: ['User', 'Event']
-  }
-});
-
-var userActorSchema = actorSchema.extend({
-  id: {
+  },
+  userId: {
     type: ObjectId,
     ref: 'User'
-  }
-});
-
-var eventActorSchema = actorSchema.extend({
-  id: {
+  },
+  eventId: {
     type: ObjectId,
     ref: 'Event'
   }
 });
 
-var userActor = mongoose.model('UserActor', userActorSchema);
-var eventActor = mongoose.model('EventActor', eventActorSchema);
+var actor = mongoose.model('Actor', actorSchema);
 
 var ActionSchema = exports.Schema = new Schema({
   _type: {
@@ -65,7 +58,7 @@ var ActionSchema = exports.Schema = new Schema({
 ActionSchema.statics = {
   newSignupAction: function (user, cb) {
     if (!cb) cb = function (){};
-    var subjectActor = new userActor({_type: 'User', id: user});
+    var subjectActor = new actor({_type: 'User', userId: user._id});
     var action = new app.Action({
       _type: actionTypes.signup,
       subject: [subjectActor]
@@ -75,8 +68,8 @@ ActionSchema.statics = {
 
   newCreateEventAction: function (event, cb) {
     if (!cb) cb = function (){};
-    var objectActor = new eventActor({_type: 'Event', id: event});
-    var subjectActor = new userActor({_type: 'User', id: event.organizator});
+    var objectActor = new actor({_type: 'Event', eventId: event});
+    var subjectActor = new actor({_type: 'User', userId: event.organizator});
     var action = new app.Action({
       _type: actionTypes.createEvent,
       object: [objectActor],
@@ -87,8 +80,8 @@ ActionSchema.statics = {
 
   newAttendEventAction: function (user, event, cb) {
     if (!cb) cb = function (){};
-    var subjectActor = new userActor({_type: 'User', id: user});
-    var objectActor = new eventActor({_type: 'Event', id: event});
+    var subjectActor = new actor({_type: 'User', userId: user});
+    var objectActor = new actor({_type: 'Event', eventId: event});
     var action = new app.Action({
       _type: actionTypes.attendEvent,
       object: [objectActor],
@@ -99,8 +92,8 @@ ActionSchema.statics = {
 
   newQuitEventAction: function (user, event, cb) {
     if (!cb) cb = function (){};
-    var subjectActor = new userActor({_type: 'User', id: user});
-    var objectActor = new eventActor({_type: 'Event', id: event});
+    var subjectActor = new actor({_type: 'User', userId: user});
+    var objectActor = new actor({_type: 'Event', eventId: event});
     var action = new app.Action({
       _type: actionTypes.quitEvent,
       object: [objectActor],
@@ -109,10 +102,10 @@ ActionSchema.statics = {
     return action.save(cb);
   },
 
-  newInviteAction: function (user, event, cb) {
+  newInviteAction: function (actorUser, user, event, cb) {
     if (!cb) cb = function (){};
-    var objectActor = new userActor({_type: 'User', id: user});
-    var subjectActor = new eventActor({_type: 'Event', id: event});
+    var objectActor = new actor({_type: 'User', userId: user});
+    var subjectActor = new actor({_type: 'Event', eventId: event, userId: actorUser});
     var action = new app.Action({
       _type: actionTypes.invite,
       object: [objectActor],
@@ -121,19 +114,71 @@ ActionSchema.statics = {
     return action.save(cb);
   },
 
-  newFollowAction: function (user, follower, cb) {
+  newFollowAction: function (follower, user, cb) {
     if (!cb) cb = function (){};
-    var objectActor = new userActor({_type: 'User', id: follower});
-    var subjectActor = new userActor({_type: 'User', id: user});
+    var objectActor = new actor({_type: 'User', userId: user});
+    var subjectActor = new actor({_type: 'User', userId: follower});
     var action = new app.Action({
       _type: actionTypes.follow,
       object: [objectActor],
       subject: [subjectActor]
     });
     return action.save(cb);
+  },
+
+  actionsForUser: function (user, offset, quantity, cb) {
+    app
+      .Action
+      .find({
+        $or: [{
+          'object.userId': user._id,
+          'object._type': 'User'
+        }, {
+          'subject.userId': user._id,
+          'subject._type': 'User'
+        }]
+      })
+      .sort({created: -1})
+      .skip(offset)
+      .limit(quantity)
+      .populate('object.userId object.eventId subject.userId subject.eventId')
+      .exec(cb);
   }
 };
 
+ActionSchema.methods = {
+  toJSON: function () {
+    var res = this.toObject({virtuals: true});
+    delete res.object;
+    delete res.subject;
+    delete res._id;
+    delete res.__v;
+
+    res.object = [];
+    res.subject = [];
+
+    _.each(this.object, function (actor) {
+      var jsonActor = actor.toObject();
+      delete jsonActor._id;
+
+      if (actor.userId) jsonActor.userId = actor.userId.toJSON();
+      if (actor.eventId) jsonActor.eventId = actor.eventId.toJSON();
+
+      res.object.push(jsonActor);
+    });
+
+    _.each(this.subject, function (actor) {
+      var jsonActor = actor.toObject();
+      delete jsonActor._id;
+
+      if (actor.userId) jsonActor.userId = actor.userId.toJSON();
+      if (actor.eventId) jsonActor.eventId = actor.eventId.toJSON();
+      res.subject.push(jsonActor);
+    });
+
+    return res;
+  }
+}
 ActionSchema.plugin(troop.timestamp, {
   useVirtual: false
 });
