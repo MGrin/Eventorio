@@ -113,7 +113,7 @@ exports.show = function (req, res) {
     },
     json: function () {
       var jsonEvent = req.event.toJSON();
-      jsonEvent.canAttend = req.user.canAttend(req.event);
+      if (req.user) jsonEvent.canAttend = req.user.canAttend(req.event);
       req.event.populateParticipantsForUser(req.user, function (err, participants) {
         jsonEvent.participants = participants;
         return res.jsonp(jsonEvent);
