@@ -143,6 +143,7 @@ UserSchema.methods = {
       this.following.push(user._id);
       this.save(cb);
       user.acceptFollower(this);
+      app.Action.newFollowAction(this, user);
     } else {
       return cb(new Error('Already following'));
     }
@@ -194,6 +195,7 @@ UserSchema.methods = {
     if (event.invitedUsers.indexOf(this._id) !== -1) {
       event.invitedUsers.splice(event.invitedUsers.indexOf(this._id), 1);
     }
+    app.Action.newAttendEventAction(this, event);
     event.save(cb);
   },
 
@@ -204,6 +206,7 @@ UserSchema.methods = {
     if (event.invitedUsers.indexOf(this._id) === -1) {
       event.invitedUsers.push(this._id);
     }
+    app.Action.newQuitEventAction(this, event);
     event.save(cb);
   },
 
@@ -263,6 +266,7 @@ UserSchema.statics = {
         });
       }, function (next) {
         app.email.sendWelcomeMessage(savedUser);
+        app.Action.newSignupAction(savedUser);
         app.Event.replaceInvitations(savedUser, next);
       }
     ], function (err) {
