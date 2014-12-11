@@ -1,7 +1,6 @@
 .row-fluid(style="height: 100%")
-  .row.col-lg-10(ng-repeat="action in actions")
-    .panel.panel-info
-      .panel-body(ng-bind-html="action.message")
-        //- {{action.message}}
-      .panel-footer.text-right
-        .small {{action.readableTimestamp}}
+  .row.col-lg-10(ng-repeat="action in actions" action-directive action="action")
+
+.row-fluid
+  .col-lg-10.text-center
+    a(href="#", ng-click="loadMoreNews()") Show more news

@@ -16,8 +16,8 @@ app.factory('Users', ['$resource', '$http', 'Global', function ($resource, $http
       });
   }
 
-  user.getNews = function (cb) {
-    $http.get('/api/news')
+  user.getNews = function (offset, cb) {
+    $http.get('/api/news?offset='+offset)
       .success(function (response) {
         return cb(null, response);
       }).error(function (response) {

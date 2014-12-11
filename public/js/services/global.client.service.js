@@ -15,6 +15,14 @@ app.factory('Global', function () {
     monthNames: [ "January", "February", "March", "April", "May", "June",
       "July", "August", "September", "October", "November", "December" ],
     screenSize: screenSize,
+    actionTypes: {
+      signup: 'signup',
+      createEvent: 'create event',
+      invite: 'invite',
+      attendEvent: 'attend event',
+      quitEvent: 'quit event',
+      follow: 'follow'
+    },
     showError: function (err) {
       alert(err);
     }

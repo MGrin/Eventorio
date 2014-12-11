@@ -8,6 +8,7 @@ var mongoose = require('mongoose');
 var User = mongoose.model('User');
 var passport = require('passport');
 var async = require('async');
+var _ = require('underscore');
 
 exports.init = function (myApp) {
   app = myApp; // jshint ignore:line
@@ -127,7 +128,16 @@ exports.news = function (req, res) {
   var offset = req.query.offset || 0;
   var quantity = req.query.quantity || 20;
 
-  return res.jsonp([]);
+  app.Action.actionsForUser(user, offset, quantity, function (err, actions) {
+    if (err) return app.err(err, res);
+    var result = [];
+
+    _.each(actions, function (action) {
+      var jsonAction = action.toJSON();
+      result.push(jsonAction);
+    });
+    return res.jsonp(result);
+  });
 }
 
 exports.loadByUsername = function (req, res, next, username) {

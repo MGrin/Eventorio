@@ -162,18 +162,17 @@ EventSchema.methods = {
 
   invite: function (actor, email, cb) {
     var event = this;
-    app.User.findOne({$or: [{email: email}, {username: email}]}, function (err, user) {
+    app.User.findOne({$or: [{email: email}, {username: new RegExp(email, 'i')}]}, function (err, user) {
       if (err) return cb(err);
       if (!user) {
         app.email.sendInvitationMail(actor, {email: email, username: email}, event);
-
         if (event.invitedEmails.indexOf(email) === -1) {
           event.invitedEmails.push(email);
           event.save();
         }
       } else {
         app.email.sendInvitationMail(actor, user, event);
-        app.Action.newInviteAction(user, actor);
+        app.Action.newInviteAction(actor, user, event);
         if (event.invitedUsers.indexOf(user._id) === -1) {
           event.invitedUsers.push(user._id);
           event.save();
