@@ -70,7 +70,7 @@ html(lang="en", ng-app="EventorioApp")
 
             .user-username.col-lg-7.col-xs-8 {{user.username}}
               .row.visible-xs
-                .col-xs-12.user-name
+                .col-xs-12.user-name(style="color: black")
                   div(ng-if="user.name")
                     a.editable(ng-if="editable") {{user.name}}
                     p(ng-if="!editable") {{user.name}}

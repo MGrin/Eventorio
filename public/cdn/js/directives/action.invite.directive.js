@@ -7,6 +7,7 @@ app.directive('inviteAction', ['Global', function (Global) {
     link: function ($scope, element, attrs) {
       $(element).find('#actionTimestamp').text(moment($scope.action.created).format('MMMM Do YYYY, HH:mm:ss'));
       $(element).find('#actionImg').attr('src', $scope.action.object[0].userId.picture);
+      $(element).find('#actionImgLink').attr('href', '/users/'+$scope.action.object[0].userId.username);
       $(element).find('#subjectLink').attr('href', '/events/' + $scope.action.subject[0].eventId.id);
       $(element).find('#subjectName').text(' @' + $scope.action.subject[0].eventId.name);
       $(element).find('#objectLink').attr('href', '/users/' + $scope.action.object[0].userId.username);
@@ -15,6 +16,7 @@ app.directive('inviteAction', ['Global', function (Global) {
       $(element).find('#secondActionImg').css('margin-top', '10px');
       $(element).find('#secondActionImg').attr('src',
           $scope.action.subject[0].eventId.picture || '/img/event_logo.jpg');
+      $(element).find('#secondActionImgLink').attr('href', '/events/'+$scope.action.subject[0].eventId.id);
     },
   }
 }]);
