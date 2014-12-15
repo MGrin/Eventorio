@@ -8,10 +8,10 @@ html(lang="en", ng-app="EventorioApp")
     if (visible === 'full')
       .row-fluid
         .col-lg-4
-          .row
+          .row-fluid
             #calendars.col-lg-12(ng-controller="CalendarController")
               include monthly.server.jade
-          .row
+          .row-fluid
             #day-events.col-lg-12(ng-controller="DaylyController")
               include daily.server.jade
 
@@ -19,16 +19,16 @@ html(lang="en", ng-app="EventorioApp")
           #news-feed.col-lg-12.hidden-xs(ng-controller="NewsFeedController")
             include newsfeed.server.jade
     else if (visible === 'calendar')
-      .row
+      .row-fluid
         #calendars.col-xs-12(ng-controller="CalendarController")
           include monthly.server.jade
 
-      .row
+      .row-fluid
         #day-events.col-xs-12(ng-controller="DaylyController")
           include daily.server.jade
 
     else if (visible === 'news')
-      .row
+      .row-fluid
         #news-feed.col-xs-12(ng-controller="NewsFeedController")
           include newsfeed.server.jade
 
