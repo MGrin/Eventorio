@@ -80,55 +80,46 @@ html(lang="en", ng-app="EventorioApp")
 
             .row.visible-xs
               .user-events.col-xs-12.visible-xs(ng-if="user.events")
-                p.text-center(ng-if="!editable") {{user.username}}'s upcoming events:
-                p.text-center(ng-if="editable") Your upcoming events:
+                p.text-center(ng-if="user.events.length === 0", style="color: grey; opacity: 0.7") No upcoming events
+                p.text-center(ng-if="user.events.length !== 0 && !editable") {{user.username}}'s upcoming events:
+                p.text-center(ng-if="user.events.length !== 0 && editable") Your upcoming events:
                 .col-lg-6(ng-repeat="event in user.events" event-line event="event")
 
-            .hidden-xs
-              .row#userTabs.visible-xs
-                .col-xs-12.text-center
-                  table.table
-                    tr
-                      td#followersTab
-                        a(href="#", ng-click="showTab('#followersTab');")
-                          | {{user.followers.length || 0}}
-                          br
-                          | Followers
-                      td#followingTab
-                        a(href="#", ng-click="showTab('#followingTab');")
-                          | {{user.following.length || 0}}
-                          br
-                          | Following
-              .row.visible-xs
-                .col-xs-12(ng-show="tab === '#followersTab'")
-                  p.text-center(style="color: gray", ng-if="user.followers.length === 0") No followers
-                  table.table(ng-repeat="us in user.followers")
-                    tr
-                      td
-                        img.img.img-responsive.img-thumbnail.col-xs-2(ng-src="{{us.picture}}")
-                      td
-                        a(href="/users/{{us.username}}") {{us.username}}
-                      td
-                        a(href="/users/{{us.username}}") {{us.name}}
+            .row#userTabs.visible-xs
+              .col-xs-12.text-center
+                table.table
+                  tr
+                    td#followersTab
+                      a(href="#", ng-click="showTab('#followersTab');")
+                        | {{user.followers.length || 0}}
+                        br
+                        | Followers
+                    td#followingTab
+                      a(href="#", ng-click="showTab('#followingTab');")
+                        | {{user.following.length || 0}}
+                        br
+                        | Following
+            //- .row.visible-xs
+            //-   .col-xs-12(ng-show="tab === '#followersTab'")
+            //-     p.text-center(style="color: gray", ng-if="user.followers.length === 0") No followers
+            //-     table.table(ng-repeat="us in user.followers")
+            //-       tr
+            //-         td
+            //-           img.img.img-responsive.img-thumbnail.col-xs-2(ng-src="{{us.picture}}")
+            //-         td
+            //-           a(href="/users/{{us.username}}") {{us.username}}
+            //-         td
+            //-           a(href="/users/{{us.username}}") {{us.name}}
 
-                .col-xs-12(ng-show="tab === '#followingTab'")
-                  table.table(ng-repeat="us in user.following")
-                    tr
-                      td
-                        img.img.img-responsive.img-thumbnail.col-xs-2(ng-src="{{us.picture}}")
-                      td
-                        a(href="/users/{{us.username}}") {{us.username}}
-                      td
-                        a(href="/users/{{us.username}}") {{us.name}}
-
-              .row-fluid.visible-xs(ng-if="global.me && !editable")
-                .col-xs-12.text-center
-                  button.btn.btn-success.col-lg-12(
-                    ng-if="global.me.following.indexOf(user.id) === -1"
-                    ng-click="follow()") Follow
-                  button.btn.btn-default.btn-sm.col-lg-6.col-lg-offset-3(
-                    ng-if="global.me.following.indexOf(user.id) !== -1"
-                    ng-click="unfollow()") Unfollow
+            //-   .col-xs-12(ng-show="tab === '#followingTab'")
+            //-     table.table(ng-repeat="us in user.following")
+            //-       tr
+            //-         td
+            //-           img.img.img-responsive.img-thumbnail.col-xs-2(ng-src="{{us.picture}}")
+            //-         td
+            //-           a(href="/users/{{us.username}}") {{us.username}}
+            //-         td
+            //-           a(href="/users/{{us.username}}") {{us.name}}
 
             .row.visible-xs
               .user-description.col-xs-10.col-xs-offset-1
@@ -138,6 +129,15 @@ html(lang="en", ng-app="EventorioApp")
                 div(ng-if="!user.desc")
                   a.editable(ng-if="editable", style="opacity: 0.5;") Tell us something about you
                   p(ng-if="!editable") No description
+
+            .row-fluid.visible-xs(ng-if="global.me && !editable")
+              .col-xs-12.text-center
+                button.btn.btn-success.col-xs-12(
+                  ng-if="global.me.following.indexOf(user.id) === -1"
+                  ng-click="follow()") Follow
+                button.btn.btn-default.btn-sm.col-lg-6.col-xs-offset-3(
+                  ng-if="global.me.following.indexOf(user.id) !== -1"
+                  ng-click="unfollow()") Unfollow
 
           .row-fluid.hidden-xs
             .user-description.col-lg-7
