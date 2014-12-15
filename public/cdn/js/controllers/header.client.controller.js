@@ -5,6 +5,10 @@ app.controller('HeaderController', ['$scope', '$rootScope', '$location', 'Global
   Users.getCurrentUser(function () {
     $scope.show = true;
     $rootScope.$broadcast('me');
+
+    if (window.location.pathname === '/calendar' || window.location.pathname === '/app') $('#calendar-menu').addClass('active');
+    if (window.location.pathname === '/news') $('#news-menu').addClass('active');
+    if (window.location.pathname === '/users/' +  Global.me.username) $('#profile-menu').addClass('active')
   });
 
   $scope.login = function () {
@@ -52,7 +56,8 @@ app.controller('HeaderController', ['$scope', '$rootScope', '$location', 'Global
           }, 2000);
           return;
         }
-        window.location = '/app';
+        if (Global.screenSize === 'lg') window.location = '/app';
+        else if (Global.screenSize === 'xs') window.location = '/calendar'
       });
     }
   }

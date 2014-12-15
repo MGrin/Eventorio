@@ -3,36 +3,71 @@ div(ng-controller="HeaderController")
     .container-fluid
       .navbar-header
         button.navbar-toggle.collapsed(type="button", data-toggle="collapse", data-target="#navbar")
-          span.sr-only
+          span.icon-bar
           span.icon-bar
           span.icon-bar
 
-        a.navbar-brand(style="padding-top: 12px", href="/app")
-          img.img-circle.pull-left(style="height: 30px; margin-right: 10px", src="/img/logo_white_on_blue.png")
+        a.navbar-brand.hidden-xs(style="padding-top: 12px", href="/app")
+          img.img-circle.pull-left(alt="{{global.config.appName}}", style="height: 30px; margin-right: 10px", src="/img/logo_white_on_blue.png")
+          span {{global.config.appName}}
+        a.navbar-brand.visible-xs(style="padding-top: 12px", href="/calendar")
+          img.img-circle.pull-left(alt="{{global.config.appName}}", style="height: 30px; margin-right: 10px", src="/img/logo_white_on_blue.png")
           span {{global.config.appName}}
 
-      #navbar.collapse.navbar-collapse
-        ul.nav.navbar-nav
-          li
-            a(href="/") Home
+      #navbar.collapse.navbar-collapse.text-center
+        .visible-lg.visible-md.visible-sm
+          ul.nav.navbar-nav
+            li
+              a(href="/") Home
 
-        ul.nav.navbar-nav.navbar-right(ng-show="show")
-          li.dropdown(ng-if="!global.me")
-            button.btn.btn-default.navbar-btn(data-toggle="modal", data-target="#loginModal")
-              | Login
+          ul.nav.navbar-nav.navbar-right(ng-show="show")
+            li(ng-if="!global.me")
+              a(href="#", data-toggle="modal", data-target="#loginModal")
+                span.glyphicon.glyphicon-off(style="margin-right: 10px")
+                span Login
+            li.dropdown(ng-if="global.me")
+              a.dropdown-toggle(href="#", data-toggle="dropdown")
+                img.img-circle(style="height: 18px; margin-right: 10px", ng-src="{{global.me.picture}}")
+                span {{global.me.username}}
+                span.caret
+              ul.dropdown-menu(role="menu", style="padding: 17px")
+                li
+                  a(href="/users/{{global.me.username}}")
+                    | Profile
+                li
+                  a(href="/logout")
+                    | Logout
 
-          li.dropdown(ng-if="global.me")
-            a.dropdown-toggle(href="#", data-toggle="dropdown")
-              img.img-circle(style="height: 18px; margin-right: 10px", ng-src="{{global.me.picture}}")
-              span {{global.me.username}}
-              span.caret
-            ul.dropdown-menu(role="menu", style="padding: 17px")
-              li
-                a(href="/users/{{global.me.username}}")
-                  | Profile
-              li
-                a(href="/logout")
-                  | Logout
+        .visible-xs
+          ul.nav.navbar-nav.navbar-right(ng-show="show && !global.me")
+            li
+              a(href="#", data-toggle="modal", data-target="#loginModal")
+                span.glyphicon.glyphicon-off(style="margin-right: 10px")
+                span Login
+          ul.nav.navbar-nav.navbar-right(ng-show="show && global.me")
+            li#profile-menu
+              a(href="/users/{{global.me.username}}")
+                img.img-circle(style="height: 30px; margin-right: 10px", ng-src="{{global.me.picture}}")
+                span {{global.me.username}}
+            li#calendar-menu
+              a(href="/calendar")
+                span.glyphicon.glyphicon-calendar(style="margin-right: 10px")
+                span Calendar
+            li#news-menu
+              a(href="/news")
+                span.glyphicon.glyphicon-bullhorn(style="margin-right: 10px")
+                span News
+            li#create-event-menu
+              a(href="/events/new")
+                span.glyphicon.glyphicon-plus-sign(style="margin-right: 10px")
+                span Create event
+            .clearfix
+            br
+            br
+            li
+              a(href="/logout")
+                span.glyphicon.glyphicon-off(style="margin-right: 10px")
+                span Logout
 
   #loginModal.modal.fade(tabindex="-1", role="dialog", aria-hidden="true")
     .modal-dialog

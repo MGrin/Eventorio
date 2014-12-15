@@ -6,15 +6,15 @@ html(lang="en", ng-app="EventorioApp", style="background-image: url(/img/bg.jpg)
     include ../layouts/header.server.jade
 
     .container-fluid(ng-controller="LandingController")
-      .col-lg-9.col-md-8.col-sm-6.hidden-xs.landing-text
-        .col-lg-3.col-md-3.hidden-sm
+      .col-lg-9.hidden-xs.landing-text
+        .col-lg-3.hidden-sm
           img#big-logo.img-responsive.img-circle(src="/img/logo_white_on_black.png")
-        .page-header.col-lg-9.col-md-9.col-sm-10
+        .page-header.col-lg-9
           h1 Welcome to Eventorio!
           h2 Blablabla
           p More blabla nad blablabla
       if !user
-        #signup-box.col-lg-3.col-md-4.col-sm-6.col-xs-12.pull-right
+        #signup-box.col-lg-3.col-xs-12.pull-right
           .jumbotron
             h2.title
               | Sign up!
@@ -29,4 +29,11 @@ html(lang="en", ng-app="EventorioApp", style="background-image: url(/img/bg.jpg)
                 input.form-control(type="password", name="repeatedPassword", placeholder="Repeat password")
               button.btn.btn-success.pull-right(ng-click="signup()")
                 | Create account
+      .col-xs-12.visible-xs.landing-text
+        .col-lg-3.hidden-sm
+          img#big-logo.img-responsive.img-circle(src="/img/logo_white_on_black.png")
+        .page-header.col-lg-9
+          h1 Welcome to Eventorio!
+          h2 Blablabla
+          p More blabla nad blablabla
 

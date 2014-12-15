@@ -14,5 +14,13 @@ exports.index = function (req, res) {
 };
 
 exports.app = function (req, res) {
-  res.render('app/app.server.jade', {user: req.user});
+  res.render('app/app.server.jade', {user: req.user, visible: 'full'});
 };
+
+exports.calendar = function (req, res) {
+  res.render('app/app.server.jade', {user: req.user, visible: 'calendar'});
+};
+
+exports.news = function (req, res) {
+  res.render('app/app.server.jade', {user: req.user, visible: 'news'});
+}
