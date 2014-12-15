@@ -13,7 +13,6 @@ app.controller('UserController', ['$scope', 'Global', 'Users', 'Events', functio
       Events.getUserEvents($scope.user, 0, function (err, events) {
         if (err) return alert(err);
         $scope.user.events = events;
-        $scope.showTab('#followersTab');
       });
       setTimeout(function () {
         $scope.setupEditable();
@@ -51,12 +50,6 @@ app.controller('UserController', ['$scope', 'Global', 'Users', 'Events', functio
       showbuttons: 'right'
     });
   };
-
-  $scope.showTab = function (tab) {
-    $scope.tab = tab;
-    $('td').removeClass('info');
-    $(tab).addClass('info');
-  }
 
   $scope.follow = function () {
     Users.follow($scope.user.id, function (err) {

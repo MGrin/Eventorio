@@ -151,10 +151,6 @@ a:hover,
 .has-error {
   color: #a94442;
 }
-#userTabs {
-  max-height: 100px;
-  padding-top: 20px;
-}
 .user-events {
   padding-top: 20px;
 }
