@@ -129,10 +129,10 @@ html(lang="en", ng-app="EventorioApp")
             li
               .row(ng-if="mode === 'Normal' && event.canAttend")
                 h3.event-user-attendance.col-lg-8.col-xs-12
-                  button.btn.btn-info.col-lg-12(
+                  button.btn.btn-info.col-lg-12.col-xs-12(
                     ng-if="event.attendees.indexOf(global.me.id) === -1"
                     ng-click="attendTheEvent()") I will go
-                  button.btn.btn-default.col-lg-12(
+                  button.btn.btn-default.col-lg-12.col-xs-12(
                     ng-if="event.attendees.indexOf(global.me.id) !== -1"
                     ng-click="quitTheEvent()") I will not go
             li
