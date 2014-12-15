@@ -3,16 +3,34 @@ html(lang="en", ng-app="EventorioApp")
   include ../layouts/head.server.jade
   body(style="background-image: url(/img/bg_opacity.jpeg)")
     include ../layouts/header.server.jade
+
     #application-content(ng-controller="ApplicationController")
+    if (visible === 'full')
       .row-fluid
-        #calendars.col-lg-4.col-md-6.col-sm-6.col-xs-12(ng-controller="CalendarController")
+        .col-lg-4
+          .row
+            #calendars.col-lg-12(ng-controller="CalendarController")
+              include monthly.server.jade
+          .row
+            #day-events.col-lg-12(ng-controller="DaylyController")
+              include daily.server.jade
+
+        .col-lg-8
+          #news-feed.col-lg-12.hidden-xs(ng-controller="NewsFeedController")
+            include newsfeed.server.jade
+    else if (visible === 'calendar')
+      .row
+        #calendars.col-xs-12(ng-controller="CalendarController")
           include monthly.server.jade
 
-        #news-feed.col-lg-8.visible-lg.pull-right(ng-controller="NewsFeedController")
+      .row
+        #day-events.col-xs-12(ng-controller="DaylyController")
+          include daily.server.jade
+
+    else if (visible === 'news')
+      .row
+        #news-feed.col-xs-12(ng-controller="NewsFeedController")
           include newsfeed.server.jade
 
-      .row-fluid
-        #day-events.col-lg-4.col-md-6.col-sm-6.col-xs-12(ng-controller="DaylyController")
-          include daily.server.jade
 
   include ../layouts/scripts.server.jade

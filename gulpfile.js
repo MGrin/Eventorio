@@ -3,6 +3,7 @@ var nodemon = require('gulp-nodemon');
 var jsmin = require('gulp-jsmin');
 var stylus = require('gulp-stylus');
 var watch = require('gulp-watch');
+var jade = require('gulp-jade');
 
 var fs = require('fs');
 var findit = require('findit');
@@ -30,8 +31,16 @@ gulp.task('compile', function () {
     gulp.src('./public/stylus/*.styl')
       .pipe(stylus())
       .pipe(gulp.dest('./public/css/'));
+
+    gulp.src('./public/jade/*.jade')
+      .pipe(jade({}))
+      .pipe(gulp.dest('./public/view/'));
+
+    gulp.src('./public/jade/actions/*.jade')
+      .pipe(jade({}))
+      .pipe(gulp.dest('./public/view/actions/'));
   }
-  watch('./public/stylus/*.styl', function (files) {
+  watch(['./public/stylus/*', './public/jade/*', './public/jade/actions/*'], function (files) {
     compile();
   });
   compile();

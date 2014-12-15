@@ -19,7 +19,12 @@ body
   min-height: 600px
 
 #currentDay
-  font-size: 2em
+  // xs
+  @media (max-width: 768px)
+    font-size 1.2em
+  // lg
+  @media (min-width: 1200px)
+    font-size: 2em
 
 #eventCreationDialog
   padding-top: 10px
@@ -80,10 +85,13 @@ a, .clickable
 .event-details
   ul
     list-style-type: none
+    padding-left: 0
     li
-      padding: 40px
       padding-left: 0
       padding-top: 0
+      // lg
+      @media (min-width: 1200px)
+        padding: 40px
 #eventButtons
   position: fixed
   bottom: 50px
@@ -99,10 +107,6 @@ a, .clickable
 
 .has-error
   color: #a94442
-
-.event-line
-  margin-top: 10px
-  border-top: 1px solid grey
 
 #userTabs
   max-height: 100px

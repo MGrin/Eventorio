@@ -9,6 +9,10 @@ module.exports = function (app, passport) {
      .get(index.index);
   app.route('/app')
     .get(users.requiresLogin, index.app);
+  app.route('/calendar')
+    .get(users.requiresLogin, index.calendar);
+  app.route('/news')
+    .get(users.requiresLogin, index.news);
 
   /** User routes */
   app.route('/login')

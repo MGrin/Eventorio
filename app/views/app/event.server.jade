@@ -5,14 +5,177 @@ html(lang="en", ng-app="EventorioApp")
   body(style="background-image: url(/img/bg_opacity.jpeg)")
     include ../layouts/header.server.jade
     .content-fluid(ng-controller="EventController", ng-init="edit = #{event.edit}", ng-show="show")
-      #eventButtons(role="group", ng-if="mode === 'Create' || mode === 'Edit'")
+      .row-fluid
+        img.img-responsive.img-event-header(src="/img/event_background.png")
+
+        .event-header.col-lg-12.hidden-xs
+          .col-lg-4.col-lg-offset-1
+            .row
+              .event-thumbnail.col-lg-12
+                img.img-responsive.img-thumbnail.col-lg-8(src="/img/event_logo.jpg")
+            .row
+              .col-lg-12.col-lg-offset-1.event-organizator(ng-if="mode === 'Normal'")
+                p(style="color: grey") Organized by&nbsp;&nbsp;
+                  span(style="color: black")
+                    a(href="/users/{{event.organizator.username}}", style="font-size: 2em")
+                      | {{event.organizator.username}}
+          .event-name.col-lg-7
+            a.editable(ng-if="mode === 'Create'") Event name
+            a.editable(ng-if="mode === 'Edit'") {{event.name}}
+            span(ng-if="mode === 'Normal'") {{event.name}}
+
+        .event-header.col-xs-12.visible-xs
+          .row-fluid
+            .col-xs-4.col-xs-offset-1.event-thumbnail
+              img.img-responsive.img-thumbnail.col-lg-8(src="/img/event_logo.jpg")
+            .event-name.col-xs-7
+              a.editable(ng-if="mode === 'Create'") Event name
+              a.editable(ng-if="mode === 'Edit'") {{event.name}}
+              span(ng-if="mode === 'Normal'") {{event.name}}
+
+          .row-fluid
+            .col-xs-6.event-organizator(ng-if="mode === 'Normal'")
+              p(style="color: grey") Organized by&nbsp;&nbsp;
+                span(style="color: black")
+                  a(href="/users/{{event.organizator.username}}")
+                    | {{event.organizator.username}}
+      .row-fluid
+        .event-details.col-lg-4.col-lg-offset-1.col-xs-12.col-xs-offset-0
+          ul
+            li
+              .event-date.col-lg-12.hidden-xs
+                a.big-text.editable(ng-if="mode === 'Create'") Date
+                a.big-text.editable(ng-if="mode === 'Edit'") {{event.readableDate}}
+                p.big-text(ng-if="mode === 'Normal'") {{event.readableDate}}
+              .event-date.col-xs-6.visible-xs
+                a.editable(ng-if="mode === 'Create'") Date
+                a.editable(ng-if="mode === 'Edit'") {{event.readableDate}}
+                p(ng-if="mode === 'Normal'") {{event.readableDate}}
+              .visible-xs
+                .event-time.col-xs-6(ng-show="!newEvent.allDay")
+                  a.editable(ng-if="mode === 'Create'") Time
+                  a.editable(ng-if="mode === 'Edit'") {{event.readableTime}}
+                  p(ng-if="mode === 'Normal'") {{event.readableTime}}
+                .col-xs-6(ng-show="newEvent.allDay")
+                  p(style="color: grey") all day event
+                .col-xs-6(ng-if="mode === 'Create'")
+                  .checkbox
+                    label
+                      input(type="checkbox", ng-model="newEvent.allDay")
+                      span All day
+                .col-xs-6(ng-if="mode === 'Edit'")
+                  .checkbox
+                    label
+                      input(type="checkbox", ng-model="newEvent.allDay", checked="{{event.isAllDay}}")
+                      span All day
+            li.hidden-xs
+              .event-time.col-lg-6(ng-show="!newEvent.allDay")
+                a.big-text.editable(ng-if="mode === 'Create'") Time
+                a.big-text.editable(ng-if="mode === 'Edit'") {{event.readableTime}}
+                p.big-text(ng-if="mode === 'Normal'") {{event.readableTime}}
+              .col-lg-6(ng-show="newEvent.allDay")
+                p.big-text(style="color: grey") all day event
+              .col-lg-6(ng-if="mode === 'Create'")
+                .checkbox
+                  label
+                    input(type="checkbox", ng-model="newEvent.allDay")
+                    span All day
+              .col-lg-6(ng-if="mode === 'Edit'")
+                .checkbox
+                  label
+                    input(type="checkbox", ng-model="newEvent.allDay", checked="{{event.isAllDay}}")
+                    span All day
+            li.visible-xs
+              .event-description.col-xs-12
+                div(ng-show="mode !== 'Normal'")
+                  h2 Description:
+                  textarea.col-lg-10
+                p(ng-if="mode === 'Normal'", ng-bind-html="event.desc")
+                i.glyphicon.glyphicon-pencil.visible-xs.pull-right(ng-if="mode === 'Normal' && global.me.id === event.organizator.id",
+                                                      ng-click="setEditable(true, 'Edit')")
+            li(style="color: grey")
+              .row
+                .event-visibility.col-lg-12.col-xs-11.col-xs-offset-1
+                  a.editable(ng-if="mode === 'Create'") Event is visible to everyone
+                  a.editable(ng-if="mode === 'Edit' && (event.permissions.visibility === 'public' || !event.permissions.visibility)")
+                    | Event is visible to everyone
+                  a.editable(ng-if="mode === 'Edit' && event.permissions.visibility === 'followers'")
+                    | Event is visible only to your followers
+                  a.editable(ng-if="mode === 'Edit' && event.permissions.visibility === 'invitations'")
+                    | Event is visible only to invited people
+
+                  span(ng-if="mode === 'Normal' && event.permissions.visibility === 'public'")
+                    | Event is visible to everyone
+                  span(ng-if="mode === 'Normal' && event.permissions.visibility === 'followers'")
+                    | Event is visible only to your followers
+                  span(ng-if="mode === 'Normal' && event.permissions.visibility === 'invitations'")
+                    | Event is visible only to invited people
+              .row
+                .event-attendance.col-lg-12.col-xs-11.col-xs-offset-1
+                  a.editable(ng-if="mode === 'Create'") Everyone can attend this event
+                  a.editable(ng-if="mode === 'Edit' && (event.permissions.attendance === 'public' || !event.permissions.attendance)")
+                    | Everyone can attend this event
+                  a.editable(ng-if="mode === 'Edit' && event.permissions.attendance === 'followers'")
+                    | Only your followers can attend this event
+                  a.editable(ng-if="mode === 'Edit' && event.permissions.attendance === 'invitations'")
+                    | Only invited people can attend this event
+
+                  span(ng-if="mode === 'Normal' && event.permissions.attendance === 'public'")
+                    | Everyone can attend this event
+                  span(ng-if="mode === 'Normal' && event.permissions.attendance === 'followers'")
+                    | Only your followers can attend this event
+                  span(ng-if="mode === 'Normal' && event.permissions.attendance === 'invitations'")
+                    | Only invited people can attend this event
+            li
+              .row(ng-if="mode === 'Normal' && event.canAttend")
+                h3.event-user-attendance.col-lg-8.col-xs-12
+                  button.btn.btn-info.col-lg-12(
+                    ng-if="event.attendees.indexOf(global.me.id) === -1"
+                    ng-click="attendTheEvent()") I will go
+                  button.btn.btn-default.col-lg-12(
+                    ng-if="event.attendees.indexOf(global.me.id) !== -1"
+                    ng-click="quitTheEvent()") I will not go
+            li
+              .row(ng-if="mode === 'Normal'")
+                .event-people.col-lg-8
+                  .col-lg-4.text-center(ng-repeat="us in event.participants")
+                    a(ng-href="/users/{{us.username}}")
+                      img.img.img-responsive.img-thumbnail(ng-src="{{us.picture}}")
+                      span {{us.username}}
+              .row(ng-if="mode === 'Normal'")
+                .col-lg-8.text-right.hidden-xs
+                  a(ng-click="showAllParticipants()"
+                    data-toggle="modal"
+                    data-target="#participantsModal") Show everybody on this event
+                .col-xs-12.text-center.visible-xs
+                  a(ng-click="showAllParticipants()"
+                    data-toggle="modal"
+                    data-target="#participantsModal") Show everybody on this event
+            li
+              .row(ng-if="mode === 'Normal' && global.me.id === event.organizator.id")
+                .col-lg-8.col-xs-12.text-center
+                  button.btn.btn-info.col-lg-12.col-xs-10.col-xs-offset-1(data-toggle="modal", data-target="#invitationModal") Invite!
+
+        .event-description.col-lg-7.hidden-xs
+          div(ng-show="mode !== 'Normal'")
+            h2 Description:
+            textarea.col-lg-10
+          p(ng-if="mode === 'Normal'", ng-bind-html="event.desc")
+
+        .col-xs-10.col-xs-offset-1.visible-xs(role="group")
+          button.btn.btn-info(ng-if="mode === 'Create'", type="button", ng-click="createEvent()") Create!
+          button.btn.btn-info(ng-if="mode === 'Edit'", type="button", ng-click="modifyEvent()") Save
+          button.btn.btn-default(ng-if="mode === 'Create'", type="button", ng-click="goBack()") Cancel
+          button.btn.btn-default(ng-if="mode === 'Edit'", type="button", ng-click="cancel()") Cancel
+
+      #eventButtons.hidden-xs(role="group", ng-if="mode !== 'Normal'")
         button.btn.btn-info.btn-lg(ng-if="mode === 'Create'", type="button", ng-click="createEvent()") Create!
         button.btn.btn-info.btn-lg(ng-if="mode === 'Edit'", type="button", ng-click="modifyEvent()") Save
         span(style="margin-left: 10px")
         button.btn.btn-default.btn-lg(ng-if="mode === 'Create'", type="button", ng-click="goBack()") Cancel
         button.btn.btn-default.btn-lg(ng-if="mode === 'Edit'", type="button", ng-click="cancel()") Cancel
 
-      #editButton(ng-if="mode === 'Normal' && global.me.id === event.organizator.id"
+      #editButton.hidden-xs(ng-if="mode === 'Normal' && global.me.id === event.organizator.id"
                   ng-click="setEditable(true, 'Edit')")
         button.btn.btn-default
           i.glyphicon.glyphicon-pencil
@@ -70,116 +233,5 @@ html(lang="en", ng-app="EventorioApp")
                       a(href="/users/{{us.username}}") {{us.username}}
                     td(style="border: none")
                       a(href="/users/{{us.username}}") {{us.name}}
-
             .modal-footer
               button.btn.btn-default(type='button', data-dismiss='modal') Cancel
-
-      .row-fluid
-        img.img-responsive.img-event-header(src="/img/event_background.png")
-
-        .event-header.col-lg-12.col-md-12.col-sm-12.hidden-xs
-          .col-lg-4.col-lg-offset-1.col-md-3.col-sm-4
-            .event-thumbnail.col-lg-12.col-md-12.col-sm-12
-              img.img-responsive.img-thumbnail.col-lg-8.col-md-12.col-sm-12(src="/img/event_logo.jpg")
-
-            .col-lg-offset-1.col-md-offset-1.col-sm-offset-1.hidden-xs.event-organizator(ng-if="mode === 'Normal'")
-              p(style="color: grey") Organized by&nbsp;&nbsp;
-                span(style="color: black")
-                  a(href="/users/{{event.organizator.username}}", style="font-size: 2em")
-                    | {{event.organizator.username}}
-
-          .event-name.col-lg-7.col-md-9.col-sm-8
-            a.editable(ng-if="mode === 'Create'") Event name
-            a.editable(ng-if="mode === 'Edit'") {{event.name}}
-            span(ng-if="mode === 'Normal'") {{event.name}}
-
-      .row-fluid
-        .event-details.col-lg-4.col-lg-offset-1.col-md-5.col-sm-4
-          ul
-            li
-              .event-date.col-lg-12.col-md-12.col-sm-12
-                a.big-text.editable(ng-if="mode === 'Create'") Date
-                a.big-text.editable(ng-if="mode === 'Edit'") {{event.readableDate}}
-                p.big-text(ng-if="mode === 'Normal'") {{event.readableDate}}
-            li
-              .event-time.col-lg-6.col-md-6.col-sm-6(ng-show="!newEvent.allDay")
-                a.big-text.editable(ng-if="mode === 'Create'") Time
-                a.big-text.editable(ng-if="mode === 'Edit'") {{event.readableTime}}
-                p.big-text(ng-if="mode === 'Normal'") {{event.readableTime}}
-              .col-lg-6.col-md-6.col-sm-6(ng-show="newEvent.allDay")
-                p.big-text(style="color: grey") all day event
-              .col-lg-6.col-md-6.col-sm-6(ng-if="mode === 'Create'")
-                .checkbox
-                  label
-                    input(type="checkbox", ng-model="newEvent.allDay")
-                    span All day
-              .col-lg-6.col-md-6.col-sm-6(ng-if="mode === 'Edit'")
-                .checkbox
-                  label
-                    input(type="checkbox", ng-model="newEvent.allDay", checked="{{event.isAllDay}}")
-                    span All day
-            li(style="color: grey")
-              .row-fluid
-                .event-visibility.col-lg-12
-                  a.editable(ng-if="mode === 'Create'") Event is visible to everyone
-                  a.editable(ng-if="mode === 'Edit' && (event.permissions.visibility === 'public' || !event.permissions.visibility)")
-                    | Event is visible to everyone
-                  a.editable(ng-if="mode === 'Edit' && event.permissions.visibility === 'followers'")
-                    | Event is visible only to your followers
-                  a.editable(ng-if="mode === 'Edit' && event.permissions.visibility === 'invitations'")
-                    | Event is visible only to invited people
-
-                  span(ng-if="mode === 'Normal' && event.permissions.visibility === 'public'")
-                    | Event is visible to everyone
-                  span(ng-if="mode === 'Normal' && event.permissions.visibility === 'followers'")
-                    | Event is visible only to your followers
-                  span(ng-if="mode === 'Normal' && event.permissions.visibility === 'invitations'")
-                    | Event is visible only to invited people
-              .row-fluid
-                .event-attendance.col-lg-12
-                  a.editable(ng-if="mode === 'Create'") Everyone can attend this event
-                  a.editable(ng-if="mode === 'Edit' && (event.permissions.attendance === 'public' || !event.permissions.attendance)")
-                    | Everyone can attend this event
-                  a.editable(ng-if="mode === 'Edit' && event.permissions.attendance === 'followers'")
-                    | Only your followers can attend this event
-                  a.editable(ng-if="mode === 'Edit' && event.permissions.attendance === 'invitations'")
-                    | Only invited people can attend this event
-
-                  span(ng-if="mode === 'Normal' && event.permissions.attendance === 'public'")
-                    | Everyone can attend this event
-                  span(ng-if="mode === 'Normal' && event.permissions.attendance === 'followers'")
-                    | Only your followers can attend this event
-                  span(ng-if="mode === 'Normal' && event.permissions.attendance === 'invitations'")
-                    | Only invited people can attend this event
-            li
-              .row-fluid(ng-if="mode === 'Normal' && event.canAttend")
-                h3.event-user-attendance.col-lg-8
-                  button.btn.btn-info.col-lg-12(
-                    ng-if="event.attendees.indexOf(global.me.id) === -1"
-                    ng-click="attendTheEvent()") I will go
-                  button.btn.btn-default.col-lg-12(
-                    ng-if="event.attendees.indexOf(global.me.id) !== -1"
-                    ng-click="quitTheEvent()") I will not go
-            li
-              .row-fluid(ng-if="mode === 'Normal'")
-                .event-people.col-lg-8
-                  .col-lg-4.text-center(ng-repeat="us in event.participants")
-                    a(ng-href="/users/{{us.username}}")
-                      img.img.img-responsive.img-thumbnail(ng-src="{{us.picture}}")
-                      span {{us.username}}
-              .row-fluid(ng-if="mode === 'Normal'")
-                .col-lg-8.text-right
-                  a(ng-click="showAllParticipants()"
-                    data-toggle="modal"
-                    data-target="#participantsModal") Show everybody on this event
-            li
-              .row-fluid(ng-if="mode === 'Normal' && global.me.id === event.organizator.id")
-                .col-lg-8.text-center
-                  button.btn.btn-info.col-lg-12(data-toggle="modal", data-target="#invitationModal") Invite!
-
-        .event-description.col-lg-7.col-md-7.col-sm-8
-          div(ng-show="mode === 'Create' || mode === 'Edit'")
-            h2 Description:
-            textarea.col-lg-10
-          p(ng-if="mode === 'Normal'", ng-bind-html="event.desc")
-

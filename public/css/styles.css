@@ -18,8 +18,15 @@ body {
 #news-feed {
   min-height: 600px;
 }
-#currentDay {
-  font-size: 2em;
+@media (max-width: 768px) {
+  #currentDay {
+    font-size: 1.2em;
+  }
+}
+@media (min-width: 1200px) {
+  #currentDay {
+    font-size: 2em;
+  }
 }
 #eventCreationDialog {
   padding-top: 10px;
@@ -115,11 +122,16 @@ a:hover,
 }
 .event-details ul {
   list-style-type: none;
+  padding-left: 0;
 }
 .event-details ul li {
-  padding: 40px;
   padding-left: 0;
   padding-top: 0;
+}
+@media (min-width: 1200px) {
+  .event-details ul li {
+    padding: 40px;
+  }
 }
 #eventButtons {
   position: fixed;
@@ -138,10 +150,6 @@ a:hover,
 }
 .has-error {
   color: #a94442;
-}
-.event-line {
-  margin-top: 10px;
-  border-top: 1px solid #808080;
 }
 #userTabs {
   max-height: 100px;
