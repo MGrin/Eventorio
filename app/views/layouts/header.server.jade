@@ -83,7 +83,10 @@ div(ng-controller="HeaderController")
               input.form-control(type="text", placeholder="Username", name="username")
             .form-group
               input.form-control(type="password", placeholder="Password", name="password")
+              input.form-control.hide(type="email", placeholder="Email", name="email")
 
+          a(href="#", ng-click="restorePasswordModal()") Restore password
         .modal-footer
           button.btn.btn-default(type='button', data-dismiss='modal') Cancel
           button#loginButton.btn.btn-success(type='button', ng-click="login()") Login
+          button#restoreButton.btn.btn-success.hide(type='button', ng-click="restore()") Restore

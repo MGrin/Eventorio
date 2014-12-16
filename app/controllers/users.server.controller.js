@@ -56,6 +56,16 @@ exports.activate = function (req, res) {
     if (err) return app.err(err, res);
     return res.redirect('/app');
   });
+};
+
+exports.restorePassword = function (req, res) {
+  var email = req.email;
+  var username = req.username;
+
+  app.User.restorePassword(email, username, function (err) {
+    if (err) return app.err(err, res);
+    return res.status(200);
+  });
 }
 
 exports.update = function (req, res) {

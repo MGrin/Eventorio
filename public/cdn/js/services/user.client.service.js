@@ -34,6 +34,16 @@ app.factory('Users', ['$resource', '$http', 'Global', function ($resource, $http
       })
   }
 
+  user.restore = function (username, email, cb) {
+    console.log(username, email);
+    $http.post('/restorePassword', {username: username, email: email})
+      .success(function (data, status, header, config) {
+        return cb();
+      }).error(function (data, status, header, config) {
+        return cb(data);
+      });
+  }
+
   user.follow = function (userId, cb) {
     $http.post('/api/follow', {userId: userId})
       .success(function (response) {
