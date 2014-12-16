@@ -115,7 +115,7 @@ UserSchema.methods = {
    * @return {String} password
    */
   createNewPassword: function () {
-    var p = lib.generatePassword(8);
+    var p = generatePassword(8);
     this.password = p;
     this.save(function () {});
     return p;
@@ -272,6 +272,18 @@ UserSchema.statics = {
     ], function (err) {
       return cb(err, savedUser);
     });
+  },
+
+  restorePassword: function (email, username, cb) {
+    app.User.findOne({email: email}, function (err, user) {
+      if (err) return cb(err);
+      if (!user) return cb(new Error('Wrong email'));
+      if (user.username !== username) return cb(new Error('Wrong email or username'));
+
+      var newPassword = user.createNewPassword();
+      app.email.sendRestorePassword(user, newPassword);
+      return cb();
+    })
   }
 }
 // Add joined and modified fields to the Schema
@@ -279,3 +291,15 @@ UserSchema.plugin(troop.timestamp, {
   useVirtual: false,
   createdPath: 'joined'
 });
+
+var generatePassword = function (length) {
+  var password = '';
+  var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-';
+  var size = chars.length;
+  _.times(length, function () {
+    // adds a random symbol to password
+    password += chars[Math.floor(Math.random() * size)];
+  });
+
+  return password;
+};
