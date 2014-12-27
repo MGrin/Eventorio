@@ -1,70 +1,57 @@
-app.controller('LandingController', ['$scope', '$location', 'Global', 'Users', function ($scope, $location, Global, Users) {
+app.controller('LandingController', ['$scope', '$location', 'Global', 'Auth', 'Notifications',
+  function ($scope, $location, Global, Auth, Notifications) {
   $scope.global = Global;
+  $scope.credentials = {
+    username: '',
+    email: '',
+    password: '',
+    repeatPassword: ''
+  };
+
+  $scope.addErrorClass = function (name) {
+    $('#signup-box input[name="' + name + '"]').parent().addClass('has-error');
+  };
+
+  $scope.clearErrors = function () {
+    _.each(_.keys($scope.credentials), function (field) {
+      $('#signup-box input[name="' + field + '"]').parent().removeClass('has-error');
+    });
+  };
 
   $scope.signup = function () {
-    var fields = {};
-    var validData = true;
-
-    $('#signup-box .jumbotron').find('input').each(function (index) {
-      var elem = this;
-
-      var field = $(elem).attr('name');
-      var val = $(elem).val();
-      fields[field] = val;
-
-      var fieldError = getErrorForField(field, val)
-      if (fieldError) {
-        validData = false;
-        if (!$(elem).parent().hasClass('has-error')) {
-          $(elem).parent().addClass('has-error');
-        }
-        $(this).popover({
-          content: fieldError,
-          placement: 'left',
-          trigger: 'manual'
-        });
-        $(this).popover('show');
-      } else {
-        if ($(elem).parent().hasClass('has-error')) {
-          $(elem).parent().removeClass('has-error');
-          $(this).popover('hide');
-        }
-      }
-    });
-
-    if (validData) {
-      $('#signup-box button').popover('destroy');
-      fields.hashedPassword = fields.password;
-      delete fields.password;
-      delete fields.repeatedPassword;
-
-      var user  = new Users(fields);
-      user.$save(function (res) {
-        window.location = '/app';
-      }, function (res) {
-        $('#signup-box button').popover({
-          content: res.data,
-          placement: 'left',
-          trigger: 'manual'
-        });
-        $('#signup-box button').popover('show');
-        setTimeout(function () {
-          $('#signup-box button').popover('hide');
-        }, 3000);
-      });
+    $scope.clearErrors();
+    if (!$scope.credentials.username) {
+      Notifications.error($('#signup-box form'), 'Username should contain only letters or digits and have more than 4 characters');
+      $scope.addErrorClass('username');
+      return;
     }
+
+    if (!$scope.credentials.email) {
+      Notifications.error($('#signup-box form'), 'Email is required');
+      $scope.addErrorClass('email');
+      return;
+    }
+
+    if (!$scope.credentials.password) {
+      Notifications.error($('#signup-box form'), 'Wrong password');
+      $scope.addErrorClass('password');
+      return;
+    }
+
+    if (!$scope.credentials.repeatPassword && $scope.credentials.repeatPassword !== $scope.credentials.password) {
+      Notifications.error($('#signup-box form'), 'Passwords are not equal');
+      $scope.addErrorClass('repeatPassword');
+      return;
+    }
+
+    Auth.signup($scope.credentials, function (err) {
+      if (err) {
+         Notifications.error($('#signup-box form'), err);
+         return;
+      }
+
+      if (Global.screenSize === 'lg') window.location = '/app';
+      else if (Global.screenSize === 'xs') window.location = '/calendar';
+    })
   }
-
-  var getErrorForField = function (field, value) {
-    if (!value || value === '') return 'Must not be empty!';
-
-    var usernameRE = /^[^\s\/\\\?\%\*\:\|\"<>\.]+$/;
-    if (field === 'username') {
-      if (!usernameRE.test(value) || value.length < 4 || value.length > 20) {
-        return 'Username should be more than 4 symbols and less than 20, and should not contain following symbols: /\|?:*".<>% and space'
-      }
-    }
-
-    return null;
-  };
 }]);

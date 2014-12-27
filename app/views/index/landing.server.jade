@@ -20,15 +20,33 @@ html(lang="en", ng-app="EventorioApp", style="background-image: url(/img/bg.jpg)
               | Sign up!
             form.form(role="form")
               .form-group
-                input.form-control(type="text", name="username", placeholder="Username")
+                input.form-control(type="text"
+                                    placeholder="Username"
+                                    name="username"
+                                    ng-model="credentials.username"
+                                    ng-pattern="/^[a-zA-Z0-9]{4,20}$/"
+                                    required)
               .form-group
-                input.form-control(type="email", name="email", placeholder="Email")
+                input.form-control(type="email"
+                                    placeholder="Email"
+                                    name="email"
+                                    ng-model='credentials.email'
+                                    required)
               .form-group
-                input.form-control(type="password", name="password", placeholder="Password")
+                input.form-control(type="password"
+                                    placeholder="Password"
+                                    name="password"
+                                    ng-model='credentials.password'
+                                    ng-pattern="/^.{8,}$/"
+                                    required)
               .form-group
-                input.form-control(type="password", name="repeatedPassword", placeholder="Repeat password")
-              button.btn.btn-success.pull-right(ng-click="signup()")
-                | Create account
+                input.form-control(type="password"
+                                    placeholder="Repeat password"
+                                    name="repeatPassword"
+                                    ng-model='credentials.repeatPassword'
+                                    required)
+            button.btn.btn-success.pull-right(ng-click="signup()") Create account
+
       .col-xs-12.visible-xs.landing-text
         .col-lg-3.hidden-sm
           img#big-logo.img-responsive.img-circle(src="/img/logo_white_on_black.png")
