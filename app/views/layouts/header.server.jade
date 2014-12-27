@@ -76,21 +76,48 @@ div(ng-controller="HeaderController")
           button.close(type='button', data-dismiss='modal')
             span(aria-hidden='true') ×
             span.sr-only Close
-          h4.modal-title(ng-if="!restoreView") Login to {{global.config.appName}}
-          h4.modal-title(ng-if="restoreView") Restore password
+          h4.modal-title(ng-if="view === 'login'") Login to {{global.config.appName}}
+          h4.modal-title(ng-if="view === 'restore'") Restore password
+          h4.modal-title(ng-if="view === 'signup'") Sign up to {{global.config.appName}}!
         #login-box.modal-body
           form.form(role="form")
             .form-group
-              input.form-control(type="text", placeholder="Username", name="username")
-            .form-group(ng-if="!restoreView")
-              input.form-control(type="password", placeholder="Password", name="password")
-            .form-group(ng-if="restoreView")
-              input.form-control(type="email", placeholder="Email", name="email")
+              input.form-control(type="text"
+                                  placeholder="Username"
+                                  name="username"
+                                  ng-model="credentials.username"
+                                  ng-pattern="/^[a-zA-Z0-9]{4,20}$/"
+                                  required)
+            .form-group(ng-if="view !== 'login'")
+              input.form-control(type="email"
+                                  placeholder="Email"
+                                  name="email"
+                                  ng-model='credentials.email'
+                                  required)
+            .form-group(ng-if="view !== 'restore'")
+              input.form-control(type="password"
+                                  placeholder="Password"
+                                  name="password"
+                                  ng-model='credentials.password'
+                                  ng-pattern="/^.{8,}$/"
+                                  required)
+            .form-group(ng-if="view === 'signup'")
+              input.form-control(type="password"
+                                  placeholder="Repeat password"
+                                  name="repeatPassword"
+                                  ng-model='credentials.repeatPassword'
+                                  required)
+
+          a.pull-left(href="#", ng-if="view !== 'signup'", ng-click="switchView('signup')")
+            big
+              label.label.label-info Sign up
+
           .text-right
-            a(href="#", ng-show="!restoreView", ng-click="restoreView=true") Restore password
-            a(href="#", ng-show="restoreView", ng-click="restoreView=false") Login
+            a(href="#", ng-show="view === 'login'", ng-click="switchView('restore')") Restore password
+            a(href="#", ng-show="view === 'restore'", ng-click="switchView('login')") Login
 
         .modal-footer
           button.btn.btn-default(type='button', data-dismiss='modal') Cancel
-          button#loginButton.btn.btn-success(ng-if="!restoreView", type='button', ng-click="login()") Login
-          button#restoreButton.btn.btn-success(ng-if="restoreView", type='button', ng-click="restorePassword()") Restore
+          button#loginButton.btn.btn-success(ng-if="view==='login'", type='button', ng-click="login()") Login
+          button#restoreButton.btn.btn-success(ng-if="view==='restore'", type='button', ng-click="restorePassword()") Restore
+          button.btn.btn-success.pull-right(ng-if="view==='signup'",ng-click="signup()") Create account

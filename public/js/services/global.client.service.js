@@ -22,9 +22,6 @@ app.factory('Global', function () {
       attendEvent: 'attend event',
       quitEvent: 'quit event',
       follow: 'follow'
-    },
-    showError: function (err) {
-      alert(err);
     }
   };
 

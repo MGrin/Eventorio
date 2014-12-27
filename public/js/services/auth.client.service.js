@@ -1,4 +1,4 @@
-app.factory('Auth', ['$http', function ($http) {
+app.factory('Auth', ['$http', 'Users', function ($http, Users) {
   'use strict';
 
   var auth = {};
@@ -20,5 +20,18 @@ app.factory('Auth', ['$http', function ($http) {
         return cb(data);
       });
   };
+
+  auth.signup = function (credentials, cb) {
+    credentials.hashedPassword = credentials.password;
+    delete credentials.password;
+    delete credentials.repeatPassword;
+
+    var user = new Users(credentials);
+    user.$save(function (res) {
+      return cb();
+    }, function (res) {
+      return cb(res.data);
+    });
+  }
   return auth;
 }]);
