@@ -1,5 +1,5 @@
-app.controller('HeaderController', ['$scope', '$rootScope', '$location', 'Global', 'Users',
-  function ($scope, $rootScope, $location, Global, Users) {
+app.controller('HeaderController', ['$scope', '$rootScope', '$location', 'Global', 'Users', 'Auth',
+  function ($scope, $rootScope, $location, Global, Users, Auth) {
   $scope.global = Global;
 
   Users.getCurrentUser(function () {
@@ -8,63 +8,57 @@ app.controller('HeaderController', ['$scope', '$rootScope', '$location', 'Global
 
     if (window.location.pathname === '/calendar' || window.location.pathname === '/app') $('#calendar-menu').addClass('active');
     if (window.location.pathname === '/news') $('#news-menu').addClass('active');
-    if (window.location.pathname === '/users/' +  Global.me.username) $('#profile-menu').addClass('active')
+    if (Global.me && window.location.pathname === '/users/' +  Global.me.username) $('#profile-menu').addClass('active')
   });
 
-  $scope.login = function () {
-    var fields = {};
-    var validData = true;
+  $scope.restorePassword = function () {
+    username = $('#login-box input[name="username"]').val() || '';
+    email = $('#login-box input[name="email"]').val() || '';
 
-    $('#login-box').find('input').each(function (index) {
-      var elem = this;
-
-      var field = $(elem).attr('name');
-      var val = $(elem).val();
-      fields[field] = val;
-
-      var fieldError = getErrorForField(field, val);
-      if (fieldError) {
-        validData = false;
-        if (!$(elem).parent().hasClass('has-error')) {
-          $(elem).parent().addClass('has-error');
-        }
-        $(this).popover({
-          content: fieldError,
-          trigger: 'manual'
+    Auth.restore(username, email, function (err) {
+      if (err) {
+        $('#restoreButton').popover({
+          content: err,
+          trigger: 'manual',
+          placement: 'left'
         });
-        $(this).popover('show');
-      } else {
-        if ($(elem).parent().hasClass('has-error')) {
-          $(elem).parent().removeClass('has-error');
-          $(this).popover('hide');
-          $(this).popover('destroy');
-        }
+        $('#restoreButton').popover('show');
+        setTimeout(function () {
+          $('#restoreButton').popover('destroy');
+        }, 2000);
+        return;
       }
-    });
 
-    if (validData) {
-      Users.login(fields.username, fields.password, function (err) {
-        if (err) {
-          $('#loginButton').popover({
-            content: err,
-            trigger: 'manual',
-            placement: 'left'
-          });
-          $('#loginButton').popover('show');
-          setTimeout(function () {
-            $('#loginButton').popover('hide');
-          }, 2000);
-          return;
-        }
-        if (Global.screenSize === 'lg') window.location = '/app';
-        else if (Global.screenSize === 'xs') window.location = '/calendar'
+      $('#loginModal').toggle();
+      $('#header').noty({
+        text: 'Email with new password was sent to you',
+        type: 'information',
+        layout: 'BottomLeft',
+        timeout: 2000
       });
-    }
-  }
+    });
+  };
 
-  var getErrorForField = function (field, value) {
-    if (!value || value === '') return 'Must not be empty!';
+  $scope.login = function () {
+    username = $('#login-box input[name="username"]').val() || '';
+    password = $('#login-box input[name="password"]').val() || '';
 
-    return null;
+    Auth.login(username, password, function (err) {
+      if (err) {
+        $('#loginButton').popover({
+          content: err,
+          trigger: 'manual',
+          placement: 'left'
+        });
+        $('#loginButton').popover('show');
+        setTimeout(function () {
+          $('#loginButton').popover('destroy');
+        }, 2000);
+        return;
+      }
+
+      if (Global.screenSize === 'lg') window.location = '/app';
+      else if (Global.screenSize === 'xs') window.location = '/calendar';
+    });
   }
 }]);

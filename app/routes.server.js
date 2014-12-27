@@ -24,6 +24,8 @@ module.exports = function (app, passport) {
   app.route('/users/:username')
     .get(users.show)
     .put(users.requiresLogin, users.update);
+  app.route('/restorePassword')
+    .post(users.restorePassword);
   app.param('username', users.loadByUsername);
 
   app.route('/activation/:activationCode')
