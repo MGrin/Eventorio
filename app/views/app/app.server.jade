@@ -10,7 +10,8 @@ html(lang="en", ng-app="EventorioApp")
         .col-lg-4.affix.affix-top
           .row-fluid
             #calendars.col-lg-12(ng-controller="CalendarController")
-              include monthly.server.jade
+              .row(calendar)
+              //- include monthly.server.jade
           .row-fluid
             #day-events.col-lg-12(ng-controller="DaylyController")
               include daily.server.jade
