@@ -56,6 +56,18 @@ exports.activate = function (req, res) {
     if (err) return app.err(err, res);
     return res.redirect('/app');
   });
+};
+
+exports.restorePassword = function (req, res) {
+  var username = req.body.username;
+  var email = req.body.email;
+
+  if (!username || !email) return app.err(new Error ('Wrong email or username'), res);
+
+  app.User.restorePassword(username, email, function (err) {
+    if (err) return app.err(err, res);
+    return res.sendStatus(200);
+  });
 }
 
 exports.update = function (req, res) {
@@ -157,7 +169,7 @@ exports.loadByUsername = function (req, res, next, username) {
           res.redirect('/');
         },
         json: function () {
-          res.send(500);
+          res.sendStatus(500);
         }
       });
     }

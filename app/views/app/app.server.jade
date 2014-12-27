@@ -6,8 +6,8 @@ html(lang="en", ng-app="EventorioApp")
 
     #application-content(ng-controller="ApplicationController")
     if (visible === 'full')
-      .row-fluid
-        .col-lg-4
+      .row-fluid.hidden-xs
+        .col-lg-4.affix.affix-top
           .row-fluid
             #calendars.col-lg-12(ng-controller="CalendarController")
               include monthly.server.jade
@@ -15,9 +15,17 @@ html(lang="en", ng-app="EventorioApp")
             #day-events.col-lg-12(ng-controller="DaylyController")
               include daily.server.jade
 
-        .col-lg-8
-          #news-feed.col-lg-12.hidden-xs(ng-controller="NewsFeedController")
+        .col-lg-8.col-lg-offset-4
+          #news-feed.col-lg-12(ng-controller="NewsFeedController")
             include newsfeed.server.jade
+
+      .row-fluid.visible-xs
+        .row-fluid
+          #calendars.col-lg-12(ng-controller="CalendarController")
+            include monthly.server.jade
+        .row-fluid
+          #day-events.col-lg-12(ng-controller="DaylyController")
+            include daily.server.jade
     else if (visible === 'calendar')
       .row-fluid
         #calendars.col-xs-12(ng-controller="CalendarController")

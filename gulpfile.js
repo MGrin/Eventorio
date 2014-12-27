@@ -5,77 +5,54 @@ var stylus = require('gulp-stylus');
 var watch = require('gulp-watch');
 var jade = require('gulp-jade');
 
-var fs = require('fs');
+var fs = require('fs-extra');
 var findit = require('findit');
 var path = require('path');
+var async = require('async');
 
 var scriptsFile = './app/views/layouts/scripts.server.jade';
 
 var ENV = process.env.NODE_ENV || 'development';
 
-var includeScripts = function () {
-  fs.unlink(scriptsFile);
-  var finder = findit('./public/cdn');
-
-  finder.on('file', function (file, stat) {
-    var basename = path.basename(file)
-    if (basename.match(/.js$/)) {
-      var filePath = file.replace('public/', '');
-      fs.appendFile(scriptsFile, "script(src=\"/" + filePath + "\")\n");
-    }
-  });
-}
-
 gulp.task('compile', function () {
-  var compile = function () {
-    gulp.src('./public/stylus/*.styl')
-      .pipe(stylus())
-      .pipe(gulp.dest('./public/css/'));
+  fs.mkdirpSync('./public/css/');
+  fs.mkdirpSync('./public/view/');
 
-    gulp.src('./public/jade/*.jade')
-      .pipe(jade({}))
-      .pipe(gulp.dest('./public/view/'));
+  gulp.src('./public/stylus/*.styl')
+    .pipe(stylus())
+    .pipe(gulp.dest('./public/css/'));
 
-    gulp.src('./public/jade/actions/*.jade')
-      .pipe(jade({}))
-      .pipe(gulp.dest('./public/view/actions/'));
-  }
-  watch(['./public/stylus/*', './public/jade/*', './public/jade/actions/*'], function (files) {
-    compile();
-  });
-  compile();
+  gulp.src('./public/jade/*.jade')
+    .pipe(jade({}))
+    .pipe(gulp.dest('./public/view/'));
+
+  gulp.src('./public/jade/actions/*.jade')
+    .pipe(jade({}))
+    .pipe(gulp.dest('./public/view/actions/'));
 });
 
 gulp.task('compress', function() {
-  var compress = function () {
-    if (ENV === 'production') {
-      gulp.src(['./public/js/*.js', './public/js/*/*.js'])
-        .pipe(jsmin())
-        .pipe(gulp.dest('./public/cdn/js/'));
-    } else {
-      gulp.src(['./public/js/*.js', './public/js/*/*.js'])
-      .pipe(gulp.dest('./public/cdn/js/'));
-    }
-    includeScripts();
-  }
-  watch(['./public/js/*.js', './public/js/*/*.js'], function (files) {
-    compress();
-  });
-  compress();
-});
+  fs.mkdirpSync('./public/cdn/');
 
-gulp.task('default', ['compile', 'compress'], function() {
-  // place code for your default task here
-  watch('*', function (files) {
-    nodemon({
-      script: 'app.js'
-    });
-  });
-  nodemon({
-    script: 'app.js'
-  });
+  if (ENV === 'production') {
+    gulp.src(['./public/js/*.js', './public/js/*/*.js'])
+      .pipe(jsmin())
+      .pipe(gulp.dest('./public/cdn/js/'));
+  } else {
+    gulp.src(['./public/js/*.js', './public/js/*/*.js'])
+    .pipe(gulp.dest('./public/cdn/js/'));
+  }
+
 });
 
 gulp.task('clean', function () {
-  fs.unlink(scriptsFile);
+  fs.removeSync('./public/cdn/');
+  fs.removeSync('./public/css/');
+  fs.removeSync('./public/view/');
+});
+
+gulp.task('default', ['clean', 'compile', 'compress'], function() {
+  nodemon({
+    script: 'app.js'
+  });
 });

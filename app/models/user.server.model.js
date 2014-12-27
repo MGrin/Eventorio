@@ -115,7 +115,7 @@ UserSchema.methods = {
    * @return {String} password
    */
   createNewPassword: function () {
-    var p = lib.generatePassword(8);
+    var p = app.lib.generatePassword(8);
     this.password = p;
     this.save(function () {});
     return p;
@@ -271,6 +271,19 @@ UserSchema.statics = {
       }
     ], function (err) {
       return cb(err, savedUser);
+    });
+  },
+
+  restorePassword: function (username, email, cb) {
+    var usernameRE = new RegExp('^' + username +'$', 'i');
+    app.User.findOne({username: usernameRE}, function (err, user) {
+      if (err) return cb(err);
+      if (!user) return cb(new Error('No user found'));
+      if (user.email !== email) return cb(new Error('Wrong email'));
+
+      var newPassword = user.createNewPassword();
+      app.email.sendNewPassword(user, newPassword);
+      return cb();
     });
   }
 }

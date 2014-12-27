@@ -76,14 +76,21 @@ div(ng-controller="HeaderController")
           button.close(type='button', data-dismiss='modal')
             span(aria-hidden='true') ×
             span.sr-only Close
-          h4.modal-title Login to {{global.config.appName}}
+          h4.modal-title(ng-if="!restoreView") Login to {{global.config.appName}}
+          h4.modal-title(ng-if="restoreView") Restore password
         #login-box.modal-body
           form.form(role="form")
             .form-group
               input.form-control(type="text", placeholder="Username", name="username")
-            .form-group
+            .form-group(ng-if="!restoreView")
               input.form-control(type="password", placeholder="Password", name="password")
+            .form-group(ng-if="restoreView")
+              input.form-control(type="email", placeholder="Email", name="email")
+          .text-right
+            a(href="#", ng-show="!restoreView", ng-click="restoreView=true") Restore password
+            a(href="#", ng-show="restoreView", ng-click="restoreView=false") Login
 
         .modal-footer
           button.btn.btn-default(type='button', data-dismiss='modal') Cancel
-          button#loginButton.btn.btn-success(type='button', ng-click="login()") Login
+          button#loginButton.btn.btn-success(ng-if="!restoreView", type='button', ng-click="login()") Login
+          button#restoreButton.btn.btn-success(ng-if="restoreView", type='button', ng-click="restorePassword()") Restore
