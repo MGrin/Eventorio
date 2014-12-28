@@ -71,21 +71,6 @@ EventSchema
     return this.invitedUsers.concat(this.attendees).concat(this.invitedEmails);
   });
 
-EventSchema
-  .virtual('readableDate')
-  .get(function () {
-    return moment(this.date).format('Do MMM YYYY');
-  });
-
-EventSchema
-  .virtual('readableTime')
-  .get(function () {
-    if (this.isAllDay) return 'All day';
-
-    return moment(this.date).format('HH:mm');
-  });
-
-
 EventSchema.methods = {
   modify: function (fields, organizator, cb) {
     if (this.organizator.id !== organizator.id) return cb(new Error('Not authorized'));

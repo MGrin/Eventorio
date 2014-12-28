@@ -4,7 +4,7 @@ html(lang="en", ng-app="EventorioApp")
   include ../layouts/scripts.server.jade
   body(style="background-image: url(/img/bg_opacity.jpeg)")
     include ../layouts/header.server.jade
-    .content-fluid(ng-controller="EventController", ng-init="edit = #{event.edit}", ng-show="show")
+    .content-fluid(ng-controller="EventController", ng-init="edit=#{event.edit}", ng-show="show")
       .row-fluid
         img.img-responsive.img-event-header(src="/img/event_background.png")
 
@@ -44,58 +44,23 @@ html(lang="en", ng-app="EventorioApp")
           ul
             li
               .event-date.col-lg-12.hidden-xs
-                a.big-text.editable(ng-if="mode === 'Create'") Date
-                a.big-text.editable(ng-if="mode === 'Edit'") {{event.readableDate}}
-                p.big-text(ng-if="mode === 'Normal'") {{event.readableDate}}
+                a.big-text.editable(ng-if="mode === 'Create'", data-toggle="modal", data-target="#dateAndTimePicker") {{event.date.format('Do MMM YYYY')}} {{event.date.format('HH:mm')}}
+                a.big-text.editable(ng-if="mode === 'Edit'", data-toggle="modal", data-target="#dateAndTimePicker") {{event.date.format('Do MMM YYYY')}} {{event.date.format('HH:mm')}}
+                p.big-text(ng-if="mode === 'Normal'") {{event.date.format('Do MMM YYYY')}} {{event.date.format('HH:mm')}}
               .event-date.col-xs-6.visible-xs
-                a.editable(ng-if="mode === 'Create'") Date
-                a.editable(ng-if="mode === 'Edit'") {{event.readableDate}}
-                p(ng-if="mode === 'Normal'") {{event.readableDate}}
-              .visible-xs
-                .event-time.col-xs-6(ng-show="!newEvent.allDay")
-                  a.editable(ng-if="mode === 'Create'") Time
-                  a.editable(ng-if="mode === 'Edit'") {{event.readableTime}}
-                  p(ng-if="mode === 'Normal'") {{event.readableTime}}
-                .col-xs-6(ng-show="newEvent.allDay")
-                  p(style="color: grey") all day event
-                .col-xs-6(ng-if="mode === 'Create'")
-                  .checkbox
-                    label
-                      input(type="checkbox", ng-model="newEvent.allDay")
-                      span All day
-                .col-xs-6(ng-if="mode === 'Edit'")
-                  .checkbox
-                    label
-                      input(type="checkbox", ng-model="newEvent.allDay", checked="{{event.isAllDay}}")
-                      span All day
-            li.hidden-xs
-              .event-time.col-lg-6(ng-show="!newEvent.allDay")
-                a.big-text.editable(ng-if="mode === 'Create'") Time
-                a.big-text.editable(ng-if="mode === 'Edit'") {{event.readableTime}}
-                p.big-text(ng-if="mode === 'Normal'") {{event.readableTime}}
-              .col-lg-6(ng-show="newEvent.allDay")
-                p.big-text(style="color: grey") all day event
-              .col-lg-6(ng-if="mode === 'Create'")
-                .checkbox
-                  label
-                    input(type="checkbox", ng-model="newEvent.allDay")
-                    span All day
-              .col-lg-6(ng-if="mode === 'Edit'")
-                .checkbox
-                  label
-                    input(type="checkbox", ng-model="newEvent.allDay", checked="{{event.isAllDay}}")
-                    span All day
+                a.editable(ng-if="mode === 'Create' && !event.date", data-toggle="modal", data-target="#dateAndTimePicker") Date and Time
+                a.editable(ng-if="mode === 'Create' && event.date", data-toggle="modal", data-target="#dateAndTimePicker") {{event.date.format('Do MMM YYYY')}} {{event.date.format('HH:mm')}}
+                a.editable(ng-if="mode === 'Edit'", data-toggle="modal", data-target="#dateAndTimePicker") {{event.date.format('Do MMM YYYY')}} {{event.date.format('HH:mm')}}
+                p(ng-if="mode === 'Normal'") {{event.date.format('Do MMM YYYY')}} {{event.date.format('HH:mm')}}
             li.visible-xs
               .event-description.col-xs-12
-                div(ng-show="mode !== 'Normal'")
-                  h2 Description:
-                  textarea.col-lg-10
+                textarea.eventDescriptionField.col-lg-10(ng-show="mode !== 'Normal'")
                 p(ng-if="mode === 'Normal'", ng-bind-html="event.desc")
-                i.glyphicon.glyphicon-pencil.visible-xs.pull-right(ng-if="mode === 'Normal' && global.me.id === event.organizator.id",
+                i.glyphicon.glyphicon-pencil.pull-right(ng-if="mode === 'Normal' && global.me.id === event.organizator.id",
                                                       ng-click="setEditable(true, 'Edit')")
             li(style="color: grey")
               .row
-                .event-visibility.col-lg-12.col-xs-11.col-xs-offset-1
+                .event-visibility.col-lg-12.col-lg-offset-0.col-xs-11.col-xs-offset-1
                   a.editable(ng-if="mode === 'Create'") Event is visible to everyone
                   a.editable(ng-if="mode === 'Edit' && (event.permissions.visibility === 'public' || !event.permissions.visibility)")
                     | Event is visible to everyone
@@ -111,7 +76,7 @@ html(lang="en", ng-app="EventorioApp")
                   span(ng-if="mode === 'Normal' && event.permissions.visibility === 'invitations'")
                     | Event is visible only to invited people
               .row
-                .event-attendance.col-lg-12.col-xs-11.col-xs-offset-1
+                .event-attendance.col-lg-12.col-lg-offset-0.col-xs-11.col-xs-offset-1
                   a.editable(ng-if="mode === 'Create'") Everyone can attend this event
                   a.editable(ng-if="mode === 'Edit' && (event.permissions.attendance === 'public' || !event.permissions.attendance)")
                     | Everyone can attend this event
@@ -154,9 +119,7 @@ html(lang="en", ng-app="EventorioApp")
                   button.btn.btn-info.col-lg-12.col-xs-10.col-xs-offset-1(data-toggle="modal", data-target="#invitationModal") Invite!
 
         .event-description.col-lg-7.hidden-xs
-          div(ng-show="mode !== 'Normal'")
-            h2 Description:
-            textarea.col-lg-10
+          textarea.eventDescriptionField.col-lg-10(ng-show="mode !== 'Normal'")
           p(ng-if="mode === 'Normal'", ng-bind-html="event.desc")
 
         .col-xs-10.col-xs-offset-1.visible-xs(role="group")
@@ -218,3 +181,37 @@ html(lang="en", ng-app="EventorioApp")
                 .col-lg-3.col-xs-4(ng-repeat="us in invited", user-small, user="us")
             .modal-footer
               button.btn.btn-default(type='button', data-dismiss='modal') Cancel
+
+      #dateAndTimePicker.modal.fade(tabindex="-1", role="dialog", aria-hidden="true")
+        .modal-dialog
+          .modal-content
+            .modal-header
+              button.close(type='button', data-dismiss='modal')
+                span(aria-hidden='true') ×
+                span.sr-only Close
+              h4.modal-title Choose date and time for your event
+            .model-body
+              .clearfix(style="margin-top: 10px")
+              .row
+                .col-lg-4.col-lg-offset-4
+                  .input-group.clockpicker(data-placement="bottom", data-align="top", data-autoclose="true")
+                    input.form-control(type="text", placeholder="Time")
+                    span.input-group-addon
+                        span.glyphicon.glyphicon-time
+              .row
+                .col-lg-10.col-lg-offset-1(ng-controller="CalendarController")
+                  .row(calendar)
+              .row
+                .col-lg-12(ng-controller="DaylyController")
+                  .row
+                    .col-lg-12
+                      .col-lg-10.col-lg-offset-1.text-center(ng-if="events.length === 0")
+                      .col-lg-11.col-lg-offset-1.col-xs-12(ng-if="events.length !== 0")
+                        .row(ng-repeat="event in events", event-line, event="event")
+            .modal-footer
+              .pull-left
+                label.big-text.label.label-success(ng-show="event.date") {{event.date.format('DD MMMM YYYY')}} {{event.date.format('HH:mm')}}
+              button.btn.btn-success(ng-if="event.date", type='button', data-dismiss='modal') Done
+              button.btn.btn-success(ng-if="!event.date", type='button', data-dismiss='modal', disabled=true) Done
+
+
