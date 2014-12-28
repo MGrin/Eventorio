@@ -25,24 +25,12 @@ html(lang="en", ng-app="EventorioApp")
           .row
             .event-details.col-lg-12.col-lg-offset-0.col-xs-12.col-xs-offset-0
               .row
-                .event-date.col-lg-12.hidden-xs
+                .event-date.col-lg-12.col-xs-12
                   a.big-text.editable(ng-if="mode === 'Create'", data-toggle="modal", data-target="#dateAndTimePicker") {{event.date.format('Do MMMM YYYY')}} {{event.date.format('HH:mm')}}
                   a.big-text.editable(ng-if="mode === 'Edit'", data-toggle="modal", data-target="#dateAndTimePicker") {{event.date.format('Do MMMM YYYY')}} {{event.date.format('HH:mm')}}
                   p.big-text(ng-if="mode === 'Normal'") {{event.date.format('Do MMMM YYYY')}} {{event.date.format('HH:mm')}}
-                .event-date.col-xs-6.visible-xs
-                  a.editable(ng-if="mode === 'Create' && !event.date", data-toggle="modal", data-target="#dateAndTimePicker") Date and Time
-                  a.editable(ng-if="mode === 'Create' && event.date", data-toggle="modal", data-target="#dateAndTimePicker") {{event.date.format('Do MMM YYYY')}} {{event.date.format('HH:mm')}}
-                  a.editable(ng-if="mode === 'Edit'", data-toggle="modal", data-target="#dateAndTimePicker") {{event.date.format('Do MMMM YYYY')}} {{event.date.format('HH:mm')}}
-                  p(ng-if="mode === 'Normal'") {{event.date.format('Do MMMM YYYY')}} {{event.date.format('HH:mm')}}
 
-              .row.visible-xs
-                .event-description.col-xs-12.visible-xs
-                  textarea.eventDescriptionField.col-lg-10(ng-show="mode !== 'Normal'", rows="10")
-                  p(ng-if="mode === 'Normal'", ng-bind-html="event.desc")
-                  i.glyphicon.glyphicon-pencil.pull-right(ng-if="mode === 'Normal' && global.me.id === event.organizator.id",
-                                                        ng-click="setEditable(true, 'Edit')")
-
-              .row(style="color: grey")
+              .row.hidden-xs(style="color: grey")
                 .row.text-right
                   .event-visibility.col-lg-8.col-lg-offset-0.col-xs-11.col-xs-offset-1
                     a.editable(ng-if="mode === 'Create'") Event is visible to everyone
@@ -85,9 +73,13 @@ html(lang="en", ng-app="EventorioApp")
                     ng-if="event.attendees.indexOf(global.me.id) !== -1"
                     ng-click="quitTheEvent()") I will not go
 
+              .row(ng-if="mode === 'Normal' && global.me.id === event.organizator.id")
+                .col-lg-7.col-xs-12.text-center(style="padding: 0px")
+                  button.btn.btn-info.col-lg-12.col-xs-10.col-xs-offset-1(data-toggle="modal", data-target="#invitationModal") Invite!
               .row(ng-if="mode === 'Normal'")
                 .event-people.col-lg-8
                   .col-lg-3.col-xs-4(ng-repeat="us in event.participants", user-small, user="us")
+
               .row(ng-if="mode === 'Normal'")
                 .col-lg-8.text-right.hidden-xs
                   a.big-text(ng-click="showAllParticipants()"
@@ -98,21 +90,42 @@ html(lang="en", ng-app="EventorioApp")
                     data-toggle="modal"
                     data-target="#participantsModal") Show everybody on this event
 
-              .row(ng-if="mode === 'Normal' && global.me.id === event.organizator.id")
-                .col-lg-7.col-xs-12.text-center(style="padding: 0px")
-                  button.btn.btn-info.col-lg-12.col-xs-10.col-xs-offset-1(data-toggle="modal", data-target="#invitationModal") Invite!
+              .row.visible-xs(ng-if="mode === 'Normal'")
+                ul.nav.nav-tabs
+                  li#descriptionTab.active(role="presentation")
+                    a(href="#", ng-click="showDescription()") Description
+                  li#commentsTab(role="presentation")
+                    a(href="#", ng-click="showComments()") Comments
+              .row.visible-xs(ng-show="view==='description'")
+                .event-description.col-xs-12.visible-xs
+                  i.glyphicon.glyphicon-pencil.pull-right(ng-if="mode === 'Normal' && global.me.id === event.organizator.id",
+                                                        ng-click="setEditable(true, 'Edit')")
+                  textarea.eventDescriptionField.col-lg-10(ng-show="mode !== 'Normal'", rows="10")
+                  p(ng-if="mode === 'Normal'", ng-bind-html="event.desc")
 
-        .col-lg-7.col-lg-offset-5
+              .row.visible-xs(ng-if="mode === 'Normal'", ng-show="view==='comments'")
+                .event-comments.col-lg-12
+                  .comment-line(ng-repeat="comment in event.comments", comment, item="comment")
+                  .form-inline
+                    img.col-xs-4.img.img-responsive(src="{{global.me.picture}}")
+                    .form-group.col-xs-8
+                      textarea.form-control.comment-input-xs(rows="3")
+                    button.btn.btn-info.col-xs-offset-8 Comment
+
+        .col-lg-7.col-lg-offset-5#rightSidebar
           .row.hidden-xs
             .event-name.col-lg-12
               a.editable(ng-if="mode === 'Create'") Event name
               a.editable(ng-if="mode === 'Edit'") {{event.name}}
               span(ng-if="mode === 'Normal'") {{event.name}}
-          .row
-            .event-description.col-lg-12.hidden-xs
+          .row.hidden-xs
+            .event-description.col-lg-12
               textarea.eventDescriptionField.col-lg-10(ng-show="mode !== 'Normal'", rows="30")
               p(ng-if="mode === 'Normal'", ng-bind-html="event.desc")
-
+          .row.hidden-xs
+            .event-comments.col-lg-12.hidden-xs
+              .comment-line(ng-repeat="comment in event.comments", comment, item="comment")
+              textarea.comment-input
 
         .col-xs-10.col-xs-offset-1.visible-xs(role="group")
           button.btn.btn-info(ng-if="mode === 'Create'", type="button", ng-click="createEvent()") Create!

@@ -3,6 +3,8 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
   $scope.global = Global;
   $scope.now = moment();
 
+  $scope.view = 'description';
+
   Events.updateMonthlyList($scope.now, function (err, events) {
     $rootScope.$broadcast('day', $scope.now, _.filter(events, function (event) {
       return moment(event.date).format('YYYYMMDD') === $scope.now.format('YYYYMMDD');
@@ -22,6 +24,20 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
     $('#leftSidebar').addClass('affix-top');
   }
 
+  $scope.showDescription = function () {
+    if ($scope.view === 'description') return;
+    $scope.view = 'description';
+    $('#descriptionTab').addClass('active');
+    $('#commentsTab').removeClass('active');
+  }
+  $scope.showComments = function () {
+    $('textarea.comment-input').wysihtml5();
+    if ($scope.view === 'comments') return;
+    $scope.view = 'comments';
+    $('#commentsTab').addClass('active');
+    $('#descriptionTab').removeClass('active');
+  }
+
   $scope.setEditable = function (status, mode) {
     if (status) {
       $scope.mode = mode;
@@ -31,9 +47,9 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
           visibility: 'public',
           attendance: 'public'
         };
-      } else {
-        console.log($scope.event);
       }
+
+      $scope.view='description';
 
       $('.event-name').editable({
         type: 'text',
