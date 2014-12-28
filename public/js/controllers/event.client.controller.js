@@ -109,12 +109,6 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
           "load": function() {
           },
           "blur": function() {
-            descHtml = $.parseHTML($(this)[0].textarea.element.value);
-            $(descHtml).find('img').each(function () {
-              $(this).addClass('img');
-              $(this).addClass('img-responsive');
-            });
-            $scope.event.desc = $(descHtml).html();
           }
         }
       });
@@ -177,7 +171,25 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
     });
   }
 
+  $scope.getDescription = function () {
+    var desc;
+    if (Global.screenSize === 'lg') desc = $('.event-description.hidden-xs textarea.eventDescriptionField').val();
+    else desc = $('.event-description.visible-xs textarea.eventDescriptionField').val();
+
+    desc = '<div>' + desc + '</div>';
+    descHtml = $(desc);
+    $(descHtml).each(function () {
+      $(this).find('img').each(function () {
+        $(this).addClass('img');
+        $(this).addClass('img-responsive');
+      });
+    });
+
+    return descHtml.prop('outerHTML');
+  };
+
   $scope.createEvent = function () {
+    $scope.event.desc = $scope.getDescription();
     if (!$scope.event.name || $scope.event.name.length < 1 || $scope.event.name > 20) {
       Notifications.error($('#header'), 'Name should not be empty and should not be longer than 20 characters');
       return;
@@ -192,6 +204,7 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
   }
 
   $scope.modifyEvent = function () {
+    $scope.event.desc = $scope.getDescription();
     if (!$scope.event.name || $scope.event.name.length < 1 || $scope.event.name > 20) {
       Notifications.error($('#header'), 'Name should not be empty and should not be longer than 20 characters');
       return;
