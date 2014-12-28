@@ -11,6 +11,19 @@ app.directive('calendar', ['$rootScope', function ($rootScope) {
 
           var date = moment(dateStr, 'YYYY-MM-DD');
           var events = events[dateStr] ? events[dateStr].dayEvents : [];
+
+          $('.day').find('a').each(function () {
+            $(this).css('background-color', 'transparent');
+            $(this).hover(function () {
+              $(this).css('background-color', '#eee');
+            }, function () {
+              $(this).css('background-color', 'transparent');
+            });
+          });
+          $(this).css('background-color', '#6BB0BA');
+          $(this).hover(function () {
+            $(this).css('background-color', '#6BB0BA');
+          });
           return $rootScope.$broadcast('day', date, events);
         }
       });

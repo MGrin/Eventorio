@@ -23,11 +23,10 @@ exports.load = function (req, res, next, id) {
 
 exports.create = function (req, res) {
   var fields = {
-    name: req.body.name,
+    name: req.body.title,
     desc: req.body.desc,
     location: req.body.location,
     date: req.body.date,
-    isAllDay: req.body.allDay,
     picture: req.body.picture,
     visibility: req.body.visibility,
     attendance: req.body.attendance

@@ -41,6 +41,7 @@ module.exports = function (app, passport) {
     .get(events.isAccessible, events.show)
     .post(users.requiresLogin, events.update);
 
+
   app.route('/api/follow')
     .post(users.requiresLogin, users.follow);
   app.route('/api/unfollow')
