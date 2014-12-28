@@ -109,7 +109,12 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
           "load": function() {
           },
           "blur": function() {
-            $scope.event.desc = $(this)[0].textarea.element.value;
+            descHtml = $.parseHTML($(this)[0].textarea.element.value);
+            $(descHtml).find('img').each(function () {
+              $(this).addClass('img');
+              $(this).addClass('img-responsive');
+            });
+            $scope.event.desc = $(descHtml).html();
           }
         }
       });

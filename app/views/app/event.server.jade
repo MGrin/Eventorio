@@ -54,7 +54,7 @@ html(lang="en", ng-app="EventorioApp")
                 p(ng-if="mode === 'Normal'") {{event.date.format('Do MMM YYYY')}} {{event.date.format('HH:mm')}}
             li.visible-xs
               .event-description.col-xs-12
-                textarea.eventDescriptionField.col-lg-10(ng-show="mode !== 'Normal'")
+                textarea.eventDescriptionField.col-lg-10(ng-show="mode !== 'Normal'", rows="30")
                 p(ng-if="mode === 'Normal'", ng-bind-html="event.desc")
                 i.glyphicon.glyphicon-pencil.pull-right(ng-if="mode === 'Normal' && global.me.id === event.organizator.id",
                                                       ng-click="setEditable(true, 'Edit')")
@@ -118,9 +118,10 @@ html(lang="en", ng-app="EventorioApp")
                 .col-lg-8.col-xs-12.text-center
                   button.btn.btn-info.col-lg-12.col-xs-10.col-xs-offset-1(data-toggle="modal", data-target="#invitationModal") Invite!
 
-        .event-description.col-lg-7.hidden-xs
-          textarea.eventDescriptionField.col-lg-10(ng-show="mode !== 'Normal'")
-          p(ng-if="mode === 'Normal'", ng-bind-html="event.desc")
+        .col-lg-7.hidden-xs
+          .event-description
+            textarea.eventDescriptionField.col-lg-10(ng-show="mode !== 'Normal'", rows="30")
+            p(ng-if="mode === 'Normal'", ng-bind-html="event.desc")
 
         .col-xs-10.col-xs-offset-1.visible-xs(role="group")
           button.btn.btn-info(ng-if="mode === 'Create'", type="button", ng-click="createEvent()") Create!
