@@ -17,6 +17,11 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
     });
   });
 
+  if (Global.screenSize === 'lg') {
+    $('#leftSidebar').addClass('affix');
+    $('#leftSidebar').addClass('affix-top');
+  }
+
   $scope.setEditable = function (status, mode) {
     if (status) {
       $scope.mode = mode;
@@ -43,7 +48,6 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
         showbuttons: false,
         success: function (response, newValue) {
           $scope.event.name = newValue;
-          console.log($scope.event);
         }
       });
 
