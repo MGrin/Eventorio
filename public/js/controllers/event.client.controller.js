@@ -1,7 +1,9 @@
-app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'Events', 'Notifications',
-  function ($scope, $rootScope, Global, Users, Events, Notifications) {
+app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'Events', 'Notifications', 'Comments',
+  function ($scope, $rootScope, Global, Users, Events, Notifications, Comments) {
   $scope.global = Global;
   $scope.now = moment();
+
+  $scope.view = 'description';
 
   Events.updateMonthlyList($scope.now, function (err, events) {
     $rootScope.$broadcast('day', $scope.now, _.filter(events, function (event) {
@@ -14,12 +16,29 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
       $scope.show = true;
       $scope.setEditable($scope.edit, ($scope.edit)?'Create':'Normal');
       $scope.event.date = moment($scope.event.date);
+
+      $scope.event.comments = Comments.get({eventId: window.location.pathname.split('/')[2]}, function () {
+        console.log($scope.event.comments);
+      });
     });
   });
 
   if (Global.screenSize === 'lg') {
     $('#leftSidebar').addClass('affix');
     $('#leftSidebar').addClass('affix-top');
+  }
+
+  $scope.showDescription = function () {
+    if ($scope.view === 'description') return;
+    $scope.view = 'description';
+    $('#descriptionTab').addClass('active');
+    $('#commentsTab').removeClass('active');
+  }
+  $scope.showComments = function () {
+    if ($scope.view === 'comments') return;
+    $scope.view = 'comments';
+    $('#commentsTab').addClass('active');
+    $('#descriptionTab').removeClass('active');
   }
 
   $scope.setEditable = function (status, mode) {
@@ -31,9 +50,9 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
           visibility: 'public',
           attendance: 'public'
         };
-      } else {
-        console.log($scope.event);
       }
+
+      $scope.view='description';
 
       $('.event-name').editable({
         type: 'text',
@@ -118,6 +137,9 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
       });
     } else {
       $scope.mode = 'Normal';
+      setTimeout(function () {
+        $('textarea.form-control.comment-input').wysihtml5();
+      }, 250);
     }
   }
 
@@ -173,12 +195,27 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
         Notifications.error($('#header'), err);
       }
     });
+  };
+
+  $scope.comment = function () {
+    var comment;
+    if (Global.screenSize === 'xs') comment = $('textarea.form-control.comment-input-xs').val();
+    else comment = $('textarea.form-control.comment-input').val();
+
+    comment = '<div>' + comment + '</div>'
+    var comment = new Comments({content: comment, event: $scope.event});
+    comment.$save(function (res) {
+      $scope.event.comments.comments.push(res);
+    }, function (res) {
+      Notifications.error($('#header'),res.data);
+    })
   }
 
   $scope.getDescription = function () {
     var desc;
-    if (Global.screenSize === 'lg') desc = $('.event-description.hidden-xs textarea.eventDescriptionField').val();
-    else desc = $('.event-description.visible-xs textarea.eventDescriptionField').val();
+
+    if (Global.screenSize === 'lg') desc = $('.hidden-xs .event-description textarea.eventDescriptionField').val();
+    else desc = $('.visible-xs .event-description textarea.eventDescriptionField').val();
 
     desc = '<div>' + desc + '</div>';
     descHtml = $(desc);
@@ -209,6 +246,7 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
 
   $scope.modifyEvent = function () {
     $scope.event.desc = $scope.getDescription();
+
     if (!$scope.event.name || $scope.event.name.length < 1 || $scope.event.name > 20) {
       Notifications.error($('#header'), 'Name should not be empty and should not be longer than 20 characters');
       return;
