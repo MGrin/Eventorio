@@ -67,50 +67,64 @@ html(lang="en", ng-app="EventorioApp")
               .row(ng-if="mode === 'Normal' && event.canAttend")
                 h3.event-user-attendance.col-lg-8.col-xs-12
                   button.btn.btn-info.col-lg-12.col-xs-12(
-                    ng-if="event.attendees.indexOf(global.me.id) === -1"
+                    ng-if="!attending"
                     ng-click="attendTheEvent()") I will go
                   button.btn.btn-default.col-lg-12.col-xs-12(
-                    ng-if="event.attendees.indexOf(global.me.id) !== -1"
+                    ng-if="attending"
                     ng-click="quitTheEvent()") I will not go
 
               .row(ng-if="mode === 'Normal' && global.me.id === event.organizator.id")
                 .col-lg-7.col-xs-12.text-center(style="padding: 0px")
                   button.btn.btn-info.col-lg-12.col-xs-10.col-xs-offset-1(data-toggle="modal", data-target="#invitationModal") Invite!
-              .row(ng-if="mode === 'Normal'")
-                .event-people.col-lg-8
-                  .col-lg-3.col-xs-4(ng-repeat="us in event.participants", user-small, user="us")
 
-              .row(ng-if="mode === 'Normal'")
-                .col-lg-8.text-right.hidden-xs
-                  a.big-text(ng-click="showAllParticipants()"
+              .row.hidden-xs(ng-if="mode === 'Normal'")
+                .col-lg-8.text-right
+                  a.big-text(
                     data-toggle="modal"
                     data-target="#participantsModal") Show everybody on this event
-                .col-xs-12.text-center.visible-xs
-                  a(ng-click="showAllParticipants()"
-                    data-toggle="modal"
-                    data-target="#participantsModal") Show everybody on this event
-
+              .margin-xs-10
               .row.visible-xs(ng-if="mode === 'Normal'")
                 ul.nav.nav-tabs
                   li#descriptionTab.active(role="presentation")
                     a(href="#", ng-click="showDescription()") Description
                   li#commentsTab(role="presentation")
                     a(href="#", ng-click="showComments()") Comments
+                  li#peopleTab(role="presentation")
+                    a(href="#", ng-click="showPeople()") People
+
               .row.visible-xs(ng-show="view==='description'")
+                .margin-xs-10
                 .event-description.col-xs-12.visible-xs
                   i.glyphicon.glyphicon-pencil.pull-right(ng-if="mode === 'Normal' && global.me.id === event.organizator.id",
                                                         ng-click="setEditable(true, 'Edit')")
                   textarea.eventDescriptionField.col-lg-10(ng-show="mode !== 'Normal'", rows="10")
                   p(ng-if="mode === 'Normal'", ng-bind-html="event.desc")
 
-              .row(ng-if="mode === 'Normal'", ng-show="view==='comments'")
-                .event-comments.col-lg-12.visible-xs
+              .row.visible-xs(ng-if="mode === 'Normal'", ng-show="view==='comments'")
+                .margin-xs-10
+                .event-comments.col-lg-12
                   .comment-line(ng-repeat="comment in event.comments.comments", comment, item="comment")
                   .form-inline
                     img.col-xs-4.img.img-responsive(ng-src="{{global.me.picture}}")
                     .form-group.col-xs-8
                       textarea.form-control.comment-input-xs(rows="3")
                     button.btn.btn-info.col-xs-offset-8(ng-click="comment()") Comment
+              .row.visible-xs(ng-if="mode === 'Normal'", ng-show="view==='people'")
+                .margin-xs-10
+                .row
+                  .col-xs-10.col-xs-offset-2
+                    ul.nav.nav-pills
+                      li.peopleAcceptedTab.active(role="presentation", ng-click="showPeopleAccepted()")
+                        a(href="#") Participants
+                      li.peopleInvitedTab(role="presentation", ng-click="showPeopleInvited()")
+                        a(href="#") Invited
+                .row
+                  .col-xs-12(ng-show="peopleView === 'accepted'")
+                    .col-xs-4(ng-if="event.people.accepted.length > 0", ng-repeat="us in event.people.accepted", user-small, user="us")
+                    .col-xs-12.text-center.big-text(ng-if="event.people.accepted.length === 0", style="color: grey") No people yet
+                  .col-xs-12(ng-show="peopleView === 'invited'")
+                    .col-xs-3(ng-repeat="us in event.people.invited", user-small, user="us")
+                    .col-xs-12.text-center.big-text(ng-if="event.people.invited.length === 0", style="color: grey") No people yet
 
         .col-lg-7.col-lg-offset-5#rightSidebar
           .row.hidden-xs
@@ -127,7 +141,7 @@ html(lang="en", ng-app="EventorioApp")
             .event-comments.col-lg-12
               .comment-line(ng-repeat="comment in event.comments.comments", comment, item="comment")
               .form
-                img.col-lg-2.img.img-responsive(ng-src="{{global.me.picture}}")
+                img.col-lg-2.img.img-responsive.img-thumbnail(ng-src="{{global.me.picture}}")
                 .form-group.col-lg-10
                   textarea.form-control.comment-input(rows="5")
                 button.btn.btn-info.col-lg-offset-10(ng-click="comment()") Comment
@@ -181,14 +195,19 @@ html(lang="en", ng-app="EventorioApp")
                 span.sr-only Close
               h4.modal-title "{{event.name}}" participants!
             .modal-body
-              table.table
-                tr
-                  td.clickable(ng-click="participantsTab = 'attendees'") Attendees
-                  td.clickable(ng-click="participantsTab = 'invited'") Invited
-              div(ng-show="participantsTab === 'attendees'")
-                .col-lg-3.col-xs-4(ng-repeat="us in attendees", user-small, user="us")
-              div(ng-show="participantsTab === 'invited'")
-                .col-lg-3.col-xs-4(ng-repeat="us in invited", user-small, user="us")
+              .row
+                ul.nav.nav-tabs
+                  li.peopleAcceptedTab.active(role="presentation", ng-click="showPeopleAccepted()")
+                    a(href="#") Participants
+                  li.peopleInvitedTab(role="presentation", ng-click="showPeopleInvited()")
+                    a(href="#") Invited
+              .row
+                .col-lg-12(ng-show="peopleView === 'accepted'")
+                  .col-lg-3(ng-if="event.people.accepted.length > 0", ng-repeat="us in event.people.accepted", user-small, user="us")
+                  .col-lg-12.text-center.big-text(ng-if="event.people.accepted.length === 0", style="color: grey") No people yet
+                .col-lg-12(ng-show="peopleView === 'invited'")
+                  .col-lg-3(ng-repeat="us in event.people.invited", user-small, user="us")
+                  .col-lg-12.text-center.big-text(ng-if="event.people.invited.length === 0", style="color: grey") No people yet
             .modal-footer
               button.btn.btn-default(type='button', data-dismiss='modal') Cancel
 

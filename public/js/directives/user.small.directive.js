@@ -3,7 +3,7 @@ app.directive('userSmall', ['Global', function (Global) {
     scope: {
       user: '=user'
     },
-    template: '<a><img class="img img-responsive img-circle">' +
+    template: '<a><img class="img img-responsive img-thumbnail">' +
               '<div class="text-center"></a>',
     link: function ($scope, element, attrs) {
       $(element).find('a').attr('href', '/users/'+$scope.user.username);

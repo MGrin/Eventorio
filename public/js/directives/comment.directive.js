@@ -7,6 +7,7 @@ app.directive('comment', ['Global', function (Global) {
     link: function ($scope, element, attrs) {
       $(element).find('#userLink').attr('href', '/users/' + $scope.comment.creator.username);
       $(element).find('#userImg').attr('src', $scope.comment.creator.picture);
+      $(element).find('#username').text($scope.comment.creator.username);
       $(element).find('#content').html($scope.comment.content);
       $(element).find('#commentTimestamp').text(moment($scope.comment.created).format('MMMM Do YYYY, HH:mm:ss'));
     },

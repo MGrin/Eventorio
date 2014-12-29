@@ -191,21 +191,23 @@ UserSchema.methods = {
   },
 
   attendEvent: function (event, cb) {
-    event.attendees.push(this._id);
-    if (event.invitedUsers.indexOf(this._id) !== -1) {
-      event.invitedUsers.splice(event.invitedUsers.indexOf(this._id), 1);
-    }
+    if (event.attendees.indexOf(this._id) === -1) event.attendees.push(this._id);
+
+    var index = event.invitedUsers.indexOf(this._id);
+    app.logger.info(index);
+    if (index !== -1) event.invitedUsers.splice(index, 1);
+
     app.Action.newAttendEventAction(this, event);
     event.save(cb);
   },
 
   quitEvent: function (event, cb) {
-    if (event.attendees.indexOf(this._id) !== -1) {
-      event.attendees.splice(event.attendees.indexOf(this._id), 1);
-    }
-    if (event.invitedUsers.indexOf(this._id) === -1) {
-      event.invitedUsers.push(this._id);
-    }
+    if (event.invitedUsers.indexOf(this._id) === -1) event.invitedUsers.push(this._id);
+
+    var index = event.attendees.indexOf(this._id);
+    app.logger.info(JSON.stringify(event.toObject()));
+    if (index !== -1) event.attendees.splice(index, 1);
+
     app.Action.newQuitEventAction(this, event);
     event.save(cb);
   },

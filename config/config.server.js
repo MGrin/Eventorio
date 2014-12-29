@@ -13,7 +13,7 @@ var config = {
     name: 'Eventorio',
     gravatar: {
       s: '400',
-      d: 'http://www.wpsymposiumpro.com/wp-content/uploads/2014/04/iStock_000033523696Small.jpg'
+      d: 'retro'
     },
     mandrill: {
       API_KEY: 'wdyAQM7hpNcKB0XU_QjvEQ'
@@ -28,7 +28,7 @@ var config = {
     name: 'Eventorio',
     gravatar: {
       s: '400',
-      d: 'http://www.wpsymposiumpro.com/wp-content/uploads/2014/04/iStock_000033523696Small.jpg'
+      d: 'retro'
     },
     mandrill: {
       API_KEY: 'wdyAQM7hpNcKB0XU_QjvEQ'

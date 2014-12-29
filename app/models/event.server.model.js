@@ -31,8 +31,7 @@ var EventSchema = exports.Schema = new Schema({
     ref: 'User'
   },
   date: Date,
-  isAllDay: Boolean,
-  picture: String,       // picture uploaded by user
+  picture: String,
   permissions: {
     visibility: {
       type: String,
@@ -65,12 +64,6 @@ EventSchema
     return this._id.toString();
   });
 
-EventSchema
-  .virtual('participants')
-  .get(function () {
-    return this.invitedUsers.concat(this.attendees).concat(this.invitedEmails);
-  });
-
 EventSchema.methods = {
   modify: function (fields, organizator, cb) {
     if (this.organizator.id !== organizator.id) return cb(new Error('Not authorized'));
@@ -91,57 +84,39 @@ EventSchema.methods = {
     return that.save(cb);
   },
 
-  populateParticipantsForUser: function (user, cb) {
-    // TODO make an intelligent algorithm to show event's participants based on the current user;
-    app.User
-    .find({_id: {$in: this.attendees}})
-    .limit(6)
-    .exec(function (err, users) {
-      if (err) return cb(err);
-      var res = [];
-      _.each(users, function (u) {
-        res.push(u.toJSON());
-      });
-      return cb(null, res);
-    });
-  },
-
-  getParticipants: function (cb) {
-    var resObject = {
-      attendees: [],
-      invited: []
+  getPeople: function (cb) {
+    var resultObject = {
+      invited: [],
+      accepted: [],
+      emails: []
     };
+
+    _.each(this.invitedEmails, function (email) {
+      resultObject.emails.push(email);
+    });
 
     var that = this;
 
-    async.series([
+    async.parallel([
       function (next) {
-        if (!that.attendees || that.attendees.length === 0) {
-          return next();
-        }
-
-        app.User.find({_id: {$in: that.attendees}}, function (err, attendees) {
+        app.User.find({_id: {$in: that.invitedUsers}}, function (err, invitedUsers) {
           if (err) return next(err);
-          _.each(attendees, function (us) {
-            resObject.attendees.push(us.toJSON());
+          _.each(invitedUsers, function (user) {
+            resultObject.invited.push(user.toJSON());
           });
           return next();
         });
       }, function (next) {
-        if (!that.invitedUsers || that.invitedUsers.length === 0) {
-          return next();
-        }
-
-        app.User.find({_id: {$in: that.invitedUsers}}, function (err, invited) {
+        app.User.find({_id: {$in: that.attendees}}, function (err, attendees) {
           if (err) return next(err);
-          _.each(invited, function (us) {
-            resObject.invited.push(us.toJSON());
+          _.each(attendees, function (user) {
+            resultObject.accepted.push(user.toJSON());
           });
           return next();
         });
       }
     ], function (err) {
-      return cb(err, resObject);
+      return cb(err, resultObject);
     });
   },
 
@@ -177,6 +152,9 @@ EventSchema.methods = {
     delete resEvent.organizator.password;
     delete resEvent.organizator.hashPassword;
     delete resEvent.organizator.salt;
+    delete resEvent.invitedUsers;
+    delete resEvent.invitedEmails;
+    delete resEvent.attendees;
     return resEvent;
   }
 };

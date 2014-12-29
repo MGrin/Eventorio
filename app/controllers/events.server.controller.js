@@ -75,9 +75,9 @@ exports.invite = function (req, res) {
 
 exports.getParticipants = function (req, res) {
   var event = req.event;
-  event.getParticipants(function (err, participants) {
+  event.getPeople(function (err, people) {
     if (err) return app.err(err, res);
-    return res.jsonp(participants);
+    return res.jsonp(people);
   });
 }
 
@@ -106,18 +106,18 @@ exports.query = function (req, res) {
 };
 
 exports.show = function (req, res) {
+  var user = req.user;
+  var event = req.event;
+
   res.format({
     html: function () {
       return res.render('app/event.server.jade', {event: {}});
     },
     json: function () {
-      var jsonEvent = req.event.toJSON();
-      if (req.user || req.event.permissions.visibility === 'public') {
-        jsonEvent.canAttend = req.user.canAttend(req.event);
-        req.event.populateParticipantsForUser(req.user, function (err, participants) {
-          jsonEvent.participants = participants;
-          return res.jsonp(jsonEvent);
-        });
+      var jsonEvent = event.toJSON();
+      if (user || event.permissions.visibility === 'public') {
+        jsonEvent.canAttend = user.canAttend(event);
+        return res.jsonp(jsonEvent);
       } else {
         return res.jsonp(404);
       }

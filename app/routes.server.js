@@ -27,7 +27,6 @@ module.exports = function (app, passport) {
     .put(users.requiresLogin, users.update);
   app.route('/restorePassword')
     .post(users.restorePassword);
-  app.param('username', users.loadByUsername);
 
   app.route('/activation/:activationCode')
     .get(users.activate);
@@ -41,6 +40,14 @@ module.exports = function (app, passport) {
   app.route('/events/:eventId')
     .get(events.isAccessible, events.show)
     .post(users.requiresLogin, events.update);
+  app.route('/events/:eventId/people')
+    .get(events.getParticipants);
+  app.route('/events/:eventId/invite')
+    .post(users.requiresLogin, events.invite);
+  app.route('/events/:eventId/attend')
+    .post(users.requiresLogin, events.isAttandable, users.attend);
+  app.route('/events/:eventId/quit')
+    .post(users.requiresLogin, users.quit);
 
   app.route('/comments')
     .post(users.requiresLogin, comments.create);
@@ -51,16 +58,12 @@ module.exports = function (app, passport) {
     .post(users.requiresLogin, users.follow);
   app.route('/api/unfollow')
     .post(users.requiresLogin, users.unfollow);
-  app.route('/api/attend/:eventId')
-    .post(users.requiresLogin, events.isAttandable, users.attend);
-  app.route('/api/quit/:eventId')
-    .post(users.requiresLogin, users.quit);
-  app.route('/api/invite/:eventId')
-    .post(users.requiresLogin, events.invite);
   app.route('/api/news')
     .get(users.requiresLogin, users.news);
   app.route('/api/participants/:eventId')
     .get(events.getParticipants);
 
   app.param('eventId', events.load);
+  app.param('username', users.loadByUsername);
+  app.param('userId', users.loadById);
 };

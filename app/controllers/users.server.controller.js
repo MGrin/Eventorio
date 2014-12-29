@@ -183,6 +183,16 @@ exports.loadByUsername = function (req, res, next, username) {
   })
 };
 
+exports.loadById = function (req, res, next, id) {
+  app.User.findById(id, function (err, user) {
+    if (err) return app.err(err, res);
+    if (!user) return app.err(new Error('No user found: ' + username), res);
+
+    req.userToShow = user;
+    return next();
+  });
+};
+
 exports.loadByActivationCode = function (req, res, next, activationCode) {
   app.User.findOne({activationCode: activationCode}, function (err, user) {
     if (err) return app.err(err, res);
