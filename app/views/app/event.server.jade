@@ -103,14 +103,14 @@ html(lang="en", ng-app="EventorioApp")
                   textarea.eventDescriptionField.col-lg-10(ng-show="mode !== 'Normal'", rows="10")
                   p(ng-if="mode === 'Normal'", ng-bind-html="event.desc")
 
-              .row.visible-xs(ng-if="mode === 'Normal'", ng-show="view==='comments'")
-                .event-comments.col-lg-12
-                  .comment-line(ng-repeat="comment in event.comments", comment, item="comment")
+              .row(ng-if="mode === 'Normal'", ng-show="view==='comments'")
+                .event-comments.col-lg-12.visible-xs
+                  .comment-line(ng-repeat="comment in event.comments.comments", comment, item="comment")
                   .form-inline
-                    img.col-xs-4.img.img-responsive(src="{{global.me.picture}}")
+                    img.col-xs-4.img.img-responsive(ng-src="{{global.me.picture}}")
                     .form-group.col-xs-8
                       textarea.form-control.comment-input-xs(rows="3")
-                    button.btn.btn-info.col-xs-offset-8 Comment
+                    button.btn.btn-info.col-xs-offset-8(ng-click="comment()") Comment
 
         .col-lg-7.col-lg-offset-5#rightSidebar
           .row.hidden-xs
@@ -122,10 +122,15 @@ html(lang="en", ng-app="EventorioApp")
             .event-description.col-lg-12
               textarea.eventDescriptionField.col-lg-10(ng-show="mode !== 'Normal'", rows="30")
               p(ng-if="mode === 'Normal'", ng-bind-html="event.desc")
-          .row.hidden-xs
-            .event-comments.col-lg-12.hidden-xs
-              .comment-line(ng-repeat="comment in event.comments", comment, item="comment")
-              textarea.comment-input
+          .row.hidden-xs(ng-if="mode === 'Normal'")
+            h3 Comments:
+            .event-comments.col-lg-12
+              .comment-line(ng-repeat="comment in event.comments.comments", comment, item="comment")
+              .form
+                img.col-lg-2.img.img-responsive(ng-src="{{global.me.picture}}")
+                .form-group.col-lg-10
+                  textarea.form-control.comment-input(rows="5")
+                button.btn.btn-info.col-lg-offset-10(ng-click="comment()") Comment
 
         .col-xs-10.col-xs-offset-1.visible-xs(role="group")
           button.btn.btn-info(ng-if="mode === 'Create'", type="button", ng-click="createEvent()") Create!

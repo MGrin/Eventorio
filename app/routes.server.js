@@ -4,6 +4,7 @@ module.exports = function (app, passport) {
   var index = app.controllers.Index;
   var users = app.controllers.Users;
   var events = app.controllers.Events;
+  var comments = app.controllers.Comments;
 
   app.route('/')
      .get(index.index);
@@ -41,6 +42,10 @@ module.exports = function (app, passport) {
     .get(events.isAccessible, events.show)
     .post(users.requiresLogin, events.update);
 
+  app.route('/comments')
+    .post(users.requiresLogin, comments.create);
+  app.route('/comments/:eventId')
+    .get(users.requiresLogin, comments.query);
 
   app.route('/api/follow')
     .post(users.requiresLogin, users.follow);
