@@ -156,6 +156,7 @@ exports.news = function (req, res) {
       var jsonAction = action.toJSON();
       result.push(jsonAction);
     });
+
     return res.jsonp(result);
   });
 }

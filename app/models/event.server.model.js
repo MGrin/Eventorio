@@ -122,7 +122,8 @@ EventSchema.methods = {
 
   invite: function (actor, email, cb) {
     var event = this;
-    app.User.findOne({$or: [{email: email}, {username: new RegExp(email, 'i')}]}, function (err, user) {
+    var usernameRE = new RegExp('^' + email + '$', 'i');
+    app.User.findOne({$or: [{email: email}, {username: usernameRE}]}, function (err, user) {
       if (err) return cb(err);
       if (!user) {
         app.email.sendInvitationMail(actor, {email: email, username: email}, event);
