@@ -214,6 +214,18 @@ UserSchema.methods = {
 
   isInvitedTo: function (event) {
     return (event.invitedUsers.indexOf(this._id) !== -1) || (event.attendees.indexOf(this._id) !== -1);
+  },
+
+  changePassword: function (credentials, cb) {
+    if (!credentials.oldPassword || !credentials.newPassword || !credentials.newPasswordRepeat) {
+      return cb(new Error('Missing credentials'));
+    }
+    if (credentials.newPassword !== credentials.newPasswordRepeat || credentials.newPassword.length < 8 || !this.authenticate(credentials.oldPassword)) {
+      return cb(new Error('Wrong credentials'))
+    }
+
+    this.password = credentials.newPassword;
+    return this.save(cb);
   }
 };
 

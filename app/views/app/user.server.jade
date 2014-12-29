@@ -35,6 +35,22 @@ html(lang="en", ng-app="EventorioApp")
                     br
                     | Following
 
+              .row-fluid.hidden-xs(ng-if="global.me && editable")
+                .col-lg-8.text-center
+                  .row(ng-show="!changePasswordView")
+                    button.btn.btn-info.col-lg-12(ng-click="changePasswordView=true") Change password
+                  .row(ng-show="changePasswordView")
+                    form
+                      .form-group
+                        input.col-lg-10.form-control(ng-model="credentials.oldPassword", type="password", placeholder="Old password")
+                      .form-group
+                        input.col-lg-10.form-control(ng-model="credentials.newPassword", type="password", placeholder="New password")
+                      .form-group
+                        input.col-lg-10.form-control(ng-model="credentials.newPasswordRepeat", type="password", placeholder="New password")
+                      .changePasswordForm
+                      button.btn.btn-warning(type="submit", ng-click="changePassword()") Change
+                      button.btn.btn-default(type="submit", ng-click="changePasswordView = false") Cancel
+
               .row-fluid.hidden-xs(ng-if="global.me && !editable")
                 .col-lg-8.text-center
                   button.btn.btn-success.col-lg-12(
@@ -90,6 +106,23 @@ html(lang="en", ng-app="EventorioApp")
                   | {{user.following.length || 0}}
                   br
                   | Following
+
+              .row-fluid.visible-xs(ng-if="global.me && editable")
+                .col-xs-8.col-xs-offset-2.text-center
+                  .row(ng-show="!changePasswordView")
+                    button.btn.btn-info.col-lg-12(ng-click="changePasswordView=true") Change password
+                  .row(ng-show="changePasswordView")
+                    form
+                      .form-group
+                        input.col-xs-10.form-control(ng-model="credentials.oldPassword", type="password", placeholder="Old password")
+                      .form-group
+                        input.col-xs-10.form-control(ng-model="credentials.newPassword", type="password", placeholder="New password")
+                      .form-group
+                        input.col-xs-10.form-control(ng-model="credentials.newPasswordRepeat", type="password", placeholder="New password")
+                      .changePasswordForm
+                      button.btn.btn-warning(type="submit", ng-click="changePassword()") Change
+                      button.btn.btn-default(type="submit", ng-click="changePasswordView = false") Cancel
+
           .row-fluid.hidden-xs
             .user-description.col-lg-7
               div(ng-if="user.desc")

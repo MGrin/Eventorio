@@ -27,6 +27,8 @@ module.exports = function (app, passport) {
     .put(users.requiresLogin, users.update);
   app.route('/restorePassword')
     .post(users.restorePassword);
+  app.route('/changePassword')
+    .post(users.requiresLogin, users.changePassword);
 
   app.route('/activation/:activationCode')
     .get(users.activate);
