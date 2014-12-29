@@ -211,7 +211,7 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
       });
     });
 
-    var comment = new Comments({content: $(comment).prop('outerHTML'), event: $scope.event});
+    var comment = new Comments({content: $(commentHtml).prop('outerHTML'), event: $scope.event});
     comment.$save(function (res) {
       $scope.event.comments.comments.push(res);
       $('textarea.form-control.comment-input-xs').val('');
