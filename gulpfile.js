@@ -25,10 +25,6 @@ gulp.task('compile', function () {
   gulp.src('./public/jade/*.jade')
     .pipe(jade({}))
     .pipe(gulp.dest('./public/view/'));
-
-  gulp.src('./public/jade/actions/*.jade')
-    .pipe(jade({}))
-    .pipe(gulp.dest('./public/view/actions/'));
 });
 
 gulp.task('compress', function() {
