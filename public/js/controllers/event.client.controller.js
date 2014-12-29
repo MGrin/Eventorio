@@ -202,10 +202,20 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
     if (Global.screenSize === 'xs') comment = $('textarea.form-control.comment-input-xs').val();
     else comment = $('textarea.form-control.comment-input').val();
 
-    comment = '<div>' + comment + '</div>'
-    var comment = new Comments({content: comment, event: $scope.event});
+    comment = '<div>' + comment + '</div>';
+    commentHtml = $(comment);
+    $(commentHtml).each(function () {
+      $(this).find('img').each(function () {
+        $(this).addClass('img');
+        $(this).addClass('img-responsive');
+      });
+    });
+
+    var comment = new Comments({content: $(comment).prop('outerHTML'), event: $scope.event});
     comment.$save(function (res) {
       $scope.event.comments.comments.push(res);
+      $('textarea.form-control.comment-input-xs').val('');
+      $('textarea.form-control.comment-input').val();
     }, function (res) {
       Notifications.error($('#header'),res.data);
     })
