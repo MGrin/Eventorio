@@ -27,7 +27,7 @@ div(ng-controller="HeaderController")
                 span Login
             li.dropdown(ng-if="global.me")
               a.dropdown-toggle(href="#", data-toggle="dropdown")
-                img.img-circle(style="height: 18px; margin-right: 10px", ng-src="{{global.me.picture}}")
+                img.img.img-rounded(style="height: 18px; margin-right: 10px", ng-src="{{global.me.picture}}")
                 span {{global.me.username}}
                 span.caret
               ul.dropdown-menu(role="menu", style="padding: 17px")
@@ -47,7 +47,7 @@ div(ng-controller="HeaderController")
           ul.nav.navbar-nav.navbar-right(ng-show="show && global.me")
             li#profile-menu
               a(href="/users/{{global.me.username}}")
-                img.img-circle(style="height: 30px; margin-right: 10px", ng-src="{{global.me.picture}}")
+                img.img.img-rounded(style="height: 30px; margin-right: 10px", ng-src="{{global.me.picture}}")
                 span {{global.me.username}}
             li#calendar-menu
               a(href="/calendar")

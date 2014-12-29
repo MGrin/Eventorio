@@ -6,7 +6,7 @@ html(lang="en", ng-app="EventorioApp")
 
     #application-content(ng-controller="ApplicationController")
     if (visible === 'full')
-      .row-fluid.hidden-xs
+      .row-fluid.hidden-xs(ng-if="global.screenSize !== 'xs'")
         .col-lg-4.affix.affix-top
           .row-fluid
             #calendars.col-lg-12(ng-controller="CalendarController")
@@ -19,7 +19,7 @@ html(lang="en", ng-app="EventorioApp")
           #news-feed.col-lg-12(ng-controller="NewsFeedController")
             include newsfeed.server.jade
 
-      .row-fluid.visible-xs
+      .row-fluid.visible-xs(ng-if="global.screenSize === 'xs'")
         .row-fluid
           #calendars.col-lg-12(ng-controller="CalendarController")
             .row(calendar)
