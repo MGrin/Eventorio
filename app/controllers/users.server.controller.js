@@ -70,6 +70,14 @@ exports.restorePassword = function (req, res) {
   });
 }
 
+exports.changePassword = function (req, res) {
+  var user = req.user;
+  user.changePassword(req.body, function (err) {
+    if (err) return app.err(err, res);
+    return res.sendStatus(200);
+  });
+}
+
 exports.update = function (req, res) {
   var field = req.body.name;
   var value = req.body.value;

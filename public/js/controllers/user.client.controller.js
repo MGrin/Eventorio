@@ -1,5 +1,7 @@
-app.controller('UserController', ['$scope', 'Global', 'Users', 'Events', function ($scope, Global, Users, Events) {
+app.controller('UserController', ['$scope', 'Global', 'Users', 'Events', 'Notifications',
+  function ($scope, Global, Users, Events, Notifications) {
   $scope.global = Global;
+  $scope.changePasswordView = false;
 
   $scope.$on('me', function () {
     $scope.user = Users.get({username: window.location.pathname.split('/')[2]}, function () {
@@ -67,5 +69,25 @@ app.controller('UserController', ['$scope', 'Global', 'Users', 'Events', functio
     })
   }
 
-  // setTimeout($scope.setupEditable, 1000);
+  $scope.credentials = {
+    oldPassword: '',
+    newPassword: '',
+    newPasswordRepeat: ''
+  }
+
+  $scope.changePassword = function () {
+    Users.changePassword($scope.credentials, function (err) {
+      if (err) {
+        return Notifications.error($('.changePasswordForm'), err);
+      }
+      $scope.credentials = {
+        oldPassword: '',
+        newPassword: '',
+        newPasswordRepeat: ''
+      };
+
+      Notifications.info($('.changePasswordForm'), 'Password successfully changed!');
+      $scope.changePasswordView = false;
+    });
+  }
 }]);

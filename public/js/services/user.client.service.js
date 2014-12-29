@@ -52,5 +52,14 @@ app.factory('Users', ['$resource', '$http', 'Global', function ($resource, $http
       });
   }
 
+  user.changePassword = function (credentials, cb) {
+    $http.post('/changePassword', credentials)
+      .success(function (response) {
+        return cb();
+      }).error(function (response) {
+        return cb(response);
+      });
+  }
+
   return user;
 }]);
