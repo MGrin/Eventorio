@@ -7,7 +7,10 @@ app.directive('calendar', ['$rootScope', function ($rootScope) {
       $(element).find('.responsive-calendar').responsiveCalendar({
         monthChangeAnimation: false,
         onDayClick: function (events) {
-          var dateStr = $(this).data('year') + '-' + $(this).data('month') + '-' + $(this).data('day');
+          var year = $(this).data('year');
+          var month = ($(this).data('month') > 9) ? $(this).data('month') : '0' + $(this).data('month');
+          var day = ($(this).data('day') > 9) ? $(this).data('day') : '0' + $(this).data('day');
+          var dateStr = year + '-' + month + '-' + day;
 
           var date = moment(dateStr, 'YYYY-MM-DD');
           var events = events[dateStr] ? events[dateStr].dayEvents : [];

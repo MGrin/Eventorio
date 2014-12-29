@@ -5,9 +5,9 @@ app.factory('Events', ['$rootScope', '$resource', '$http', 'Global', function ($
 
   event.updateMonthlyList = function (date, cb) {
     var startDate = moment(date).subtract(1, 'month');
-    startDate.set('date', 15);
+    startDate.date(15);
     var stopDate = moment(date).add(1, 'month');
-    stopDate.set('date', 15);
+    stopDate.date(15);
 
     $http.get('/events?startDate=' + startDate + '&stopDate=' + stopDate)
       .success(function (res) {
@@ -26,8 +26,6 @@ app.factory('Events', ['$rootScope', '$resource', '$http', 'Global', function ($
         return cb(res);
       });
   };
-
-  event.people = $resource('/events/:eventId/people', {eventId: '@_id'}, {update: {method: 'POST'}});
 
   event.invite = function (emails, event, cb) {
     $http.post('/events/' + event.id + '/invite', emails)
@@ -55,5 +53,8 @@ app.factory('Events', ['$rootScope', '$resource', '$http', 'Global', function ($
         return cb(response);
       });
   };
+
+  event.people = $resource('/events/:eventId/people', {eventId: '@_id'}, {update: {method: 'POST'}});
+
   return event;
 }]);
