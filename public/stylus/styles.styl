@@ -1,5 +1,7 @@
 body
-  background: transparent
+  background url(/img/bg_opacity.jpeg)
+  background-repeat no-repeat
+  background-attachment fixed
 
 #signup-box
   .jumbotron
@@ -40,6 +42,10 @@ a, .clickable
 
 .big-text
   font-size: 1.5em
+
+.big-text-lg
+  @media (min-width: 1200px)
+    font-size: 1.5em
 
 .day.active
   a
@@ -107,4 +113,7 @@ a, .clickable
 
 .margin-xs-10
   @media (max-width: 768px)
+    height: 10px
+.margin-lg-10
+  @media (min-width: 1200px)
     height: 10px

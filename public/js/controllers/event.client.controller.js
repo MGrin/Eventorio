@@ -18,11 +18,14 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
       $scope.setEditable($scope.edit, ($scope.edit)?'Create':'Normal');
 
       $scope.event.date = moment($scope.event.date);
-      $scope.event.comments = Comments.get({eventId: window.location.pathname.split('/')[2]});
-      $scope.event.people = Events.people.get({eventId: $scope.event.id}, function () {
-        $scope.event.people.accepted.push($scope.event.organizator);
-        $scope.attending = (_.findWhere($scope.event.people.accepted, {id: Global.me.id})) ? true : false;
-      });
+
+      if ($scope.mode === 'Normal') {
+        $scope.event.comments = Comments.get({eventId: window.location.pathname.split('/')[2]});
+        $scope.event.people = Events.people.get({eventId: $scope.event.id}, function () {
+          $scope.event.people.accepted.push($scope.event.organizator);
+          $scope.attending = (_.findWhere($scope.event.people.accepted, {id: Global.me.id})) ? true : false;
+        });
+      }
     });
   });
 
@@ -271,6 +274,7 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
 
   $scope.createEvent = function () {
     $scope.event.desc = $scope.getDescription();
+
     if (!$scope.event.name || $scope.event.name.length < 1 || $scope.event.name > 20) {
       Notifications.error($('#header'), 'Name should not be empty and should not be longer than 20 characters');
       return;
