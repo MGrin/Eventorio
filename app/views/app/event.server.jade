@@ -105,7 +105,12 @@ html(lang="en", ng-app="EventorioApp")
                 .event-comments.col-lg-12
                   .comment-line(ng-repeat="comment in event.comments.comments", comment, item="comment")
                   .form-inline
-                    img.col-xs-4.img.img-responsive(ng-src="{{global.me.picture}}")
+                    .col-xs-4
+                      .row
+                        img.col-xs-12.img.img-responsive.img-thumbnail(ng-src="{{global.me.picture}}")
+                      .margin-xs-10
+                      .row
+                        label.label.label-default.col-xs-12 {{global.me.username}}
                     .form-group.col-xs-8
                       textarea.form-control.comment-input-xs(rows="3")
                     button.btn.btn-info.col-xs-offset-8(ng-click="comment()") Comment
@@ -141,7 +146,12 @@ html(lang="en", ng-app="EventorioApp")
             .event-comments.col-lg-12
               .comment-line(ng-repeat="comment in event.comments.comments", comment, item="comment")
               .form
-                img.col-lg-2.img.img-responsive.img-thumbnail(ng-src="{{global.me.picture}}")
+                .col-lg-2
+                  .row
+                    img.col-lg-12.img.img-responsive.img-thumbnail(ng-src="{{global.me.picture}}")
+                  .margin-lg-10
+                  .row
+                    label.label.label-default.col-lg-10.col-lg-offset-1 {{global.me.username}}
                 .form-group.col-lg-10
                   textarea.form-control.comment-input(rows="5")
                 button.btn.btn-info.col-lg-offset-10(ng-click="comment()") Comment
