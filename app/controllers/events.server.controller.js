@@ -73,6 +73,16 @@ exports.invite = function (req, res) {
   });
 }
 
+exports.delete = function(req, res) {
+    var user = req.user;
+    var event = req.event;
+
+    event.delete(user, function (err) {
+        if (err) return app.err(err, res);
+        return res.jsonp();
+    });
+}
+
 exports.getParticipants = function (req, res) {
   var event = req.event;
   event.getPeople(function (err, people) {

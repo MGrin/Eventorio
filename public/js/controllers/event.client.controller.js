@@ -230,6 +230,18 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
     });
   };
 
+  $scope.deleteEvent = function() {
+      var input = $('#eventNameToDelete textarea').val();
+      if(input === $scope.event.name){
+          Events.delete($scope.event, function(err) {
+            if(!err){
+                $('#deleteModal').toggle();
+                window.location.pathname = "/";
+            }
+          });
+      }
+  };
+
   $scope.comment = function () {
     var comment;
     if (Global.screenSize === 'xs') comment = $('textarea.form-control.comment-input-xs').val();

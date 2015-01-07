@@ -78,6 +78,14 @@ ActionSchema.statics = {
     return action.save(cb);
   },
 
+  newDeleteEventAction: function(event, cb){
+    if (!cb) cb = function (){};
+    app.Action.remove({ '_type': actionTypes.createEvent, 'object.eventId': event.id }).exec(function(err) {
+        if(err) return cb(err);
+        return cb();
+    });
+  },
+
   newAttendEventAction: function (user, event, cb) {
     if (!cb) cb = function (){};
     var subjectActor = new actor({_type: 'User', userId: user});

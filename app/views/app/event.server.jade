@@ -76,6 +76,8 @@ html(lang="en", ng-app="EventorioApp")
               .row(ng-if="mode === 'Normal' && global.me.id === event.organizator.id")
                 .col-lg-7.col-xs-12.text-center(style="padding: 0px")
                   button.btn.btn-info.col-lg-12.col-xs-10.col-xs-offset-1(data-toggle="modal", data-target="#invitationModal") Invite!
+                .col-lg-7.col-xs-12.text-center(style="padding: 0px")
+                  button.btn.btn-warning.col-lg-12.col-xs-10.col-xs-offset-1(data-toggle="modal", data-target="#deleteModal") Delete Event!
 
               .row.hidden-xs(ng-if="mode === 'Normal'")
                 .col-lg-8.text-right
@@ -195,6 +197,29 @@ html(lang="en", ng-app="EventorioApp")
             .modal-footer
               button.btn.btn-default(type='button', data-dismiss='modal') Cancel
               button.btn.btn-success(type='button', ng-click="invite()") Invite
+
+      #deleteModal.modal.fade(tabindex="-1", role="dialog", aria-hidden="true")
+          .modal-dialog
+              .modal-content
+                  .modal-header
+                      button.close(type='button', data-dismiss='modal')
+                          span(aria-hidden='true') ×
+                          span.sr-only Close
+                      h4.modal-title Remove event : "{{event.name}}"!
+                  .modal-body
+                      .row
+                          .col-lg-12
+                              h4 Are you sure you want to delete this event, can't be undone
+                              p Enter the event name ("{{event.name}}") to delete it !
+                      .row
+                          .col-lg-12
+                              form.form(role="form")
+                                  .form-group#eventNameToDelete
+                                      textarea.form-control.col-lg-12(placeholder="Enter event name to delete it", ng-model="deletedEventName")
+                                      label
+                  .modal-footer
+                      button.btn.btn-default(type='button', data-dismiss='modal') Cancel
+                      button.btn.btn-success(type='button', ng-click="deleteEvent()", ng-disabled="deletedEventName != event.name") Delete
 
       #participantsModal.modal.fade(tabindex="-1", role="dialog", aria-hidden="true", ng-init="participantsTab = 'attendees'")
         .modal-dialog
