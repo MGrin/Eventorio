@@ -25,7 +25,7 @@ exports.initModel = function (myApp) {
 var EventSchema = exports.Schema = new Schema({
   name: String,
   desc: String,
-  location: String,
+  location: Object,
   organizator: {
     type: ObjectId,
     ref: 'User'

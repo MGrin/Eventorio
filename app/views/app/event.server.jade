@@ -5,7 +5,7 @@ html(lang="en", ng-app="EventorioApp")
   body(style="background-image: url(/img/bg_opacity.jpeg)")
     include ../layouts/header.server.jade
     .content-fluid(ng-controller="EventController", ng-init="edit=#{event.edit}", ng-show="show")
-      .row-fluid
+      .row
         img.img-responsive.img-event-header(src="/img/event_background.png")
 
         .col-lg-4.col-lg-offset-1.col-xs-12.col-xs-offset-0#leftSidebar
@@ -23,16 +23,22 @@ html(lang="en", ng-app="EventorioApp")
                   a(href="/users/{{event.organizator.username}}", style="font-size: 2em")
                     | {{event.organizator.username}}
           .row
-            .event-details.col-lg-12.col-lg-offset-0.col-xs-12.col-xs-offset-0
+            .event-details.col-lg-8.col-lg-offset-0.col-xs-12.col-xs-offset-0
               .row
                 .event-date.col-lg-12.col-xs-12
                   a.big-text.editable(ng-if="mode === 'Create'", data-toggle="modal", data-target="#dateAndTimePicker") {{event.date.format('Do MMMM YYYY')}} {{event.date.format('HH:mm')}}
                   a.big-text.editable(ng-if="mode === 'Edit'", data-toggle="modal", data-target="#dateAndTimePicker") {{event.date.format('Do MMMM YYYY')}} {{event.date.format('HH:mm')}}
                   p.big-text(ng-if="mode === 'Normal'") {{event.date.format('Do MMMM YYYY')}} {{event.date.format('HH:mm')}}
+              .row
+                .event-location.col-lg-12.col-xs-12
+                  a.big-text.editable(ng-if="mode === 'Create'", data-toggle="modal", data-target="#locationPicker") {{event.location.name || 'Location'}}
+                  a.big-text.editable(ng-if="mode === 'Edit'", data-toggle="modal", data-target="#locationPicker") {{event.location.name || 'Location'}}
+                  a.big-text(ng-if="mode === 'Normal' && event.location", data-toggle="modal", data-target="#locationPicker") {{event.location.name}}
+                  p(ng-if="mode === 'Normal' && !event.location", style="color: grey") No location precised
 
               .row.hidden-xs(style="color: grey")
                 .row.text-right
-                  .event-visibility.col-lg-8.col-lg-offset-0.col-xs-11.col-xs-offset-1
+                  .event-visibility.col-lg-12.col-lg-offset-0.col-xs-11.col-xs-offset-1
                     a.editable(ng-if="mode === 'Create'") Event is visible to everyone
                     a.editable(ng-if="mode === 'Edit' && (event.permissions.visibility === 'public' || !event.permissions.visibility)")
                       | Event is visible to everyone
@@ -48,7 +54,7 @@ html(lang="en", ng-app="EventorioApp")
                     span(ng-if="mode === 'Normal' && event.permissions.visibility === 'invitations'")
                       | Event is visible only to invited people
                 .row.text-right
-                  .event-attendance.col-lg-8.col-lg-offset-0.col-xs-11.col-xs-offset-1
+                  .event-attendance.col-lg-12.col-lg-offset-0.col-xs-11.col-xs-offset-1
                     a.editable(ng-if="mode === 'Create'") Everyone can attend this event
                     a.editable(ng-if="mode === 'Edit' && (event.permissions.attendance === 'public' || !event.permissions.attendance)")
                       | Everyone can attend this event
@@ -65,7 +71,7 @@ html(lang="en", ng-app="EventorioApp")
                       | Only invited people can attend this event
 
               .row(ng-if="mode === 'Normal' && event.canAttend")
-                h3.event-user-attendance.col-lg-8.col-xs-12
+                h3.event-user-attendance.col-lg-12.col-xs-12
                   button.btn.btn-info.col-lg-12.col-xs-12(
                     ng-if="!attending"
                     ng-click="attendTheEvent()") I will go
@@ -74,14 +80,14 @@ html(lang="en", ng-app="EventorioApp")
                     ng-click="quitTheEvent()") I will not go
 
               .row(ng-if="mode === 'Normal' && global.me.id === event.organizator.id")
-                .col-lg-7.col-xs-12.text-center(style="padding: 0px")
+                .col-lg-11.col-xs-12.text-center(style="padding: 0px")
                   button.btn.btn-info.col-lg-12.col-xs-10.col-xs-offset-1(data-toggle="modal", data-target="#invitationModal") Invite!
               .row(ng-if="mode === 'Edit' && global.me.id === event.organizator.id")
-                .col-lg-7.col-xs-12.text-center(style="padding: 0px")
+                .col-lg-11.col-xs-12.text-center(style="padding: 0px")
                   button.btn.btn-warning.col-lg-12.col-xs-10.col-xs-offset-1(data-toggle="modal", data-target="#deleteModal") Delete Event!
 
               .row.hidden-xs(ng-if="mode === 'Normal'")
-                .col-lg-8.text-right
+                .col-lg-12.text-right
                   a.big-text(
                     data-toggle="modal"
                     data-target="#participantsModal") Show everybody on this event
@@ -141,8 +147,9 @@ html(lang="en", ng-app="EventorioApp")
               a.editable(ng-if="mode === 'Edit'") {{event.name}}
               span(ng-if="mode === 'Normal'") {{event.name}}
           .row.hidden-xs
+            .margin-lg-10
             .event-description.col-lg-12
-              textarea.eventDescriptionField.col-lg-10(ng-show="mode !== 'Normal'", rows="30")
+              textarea.eventDescriptionField.col-lg-10(ng-show="mode !== 'Normal'", rows="10")
               p(ng-if="mode === 'Normal'", ng-bind-html="event.desc")
           .row.hidden-xs(ng-if="mode === 'Normal'")
             h3 Comments:
@@ -278,5 +285,23 @@ html(lang="en", ng-app="EventorioApp")
                 label.big-text.label.label-success(ng-show="event.date") {{event.date.format('DD MMMM YYYY')}} {{event.date.format('HH:mm')}}
               button.btn.btn-success(ng-if="event.date", type='button', data-dismiss='modal') Done
               button.btn.btn-success(ng-if="!event.date", type='button', data-dismiss='modal', disabled=true) Done
+
+      #locationPicker.modal.fade(ng-if="show", tabindex="-1", role="dialog", aria-hidden="true")
+        .modal-dialog
+          .modal-content
+            .modal-header
+              button.close(type='button', data-dismiss='modal')
+                span(aria-hidden='true') ×
+                span.sr-only Close
+              h4.modal-title Choose your event location
+            .model-body
+              .margin-lg-10
+              .row
+                .event-location.col-lg-10.col-lg-offset-1
+                  div(location-autocomplete, ng-model='event.location')
+            .modal-footer
+              .pull-left
+                label.big-text.label.label-success(ng-show="event.location") {{event.location.name}}
+              button.btn.btn-success(type='button', data-dismiss='modal') Done
 
 
