@@ -79,10 +79,10 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
         $scope.event = {
           date: moment(),
           visibility: 'public',
-          attendance: 'public'
+          attendance: 'public',
+          location: {}
         };
       }
-
       $scope.view='description';
 
       $('.event-name').editable({
@@ -307,6 +307,7 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
       Notifications.error($('#header'), 'Name should not be empty and should not be longer than 20 characters');
       return;
     }
+
     $scope.event = Events.update({eventId: $scope.event.id}, $scope.event, function () {
       window.location.reload();
     });
