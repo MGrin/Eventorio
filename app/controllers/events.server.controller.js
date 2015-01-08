@@ -73,6 +73,16 @@ exports.invite = function (req, res) {
   });
 }
 
+exports.remove = function(req, res) {
+    var user = req.user;
+    var event = req.event;
+
+    event.removeEvent(user, function (err) {
+        if (err) return app.err(err, res);
+        return res.sendStatus(200);
+    });
+}
+
 exports.getParticipants = function (req, res) {
   var event = req.event;
   event.getPeople(function (err, people) {

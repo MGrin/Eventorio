@@ -54,6 +54,15 @@ app.factory('Events', ['$rootScope', '$resource', '$http', 'Global', function ($
       });
   };
 
+  event.remove = function(event, cb) {
+    $http.delete('/events/' + event.id)
+      .success(function () {
+        return cb();
+      }).error(function (response) {
+        return cb(response);
+      });
+  };
+
   event.people = $resource('/events/:eventId/people', {eventId: '@_id'}, {update: {method: 'POST'}});
 
   return event;

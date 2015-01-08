@@ -41,7 +41,8 @@ module.exports = function (app, passport) {
     .get(users.requiresLogin, events.createPage);
   app.route('/events/:eventId')
     .get(events.isAccessible, events.show)
-    .post(users.requiresLogin, events.update);
+    .post(users.requiresLogin, events.update)
+    .delete(users.requiresLogin, events.remove);
   app.route('/events/:eventId/people')
     .get(events.getParticipants);
   app.route('/events/:eventId/invite')
@@ -50,6 +51,7 @@ module.exports = function (app, passport) {
     .post(users.requiresLogin, events.isAttandable, users.attend);
   app.route('/events/:eventId/quit')
     .post(users.requiresLogin, users.quit);
+
 
   app.route('/comments')
     .post(users.requiresLogin, comments.create);

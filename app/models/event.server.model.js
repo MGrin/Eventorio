@@ -142,6 +142,18 @@ EventSchema.methods = {
     });
   },
 
+  removeEvent: function (organizator, cb) {
+      if (this.organizator.id !== organizator.id) return cb(new Error('Not authorized'));
+      var event = this;
+      app.Action.newDeleteEventAction(event, function(err){
+          if(err) return cb(err);
+
+          event.remove();
+
+          return cb();
+      });
+  },
+
   toJSON: function () {
     var resEvent = this.toObject({virtuals: true});
     delete resEvent._id;
