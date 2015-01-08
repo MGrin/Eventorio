@@ -132,9 +132,10 @@ EventSchema.methods = {
           event.save();
         }
       } else {
+
         app.email.sendInvitationMail(actor, user, event);
         app.Action.newInviteAction(actor, user, event);
-        if (event.invitedUsers.indexOf(user._id) === -1) {
+        if (event.invitedUsers.indexOf(user._id) === -1 && event.attendees.indexOf(user._id) === -1) {
           event.invitedUsers.push(user._id);
           event.save();
         }
