@@ -80,7 +80,12 @@ ActionSchema.statics = {
 
   newDeleteEventAction: function(event, cb){
     if (!cb) cb = function (){};
-    app.Action.remove({ '_type': actionTypes.createEvent, 'object.eventId': event.id }).exec(function(err) {
+    app.Action.remove({
+        $or:[
+            {'object.eventId': event.id},
+            {'subject.eventId': event.id }
+        ]}
+    ).exec(function(err) {
         if(err) return cb(err);
         return cb();
     });

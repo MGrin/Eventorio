@@ -54,7 +54,7 @@ app.factory('Events', ['$rootScope', '$resource', '$http', 'Global', function ($
       });
   };
 
-  event.delete = function(event, cb) {
+  event.remove = function(event, cb) {
     $http.delete('/events/' + event.id)
       .success(function () {
         return cb();

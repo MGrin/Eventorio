@@ -42,7 +42,7 @@ module.exports = function (app, passport) {
   app.route('/events/:eventId')
     .get(events.isAccessible, events.show)
     .post(users.requiresLogin, events.update)
-    .delete(users.requiresLogin, events.delete);
+    .delete(users.requiresLogin, events.remove);
   app.route('/events/:eventId/people')
     .get(events.getParticipants);
   app.route('/events/:eventId/invite')

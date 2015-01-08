@@ -233,7 +233,7 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
   $scope.deleteEvent = function() {
       var input = $('#eventNameToDelete textarea').val();
       if(input === $scope.event.name){
-          Events.delete($scope.event, function(err) {
+          Events.remove($scope.event, function(err) {
             if(!err){
                 $('#deleteModal').toggle();
                 window.location.pathname = "/";
