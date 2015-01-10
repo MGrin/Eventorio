@@ -21,7 +21,8 @@ app.factory('Global', function () {
       invite: 'invite',
       attendEvent: 'attend event',
       quitEvent: 'quit event',
-      follow: 'follow'
+      follow: 'follow',
+      referenced: 'referenced'
     }
   };
 
