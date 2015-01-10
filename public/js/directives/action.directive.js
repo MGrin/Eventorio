@@ -87,7 +87,7 @@ app.directive('action', ['Global', function (Global) {
             'invited'
           ];
           contentHTML.push('<a href="/users/' + action.object[0].userId.username + '"><b>' + action.object[0].userId.username + '</b></a>');
-          contentHTML.push('<a href="/events/' + subjectEvent.id + '"><b>@' + subjectEvent.name + '</b></a>');
+          contentHTML.push('<a href="/events/' + subjectEvent._id + '"><b>@' + subjectEvent.name + '</b></a>');
 
           contentHTML = contentHTML.join(' ');
 
