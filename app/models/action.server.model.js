@@ -19,7 +19,8 @@ var actionTypes = {
   invite: 'invite',
   attendEvent: 'attend event',
   quitEvent: 'quit event',
-  follow: 'follow'
+  follow: 'follow',
+  referenced: 'referenced'
 };
 
 /**
@@ -78,19 +79,6 @@ ActionSchema.statics = {
     return action.save(cb);
   },
 
-  newDeleteEventAction: function(event, cb){
-    if (!cb) cb = function (){};
-    app.Action.remove({
-        $or:[
-            {'object.eventId': event.id},
-            {'subject.eventId': event.id }
-        ]}
-    ).exec(function(err) {
-        if(err) return cb(err);
-        return cb();
-    });
-  },
-
   newAttendEventAction: function (user, event, cb) {
     if (!cb) cb = function (){};
     var subjectActor = new actor({_type: 'User', userId: user});
@@ -118,7 +106,7 @@ ActionSchema.statics = {
   newInviteAction: function (actorUser, user, event, cb) {
     if (!cb) cb = function (){};
     var objectActor = new actor({_type: 'User', userId: user});
-    var subjectActor = new actor({_type: 'Event', eventId: event, userId: actorUser});
+    var subjectActor = new actor({_type: 'User', eventId: event, userId: actorUser});
     var action = new app.Action({
       _type: actionTypes.invite,
       object: [objectActor],
@@ -139,16 +127,28 @@ ActionSchema.statics = {
     return action.save(cb);
   },
 
+  newReferencedAction: function (author, user, eventId, cb) {
+    if (!cb) cb = function (){};
+    var objectActor = new actor({_type: 'User', userId: user});
+    var subjectActor = new actor({_type: 'User', userId: author, eventId: eventId});
+
+    var action = new app.Action({
+      _type: actionTypes.referenced,
+      object: [objectActor],
+      subject: [subjectActor]
+    });
+
+    return action.save(cb);
+  },
+
   actionsForUser: function (user, offset, quantity, cb) {
     app
       .Action
       .find({
         $or: [{
           'object.userId': user._id,
-          'object._type': 'User'
         }, {
           'subject.userId': user._id,
-          'subject._type': 'User'
         }]
       })
       .sort({created: -1})
@@ -156,6 +156,19 @@ ActionSchema.statics = {
       .limit(quantity)
       .populate('object.userId object.eventId subject.userId subject.eventId')
       .exec(cb);
+  },
+
+  removeEventActions: function(event, cb){
+    if (!cb) cb = function (){};
+    app.Action.remove({
+        $or:[
+            {'object.eventId': event.id},
+            {'subject.eventId': event.id }
+        ]}
+    ).exec(function(err) {
+        if(err) return cb(err);
+        return cb();
+    });
   }
 };
 

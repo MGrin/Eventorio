@@ -5,111 +5,180 @@ app.directive('action', ['Global', function (Global) {
     },
     templateUrl: '/view/action.html',
     link: function ($scope, element, attrs) {
-      $(element).find('#actionTimestamp').text(moment($scope.action.created).format('MMMM Do YYYY, HH:mm:ss'));
+      var objectImgSrc;
+      var objectImgLinkHref;
+      var objectName;
 
-      $(element).find('#actionImg').attr('src', $scope.action.subject[0].userId.picture);
-      $(element).find('#actionImgLink').attr('href', '/users/'+ $scope.action.subject[0].userId.username);
-      $(element).find('#subjectLink').attr('href', '/users/' + $scope.action.subject[0].userId.username);
-      $(element).find('#subjectName').text($scope.action.subject[0].userId.username + ' ');
+      var subjectImgSrc;
+      var subjectImgLinkHref;
+      var subjectName;
 
-      $(element).find('#secondActionImg').css('height', '100px');
-      $(element).find('#secondActionImg').css('margin-top', '10px');
+      var contentHTML;
 
-      var contentHtml;
-      var secondImgSrc;
-      var secondImgHref;
+      var action = $scope.action;
 
-      switch($scope.action._type) {
-        case 'signup': {
-          contentHtml = [
-            '<b><a href="/users/' + $scope.action.subject[0].userId.username + '">',
-            $scope.action.subject[0].userId.username,
-            '</a></b>',
-            ', welcome to Eventorio!'
-          ].join('');
-          secondImgSrc = '/img/logo_white_on_blue.png';
+      var subject;
+      var object;
+
+      switch (action.subject[0]._type) {
+        case 'User' : {
+          subject = action.subject[0].userId;
+
+          subjectImgSrc = subject.picture;
+          subjectImgLinkHref = '/users/' + subject.username;
+          subjectName = subject.username;
+
           break;
-        };
-        case 'create event': {
-          contentHtml = [
-            '<b><a href="/users/' + $scope.action.subject[0].userId.username + '">',
-            $scope.action.subject[0].userId.username,
-            '</a></b>',
-            ' has created new event ',
-            '<b><a href="/events/' + $scope.action.object[0].eventId.id + '">',
-            '"' + $scope.action.object[0].eventId.name + '"',
-            '</a></b>'
-          ].join('');
+        }
+        case 'Event' : {
+          subject = action.subject[0].eventId;
 
-          secondImgSrc = $scope.action.object[0].eventId.picture || '/img/event_logo.jpg';
-          secondImgHref = "/events/" + $scope.action.object[0].eventId.id;
+          subjectImgSrc = subject.picture || '/img/event_logo.jpg';
+          subjectImgLinkHref = '/events/' + subject.id;
+          subjectName = subject.name;
           break;
-        };
-        case 'invite': {
-          contentHtml = [
-            '<b><a href="/users/' + $scope.action.subject[0].userId.username + '">',
-            $scope.action.subject[0].userId.username,
-            '</a></b>',
-            ' is invited ',
-            '<b><a href="/events/' + $scope.action.object[0].eventId.id + '">',
-            '@' + $scope.action.object[0].eventId.name,
-            '</a></b>'
-          ].join('');
-
-          secondImgSrc = $scope.action.object[0].eventId.picture || '/img/event_logo.jpg';
-          secondImgHref = "/events/" + $scope.action.object[0].eventId.id;
-          break;
-        };
-        case 'attend event': {
-          contentHtml = [
-            '<b><a href="/users/' + $scope.action.subject[0].userId.username + '">',
-            $scope.action.subject[0].userId.username,
-            '</a></b>',
-            ' will participate ',
-            '<b><a href="/events/' + $scope.action.object[0].eventId.id + '">',
-            '@' + $scope.action.object[0].eventId.name,
-            '</a></b>'
-          ].join('');
-
-          secondImgSrc = $scope.action.object[0].eventId.picture || '/img/event_logo.jpg';
-          secondImgHref = "/events/" + $scope.action.object[0].eventId.id;
-          break;
-        };
-        case 'quit event': {
-          contentHtml = [
-            '<b><a href="/users/' + $scope.action.subject[0].userId.username + '">',
-            $scope.action.subject[0].userId.username,
-            '</a></b>',
-            ' will not participate ',
-            '<b><a href="/events/' + $scope.action.object[0].eventId.id + '">',
-            '@' + $scope.action.object[0].eventId.name,
-            '</a></b>'
-          ].join('');
-
-          secondImgSrc = $scope.action.object[0].eventId.picture || '/img/event_logo.jpg';
-          secondImgHref = "/events/" + $scope.action.object[0].eventId.id;
-          break;
-        };
-        case 'follow': {
-          contentHtml = [
-            '<b><a href="/users/' + $scope.action.subject[0].userId.username + '">',
-            $scope.action.subject[0].userId.username,
-            '</a></b>',
-            ' is now following ',
-            '<b><a href="/events/' + $scope.action.object[0].userId.username + '">',
-            $scope.action.object[0].userId.username,
-            '</a></b>'
-          ].join('');
-
-          secondImgSrc = $scope.action.object[0].userId.picture;
-          secondImgHref = "/users/" + $scope.action.object[0].userId.username;
-          break;
-        };
+        }
       }
 
-      $(element).find('#secondActionImg').attr('src', secondImgSrc);
-      if (secondImgHref) $(element).find('#secondActionImgLink').attr('href', secondImgHref);
-      $(element).find('#actionContent').html(contentHtml);
+      switch (action._type) {
+        case Global.actionTypes.signup: {
+          objectImgSrc = '/img/logo_white_on_blue.png';
+          objectImgLinkHref = '/app';
+          objectName = 'Eventorio';
+
+          contentHTML = [
+            '<a href="' + subjectImgLinkHref + '"><b>' + subjectName + '</b></a>,',
+            'welcome to Eventorio!'
+          ].join(' ');
+          break;
+        }
+
+        case Global.actionTypes.createEvent: {
+          object = action.object[0].eventId;
+
+          objectImgSrc = object.picture;
+          objectImgLinkHref = '/events/' + object.id;
+          objectName = object.name;
+
+          contentHTML = [
+            '<a href="' + subjectImgLinkHref + '"><b>' + subjectName + '</b></a>',
+            'has created'
+          ];
+
+          contentHTML.push('the event');
+          contentHTML.push('"<a href="' + objectImgLinkHref + '"><b>' + objectName + '</b></a>"');
+
+          contentHTML = contentHTML.join(' ');
+          break;
+        }
+
+        case Global.actionTypes.invite: {
+          var subjectEvent = action.subject[0].eventId;
+          var subjectUser = action.subject[0].userId;
+
+          object = action.object[0].userId;
+
+          objectImgSrc = object.picture;
+          objectImgLinkHref = '/users/' + object.username;
+          objectName = object.username;
+
+          contentHTML = [
+            '<a href="/users/' + subjectUser.username + '"><b>' + subjectUser.username + '</b></a>',
+            'invited'
+          ];
+          contentHTML.push('<a href="/users/' + action.object[0].userId.username + '"><b>' + action.object[0].userId.username + '</b></a>');
+          contentHTML.push('<a href="/events/' + subjectEvent.id + '"><b>@' + subjectEvent.name + '</b></a>');
+
+          contentHTML = contentHTML.join(' ');
+
+          break;
+        }
+
+        case Global.actionTypes.attendEvent: {
+          object = action.object[0].eventId;
+
+          objectImgSrc = object.picture;
+          objectImgLinkHref = '/events/' + object.id;
+          objectName = object.name;
+
+          contentHTML = [
+            '<a href="' + subjectImgLinkHref + '"><b>' + subjectName + '</b></a>',
+            'will participate'
+          ];
+
+          contentHTML.push('<a href="' + objectImgLinkHref + '"><b>@' + objectName + '</b></a>');
+          contentHTML = contentHTML.join(' ');
+          break;
+        }
+
+        case Global.actionTypes.quitEvent: {
+          object = action.object[0].eventId;
+
+          objectImgSrc = object.picture;
+          objectImgLinkHref = '/events/' + object.id;
+          objectName = object.name;
+
+          contentHTML = [
+            '<a href="' + subjectImgLinkHref + '"><b>' + subjectName + '</b></a>',
+            'will not participate'
+          ];
+
+          contentHTML.push('<a href="' + objectImgLinkHref + '"><b>@' + objectName + '</b></a>');
+          contentHTML = contentHTML.join(' ');
+          break;
+        }
+
+        case Global.actionTypes.follow: {
+          object = action.object[0].userId;
+
+          objectImgSrc = object.picture;
+          objectImgLinkHref = '/users/' + object.username;
+          objectName = object.username;
+
+          contentHTML = [
+            '<a href="' + subjectImgLinkHref + '"><b>' + subjectName + '</b></a>',
+            'is now following'
+          ];
+
+          contentHTML.push('<a href="' + objectImgLinkHref + '"><b>@' + objectName + '</b></a>');
+          contentHTML = contentHTML.join(' ');
+          break;
+        }
+
+        case Global.actionTypes.referenced: {
+          object = action.object[0].userId;
+
+          objectImgSrc = object.picture;
+          objectImgLinkHref = '/users/' + object.username;
+          objectName = object.username;
+
+          contentHTML = [
+            '<a href="' + subjectImgLinkHref + '"><b>' + subjectName + '</b></a>',
+            'mentionned',
+            '<a href="' + objectImgLinkHref + '"><b>@' + objectName + '</b></a>',
+            'in his comment',
+            '<a href="/events/' + action.subject[0].eventId._id + '"><b>@' + action.subject[0].eventId.name + '</b></a>'
+          ];
+
+          contentHTML = contentHTML.join(' ');
+          break;
+        }
+      }
+
+      $(element).find('#actionTimestamp').text(moment($scope.action.created).format('MMMM Do YYYY, HH:mm:ss'));
+
+      $(element).find('#subjectImg').attr('src', subjectImgSrc);
+      $(element).find('#subjectImgLink').attr('href', subjectImgLinkHref);
+      $(element).find('#subjectName').text(subjectName);
+
+      $(element).find('#objectImg').attr('src', objectImgSrc);
+      $(element).find('#objectImgLink').attr('href', objectImgLinkHref);
+      $(element).find('#objectName').text(objectName);
+
+      $(element).find('#actionContent').html(contentHTML);
+
+      $scope.objectImgSrc = objectImgSrc;
+      // $scope.$apply();
     },
   }
 }]);

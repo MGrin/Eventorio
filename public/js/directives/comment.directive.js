@@ -18,7 +18,6 @@ app.directive('comment', ['Global', function (Global) {
           word = word.substring(0, temp.index)
                   + '<b><a href="/users/' + username + '">@' + username + '</a></b>'
                   + word.substring(temp.index + username.length + 1);
-          console.log(word)
         }
         resContent.push(word);
       });

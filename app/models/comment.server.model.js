@@ -32,18 +32,51 @@ var CommentSchema = exports.Schema = new Schema({
 });
 
 CommentSchema.statics = {
-  create: function (user, eventId, content, cb) {
+  create: function (author, eventId, content, cb) {
     var comment = new app.Comment({
       content: content,
-      creator: user,
+      creator: author,
       event: eventId
     });
 
     comment.save(function (err, comment) {
-      if (err) return cb(err);
+      if (err) cb(err);
       comment = comment.toObject();
-      comment.creator = user.toJSON();
-      return cb(null, comment);
+      comment.creator = author.toJSON();
+      cb(err, comment);
+    });
+
+    var words = content.split(' ');
+    var references = [];
+    var usernamesRE = [];
+
+    _.each(words, function (word, index) {
+      var regExpMatch = word.match(/@[a-zA-Z0-9]+/);
+      if (regExpMatch) {
+        var username = regExpMatch[0].substring(1);
+        var usernameRE = new RegExp('^' + username +'$', 'i');
+        references.push({
+          word: word,
+          index: index,
+          username: username,
+          usernameRE: usernameRE
+        });
+        usernamesRE.push(usernameRE);
+      }
+    });
+
+    app.User.find({username: {$in: usernamesRE}}, function (err, users) {
+      if (err) return next();
+
+      _.each(users, function (user) {
+        var usernameRE = new RegExp('^' + user.username +'$', 'i');
+
+        var reference = _.find(references, function (reference) {
+          return reference.username.match(usernameRE);
+        });
+
+        if (reference) app.Action.newReferencedAction(author, user, eventId);
+      });
     });
   },
 
