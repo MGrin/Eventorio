@@ -299,6 +299,14 @@ UserSchema.statics = {
       app.email.sendNewPassword(user, newPassword);
       return cb();
     });
+  },
+
+  search: function(username, cb) {
+    var toSearch = new RegExp(username, 'i');
+    app.User.find( {username: toSearch} , function(err, users){
+        if (err) return cb(err);
+        return cb(false, users);
+    });
   }
 }
 // Add joined and modified fields to the Schema

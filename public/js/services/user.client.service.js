@@ -61,5 +61,14 @@ app.factory('Users', ['$resource', '$http', 'Global', function ($resource, $http
       });
   }
 
+  user.search = function (toSearch, cb) {
+    $http.post('/users/search', toSearch)
+      .success(function (response) {
+        return cb(null, response);
+      }).error(function () {
+        return cb(false);
+      });
+  }
+
   return user;
 }]);

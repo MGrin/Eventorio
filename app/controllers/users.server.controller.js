@@ -241,3 +241,14 @@ exports.requiresLogin = function (req, res, next) {
     res.redirect('/');
   }
 };
+
+
+exports.search = function (req, res) {
+    var username = req.body.search;
+    app.User.search(username , function(err, users){
+        if (err) return app.err(err, res);
+        res.jsonp(users.map(function(user){
+            return user.toJSON();
+        }));
+    });
+};

@@ -19,6 +19,12 @@ div(ng-controller="HeaderController")
           ul.nav.navbar-nav
             li
               a(href="/") Home
+            li
+              form.search-form.form(ng-submit="search()")
+                input.form-control(type="text"
+                                 placeholder="Search"
+                                 name="search"
+                                 ng-model='formSearch.text')
 
           ul.nav.navbar-nav.navbar-right(ng-show="show")
             li(ng-if="!global.me")

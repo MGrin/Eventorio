@@ -339,5 +339,15 @@ EventSchema.statics = {
       if (!err) app.Action.newCreateEventAction(createdEvent);
       return cb(err, createdEvent);
     });
+  },
+
+  search: function(name, cb) {
+    console.log("Ok");
+    var toSearch = new RegExp(name, 'i');
+    app.Event.find( {name: toSearch} , function(err, events){
+      if (err) return cb(err);
+      return cb(false, events);
+    });
   }
+
 }

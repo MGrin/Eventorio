@@ -176,3 +176,14 @@ exports.isAttandable = function (req, res, next) {
     return next();
   }
 }
+
+exports.search = function (req, res) {
+    console.log("Search");
+    var name = req.body.search;
+    app.Event.search(name , function(err, events){
+        if (err) return app.err(err, res);
+        res.jsonp(events.map(function(event){
+            return event.toJSON();
+        }));
+    });
+};
