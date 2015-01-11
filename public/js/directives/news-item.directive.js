@@ -1,4 +1,4 @@
-app.directive('action', ['Global', function (Global) {
+app.directive('newsItem', ['Global', function (Global) {
   return {
     scope: {
       action: '=item'
