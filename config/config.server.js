@@ -16,7 +16,7 @@ var config = {
       d: 'retro'
     },
     mandrill: {
-      API_KEY: 'wdyAQM7hpNcKB0XU_QjvEQ'
+      API_KEY: 'wtWcKsV31HCK-z05mhKgMQ'
     }
   },
 
@@ -31,7 +31,7 @@ var config = {
       d: 'retro'
     },
     mandrill: {
-      API_KEY: 'wdyAQM7hpNcKB0XU_QjvEQ'
+      API_KEY: 'wtWcKsV31HCK-z05mhKgMQ'
     }
   }
 };
