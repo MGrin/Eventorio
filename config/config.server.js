@@ -9,7 +9,7 @@ var config = {
     db: 'mongodb://localhost/Eventorio-dev',
     root: rootPath,
     port: 7000,
-    serverUrl: 'http://eventorio.uk.to/',
+    serverUrl: 'http://eventorio.me/',
     name: 'Eventorio',
     gravatar: {
       s: '400',
@@ -24,7 +24,7 @@ var config = {
     db: 'mongodb://eventorio:Eventorio2014Mongolab@ds063779.mongolab.com:63779/eventorio',
     root: rootPath,
     port: process.env.PORT || 80,
-    serverUrl: 'http://eventorio.uk.to/',
+    serverUrl: 'http://eventorio.me/',
     name: 'Eventorio',
     gravatar: {
       s: '400',
