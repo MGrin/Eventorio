@@ -10,6 +10,7 @@ var Schema = mongoose.Schema;
 var _ = require('underscore');
 var async = require('async');
 var ObjectId = Schema.ObjectId;
+var textSearch = require('mongoose-text-search');
 
 var visLevels = ['public', 'followers', 'invitations'];
 /**
@@ -63,6 +64,8 @@ EventSchema
   .get(function () {
     return this._id.toString();
   });
+
+EventSchema.index({ name: 'text', description: 'text'});
 
 EventSchema.methods = {
   modify: function (fields, organizator, cb) {
@@ -162,6 +165,7 @@ EventSchema.methods = {
     delete resEvent.organizator.__v;
     delete resEvent.organizator.modified;
     delete resEvent.organizator.password;
+    delete resEvent.organizator.activationCode;
     delete resEvent.organizator.hashPassword;
     delete resEvent.organizator.salt;
     delete resEvent.invitedUsers;
@@ -339,5 +343,25 @@ EventSchema.statics = {
       if (!err) app.Action.newCreateEventAction(createdEvent);
       return cb(err, createdEvent);
     });
+  },
+
+  search: function(toSearch, user, limit, cb) {
+    app.Event.textSearch(toSearch, {limit: limit}, function (err, output) {
+        if (err) return cb(err);
+        var events = output.results.map(function (objWithScore) {
+            return objWithScore.obj;
+        });
+
+        app.User.populate(events, {path: 'organizator'}, function (err, events) {
+            if (err) cb(err);
+            return cb(false, events.filter(
+                function (event) {
+                    return user.canView(event);
+                }));
+        });
+    });
   }
+
 }
+
+EventSchema.plugin(textSearch);

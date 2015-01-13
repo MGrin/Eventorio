@@ -37,6 +37,7 @@
     "moment": "latest",
     "mongoose": "latest",
     "mongoose-schema-extend": "latest",
+    "mongoose-text-search": "latest",
     "mongoose-troop": "latest",
     "morgan": "latest",
     "passport": "latest",

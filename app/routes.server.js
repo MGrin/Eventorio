@@ -5,6 +5,7 @@ module.exports = function (app, passport) {
   var users = app.controllers.Users;
   var events = app.controllers.Events;
   var comments = app.controllers.Comments;
+  var search = app.controllers.Search;
 
   app.route('/')
      .get(index.index);
@@ -19,6 +20,7 @@ module.exports = function (app, passport) {
   app.route('/login')
     .post(users.login);
   app.route('/users')
+    .get(users.requiresLogin, users.query)
     .post(users.signup);
   app.route('/logout')
     .get(users.logout);
@@ -51,6 +53,7 @@ module.exports = function (app, passport) {
     .post(users.requiresLogin, events.isAttandable, users.attend);
   app.route('/events/:eventId/quit')
     .post(users.requiresLogin, users.quit);
+
 
 
   app.route('/comments')

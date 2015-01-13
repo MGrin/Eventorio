@@ -20,11 +20,21 @@ div(ng-controller="HeaderController")
             li
               a(href="/") Home
 
+
           ul.nav.navbar-nav.navbar-right(ng-show="show")
             li(ng-if="!global.me")
               a(href="#", data-toggle="modal", data-target="#loginModal")
                 span.glyphicon.glyphicon-off(style="margin-right: 10px")
                 span Login
+            li(ng-if="global.me", ng-controller="SearchController")
+              .form-group
+                input.search-input.sfTypeahead.form-control(
+                    type="text"
+                    placeholder="Search"
+                    name="search"
+                    ng-model="searchEntry"
+                    options="searchOptions"
+                    datasets="searchDatasets")
             li.dropdown(ng-if="global.me")
               a.dropdown-toggle(href="#", data-toggle="dropdown")
                 img.img.img-rounded(style="height: 18px; margin-right: 10px", ng-src="{{global.me.picture}}")
@@ -49,6 +59,15 @@ div(ng-controller="HeaderController")
               a(href="/users/{{global.me.username}}")
                 img.img.img-rounded(style="height: 30px; margin-right: 10px", ng-src="{{global.me.picture}}")
                 span {{global.me.username}}
+            li#search-menu(ng-if="global.me", ng-controller="SearchController")
+                input.search-input.sfTypeahead.form-control(
+                    type="text"
+                    placeholder="Search"
+                    name="search"
+                    ng-model="searchEntry"
+                    options="searchOptions"
+                    datasets="searchDatasets")
+
             li#calendar-menu
               a(href="/calendar")
                 span.glyphicon.glyphicon-calendar(style="margin-right: 10px")

@@ -2,6 +2,8 @@ app.controller('HeaderController', ['$scope', '$rootScope', '$location', 'Global
   function ($scope, $rootScope, $location, Global, Users, Auth, Notifications) {
   $scope.global = Global;
   $scope.view = 'login';
+
+
   $scope.credentials = {
     username: '',
     email: '',
@@ -126,4 +128,5 @@ app.controller('HeaderController', ['$scope', '$rootScope', '$location', 'Global
       else if (Global.screenSize === 'xs') window.location = '/calendar';
     });
   };
+
 }]);
