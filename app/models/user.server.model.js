@@ -13,6 +13,7 @@ var async = require('async');
 var ObjectId = Schema.ObjectId;
 var gravatar = require('gravatar');
 var randomstring = require('randomstring');
+var textSearch = require('mongoose-text-search');
 
 /**
  * Models
@@ -190,6 +191,12 @@ UserSchema.methods = {
             || (event.permissions.attendance === 'invitations' && this.isInvitedTo(event)));
   },
 
+  canView: function (event) {
+    return this.id === event.organizator.id || (event.permissions.visibility === 'public'
+        || (event.permissions.visibility === 'followers' && this.isFollowing(event.organizator))
+        || (event.permissions.visibility === 'invitations' && this.isInvitedTo(event)));
+  },
+
   attendEvent: function (event, cb) {
     if (event.attendees.indexOf(this._id) === -1) event.attendees.push(this._id);
 
@@ -301,11 +308,12 @@ UserSchema.statics = {
     });
   },
 
-  search: function(username, cb) {
-    var toSearch = new RegExp(username, 'i');
-    app.User.find( {username: toSearch} , function(err, users){
+  search: function(searchQuery, limit, cb) {
+    app.User.textSearch(searchQuery, {limit: limit}, function(err, output){
         if (err) return cb(err);
-        return cb(false, users);
+        return cb(false, output.results.map(function (objWithScore){
+            return objWithScore.obj;
+        }));
     });
   }
 }
@@ -314,3 +322,6 @@ UserSchema.plugin(troop.timestamp, {
   useVirtual: false,
   createdPath: 'joined'
 });
+
+
+UserSchema.plugin(textSearch);

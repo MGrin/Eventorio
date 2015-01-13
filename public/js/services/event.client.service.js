@@ -63,16 +63,6 @@ app.factory('Events', ['$rootScope', '$resource', '$http', 'Global', function ($
       });
   };
 
-
-  event.search = function (toSearch, cb) {
-    $http.post('/events/search', toSearch)
-      .success(function (response) {
-        return cb(null, response);
-      }).error(function () {
-        return cb(false);
-      });
-  };
-
   event.people = $resource('/events/:eventId/people', {eventId: '@_id'}, {update: {method: 'POST'}});
 
   return event;

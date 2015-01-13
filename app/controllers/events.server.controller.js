@@ -112,6 +112,15 @@ exports.query = function (req, res) {
       if (err) return app.err(err, res);
       return res.jsonp(events);
     });
+  } else if (req.query.q) {
+    var searchQuery = req.query.q;
+    var searchLimit = req.query.limit || 5;
+    app.Event.search(searchQuery, user, searchLimit,  function(err, events){
+      if (err) return app.err(err, res);
+      return res.jsonp(events.map(function(event){
+            return event.toJSON();
+        }));
+    });
   }
 };
 
@@ -176,14 +185,3 @@ exports.isAttandable = function (req, res, next) {
     return next();
   }
 }
-
-exports.search = function (req, res) {
-    console.log("Search");
-    var name = req.body.search;
-    app.Event.search(name , function(err, events){
-        if (err) return app.err(err, res);
-        res.jsonp(events.map(function(event){
-            return event.toJSON();
-        }));
-    });
-};

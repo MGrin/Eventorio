@@ -1,11 +1,8 @@
-app.controller('HeaderController', ['$scope', '$rootScope', '$location', 'Global', 'Users', 'Events', 'Auth', 'Notifications',
-  function ($scope, $rootScope, $location, Global, Users, Events, Auth, Notifications) {
+app.controller('HeaderController', ['$scope', '$rootScope', '$location', 'Global', 'Users', 'Auth', 'Notifications',
+  function ($scope, $rootScope, $location, Global, Users, Auth, Notifications) {
   $scope.global = Global;
   $scope.view = 'login';
 
-  $scope.formSearch = {
-      text: ''
-  };
 
   $scope.credentials = {
     username: '',
@@ -130,17 +127,6 @@ app.controller('HeaderController', ['$scope', '$rootScope', '$location', 'Global
       if (Global.screenSize === 'lg') window.location = '/app';
       else if (Global.screenSize === 'xs') window.location = '/calendar';
     });
-  };
-
-  $scope.search = function() {
-    var toSearch = {search: $scope.formSearch.text};
-    Users.search(toSearch, function (err, users){
-        if(err) return;
-    });
-
-    Events.search(toSearch, function (err, events){
-        if(err) return;
-    })
   };
 
 }]);

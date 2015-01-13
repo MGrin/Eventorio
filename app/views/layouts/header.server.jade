@@ -19,12 +19,15 @@ div(ng-controller="HeaderController")
           ul.nav.navbar-nav
             li
               a(href="/") Home
-            li
-              form.search-form.form(ng-submit="search()")
-                input.form-control(type="text"
-                                 placeholder="Search"
-                                 name="search"
-                                 ng-model='formSearch.text')
+            li(ng-if="global.me", ng-controller="SearchController")
+              input.search-input.sfTypeahead.form-control(
+                  type="text"
+                  placeholder="Search"
+                  name="search"
+                  ng-model="searchEntry"
+                  options="searchOptions"
+                  datasets="searchDatasets")
+
 
           ul.nav.navbar-nav.navbar-right(ng-show="show")
             li(ng-if="!global.me")
@@ -55,6 +58,15 @@ div(ng-controller="HeaderController")
               a(href="/users/{{global.me.username}}")
                 img.img.img-rounded(style="height: 30px; margin-right: 10px", ng-src="{{global.me.picture}}")
                 span {{global.me.username}}
+            li#search-menu(ng-if="global.me", ng-controller="SearchController")
+                input.search-input.sfTypeahead.form-control(
+                    type="text"
+                    placeholder="Search"
+                    name="search"
+                    ng-model="searchEntry"
+                    options="searchOptions"
+                    datasets="searchDatasets")
+
             li#calendar-menu
               a(href="/calendar")
                 span.glyphicon.glyphicon-calendar(style="margin-right: 10px")
