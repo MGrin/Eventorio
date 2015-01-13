@@ -1,8 +1,5 @@
-app.controller('SearchController', ['$scope',  '$location', 'Global',
-    function ($scope, $location, Global) {
-
-    $scope.global = Global;
-
+app.controller('SearchController', ['$scope', '$compile',
+    function ($scope, $compile) {
     var users = new Bloodhound({
         datumTokenizer: Bloodhound.tokenizers.obj.whitespace('username'),
         queryTokenizer: Bloodhound.tokenizers.whitespace,
@@ -31,36 +28,31 @@ app.controller('SearchController', ['$scope',  '$location', 'Global',
         }
     });
 
-
     users.initialize();
     events.initialize();
-
 
     $scope.searchOptions = {
         highlight: true
     };
 
 
-   $scope.searchDatasets = [
-        {
-            displayKey: 'username',
-            source: users.ttAdapter(),
-            templates: {
-                suggestion: function(user){
-                    return '<a href="' + user.link  + '">'  + user.username + '</a>';
-                }
-            }
-        },
-       {
-           displayKey: 'name',
-           source: events.ttAdapter(),
-           templates: {
-               suggestion: function(event){
-                   return '<a href="' + event.link  + '">' + event.name + '</a>';
-               }
-           }
-       }
-    ];
+   $scope.searchDatasets = [{
+      displayKey: 'username',
+      source: users.ttAdapter(),
+      templates: {
+        suggestion: function(user){
+          return $compile('<div class="search-item" search-item href="' + user.link + '" picture="' + user.picture + '" title="' + user.username + '"></div>')($scope);
+        }
+      }
+    }, {
+      displayKey: 'name',
+      source: events.ttAdapter(),
+      templates: {
+        suggestion: function(event){
+          return $compile('<div class="search-item" search-item href="' + event.link + '" picture="' + (event.picture || '/img/event_logo.jpg') + '" title="' + event.name + '"></div>')($scope);
+        }
+      }
+    }];
 
     $scope.searchEntry = null;
 
