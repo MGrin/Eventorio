@@ -5,7 +5,7 @@ html(lang="en", ng-app="EventorioApp")
   body(style="background-image: url(/img/bg_opacity.jpeg)")
     include ../layouts/header.server.jade
     .content-fluid(ng-controller="EventController", ng-init="edit=#{event.edit}", ng-show="show")
-      .row
+      .row-fluid
         img.img-responsive.img-event-header(src="/img/event_background.png")
 
         .col-lg-4.col-lg-offset-1.col-xs-12.col-xs-offset-0#leftSidebar
