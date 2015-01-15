@@ -33,8 +33,8 @@ var UserSchema = exports.Schema = new Schema({
   provider: String,
   gender: String, // male or female
 
-  hashPassword: String,
-  salt: String,
+  hashPassword: {type: String, select: false},
+  salt: {type: String, select: false},
 
   following: [{
     type: ObjectId,
@@ -46,7 +46,7 @@ var UserSchema = exports.Schema = new Schema({
     ref: 'User'
   }],
 
-  activationCode: String,
+  activationCode: {type: String, select: false},
 });
 
 /**
@@ -225,10 +225,10 @@ UserSchema.methods = {
 
   changePassword: function (credentials, cb) {
     if (!credentials.oldPassword || !credentials.newPassword || !credentials.newPasswordRepeat) {
-      return cb(new Error('Missing credentials'));
+        return cb(new Error('Missing credentials'));
     }
     if (credentials.newPassword !== credentials.newPasswordRepeat || credentials.newPassword.length < 8 || !this.authenticate(credentials.oldPassword)) {
-      return cb(new Error('Wrong credentials'))
+        return cb(new Error('Wrong credentials'))
     }
 
     this.password = credentials.newPassword;

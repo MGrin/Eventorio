@@ -24,7 +24,7 @@ module.exports = function (myApp, passport) {
   });
 
   passport.deserializeUser(function (id, cb) {
-    app.User.findOne({_id: id}, function (err, user) {
+    app.User.findOne({_id: id}, '+hashPassword +salt', function (err, user) {
       cb(err, user);
     });
   });
@@ -33,7 +33,7 @@ module.exports = function (myApp, passport) {
   passport.use(new LocalStrategy(
     function(username, password, done) {
       var usernameRE = new RegExp('^' + username +'$', 'i');
-      app.User.findOne({username: usernameRE}, function(err, user) {
+      app.User.findOne({username: usernameRE}, '+hashPassword +salt', function(err, user) {
         if (err) { return done(err); }
         if (!user) {
           return done(null, false, { message: 'Incorrect username.' });
