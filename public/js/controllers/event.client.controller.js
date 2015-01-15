@@ -2,62 +2,42 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
   function ($scope, $rootScope, Global, Users, Events, Notifications, Comments) {
   $scope.global = Global;
   $scope.now = moment();
+  $scope.deletedEventName = '';
 
-  $scope.view = 'description';
-  $scope.peopleView = 'accepted';
-
-  Events.updateMonthlyList($scope.now, function (err, events) {
-    $rootScope.$broadcast('day', $scope.now, _.filter(events, function (event) {
-      return moment(event.date).format('YYYYMMDD') === $scope.now.format('YYYYMMDD');
-    }));
-  });
-
-  $scope.$on('me', function () {
+  $scope.eventId = window.location.pathname.split('/')[2].toLowerCase();
+  if ($scope.eventId !== 'new') {
     $scope.event = Events.get({eventId: window.location.pathname.split('/')[2]}, function () {
       $scope.show = true;
-      $scope.setEditable($scope.edit, ($scope.edit)?'Create':'Normal');
+
+      $scope.originalName = $scope.event.name;
 
       $scope.event.date = moment($scope.event.date);
 
-      if ($scope.mode === 'Normal') {
-        $scope.event.comments = Comments.get({eventId: window.location.pathname.split('/')[2]});
-        $scope.event.people = Events.people.get({eventId: $scope.event.id}, function () {
-          $scope.event.people.accepted.push($scope.event.organizator);
-          $scope.attending = (_.findWhere($scope.event.people.accepted, {id: Global.me.id})) ? true : false;
-        });
-      }
+      $scope.event.comments = Comments.get({eventId: window.location.pathname.split('/')[2]});
+      $scope.event.people = Events.people.get({eventId: $scope.event.id}, function () {
+        $scope.event.people.accepted.push($scope.event.organizator);
+        $scope.event.attending = (_.findWhere($scope.event.people.accepted, {id: Global.me.id})) ? true : false;
+      });
     });
-  });
-
-  if (Global.screenSize === 'lg') {
-    $('#leftSidebar').addClass('affix');
-    $('#leftSidebar').addClass('affix-top');
+  } else {
+    $scope.event = {
+      organizator : Global.me,
+      name: null,
+      desc: null,
+      date: moment(),
+      permissions: {
+          visibility: "public",
+          attendance: "public"
+      },
+      picture: '/img/event_logo.jpg',
+      headerPicture: '/img/event_background.png'
+    }
+    $scope.show = true;
   }
 
-  $scope.showDescription = function () {
-    if ($scope.view === 'description') return;
-    $scope.view = 'description';
-    $('#descriptionTab').addClass('active');
-    $('#commentsTab').removeClass('active');
-    $('#peopleTab').removeClass('active');
-  };
-  $scope.showComments = function () {
-    if ($scope.view === 'comments') return;
-    $scope.view = 'comments';
-    $('#commentsTab').addClass('active');
-    $('#descriptionTab').removeClass('active');
-    $('#peopleTab').removeClass('active');
-  };
-  $scope.showPeople = function () {
-    if ($scope.view === 'people') return;
-    $scope.view = 'people';
-    $('#peopleTab').addClass('active');
-    $('#descriptionTab').removeClass('active');
-    $('#commentsTab').removeClass('active');
-  };
+  $scope.peopleView = 'accepted';
 
   $scope.showPeopleAccepted = function () {
-    console.log('showPeopleAccepted');
     if ($scope.peopleView === 'accepted') return;
     $scope.peopleView = 'accepted';
     $('.peopleAcceptedTab').addClass('active');
@@ -65,124 +45,14 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
   };
 
   $scope.showPeopleInvited = function () {
-    console.log('showPeopleInvited');
     if ($scope.peopleView === 'invited') return;
     $scope.peopleView = 'invited';
     $('.peopleInvitedTab').addClass('active');
     $('.peopleAcceptedTab').removeClass('active');
   };
 
-  $scope.setEditable = function (status, mode) {
-    if (status) {
-      $scope.mode = mode;
-      if (mode === 'Create') {
-        $scope.event = {
-          date: moment(),
-          visibility: 'public',
-          attendance: 'public',
-          location: {}
-        };
-      }
-      $scope.view='description';
-
-      $('.event-name').editable({
-        type: 'text',
-        mode: 'inline',
-        placeholder: 'Event title',
-        title: 'Enter event title',
-        onblur: 'submit',
-        value: (mode === 'Create')?'':$scope.event.name,
-        send: 'always',
-        selector: '.editable',
-        highlight: false,
-        showbuttons: false,
-        success: function (response, newValue) {
-          $scope.event.name = newValue;
-        }
-      });
-
-      $('.event-visibility').editable({
-        type: 'select',
-        mode: 'inline',
-        title: 'Event visibility',
-        send: 'always',
-        onblur: 'submit',
-        selector: '.editable',
-        value: 'public',
-        highlight: false,
-        placement: 'right',
-        showbuttons: false,
-        source: [
-          {value: 'public', text: 'Event is visible to everyone'},
-          {value: 'followers', text: 'Event is visible only to your followers'},
-          {value: 'invitations', text: 'Event is visible only to invited people'}
-        ],
-        success: function (response, newValue) {
-          $scope.event.visibility = newValue;
-        }
-      });
-
-      $('.event-attendance').editable({
-        type: 'select',
-        mode: 'inline',
-        title: 'Event attendance',
-        send: 'always',
-        selector: '.editable',
-        value: 'public',
-        onblur: 'submit',
-        highlight: false,
-        placement: 'right',
-        showbuttons: false,
-        source: [
-          {value: 'public', text: 'Everyone can attend this event'},
-          {value: 'followers', text: 'Only your followers can attend this event'},
-          {value: 'invitations', text: 'Only invited people can attend this event'}
-        ], success: function (response, newValue) {
-          $scope.event.attendance = newValue;
-        }
-      });
-
-      $('.clockpicker').clockpicker({
-        default: 'now'
-      }).find('input').change(function () {
-        var temp = this.value.split(':');
-        if (!$scope.event.date) $scope.event.date = moment();
-        $scope.event.date.hours(parseInt(temp[0]));
-        $scope.event.date.minutes(parseInt(temp[1]));
-        $scope.$apply();
-      });
-      $scope.$on('day', function (info, date, events) {
-        date = moment(date);
-        if (!$scope.event.date) $scope.event.date = date;
-        else $scope.event.date = $scope.event.date.year(date.year()).month(date.month()).date(date.date());
-      });
-
-      $('textarea.eventDescriptionField').html($scope.event.desc);
-      $('textarea.eventDescriptionField').wysihtml5({
-        "events": {
-          "load": function() {
-          },
-          "blur": function() {
-          }
-        }
-      });
-    } else {
-      $scope.mode = 'Normal';
-      setTimeout(function () {
-        $('textarea.form-control.comment-input').wysihtml5();
-      }, 250);
-    }
-  }
-
-  $scope.goBack = function () {
-    window.history.back();
-  }
-  $scope.cancel = function () {
-    window.location.reload();
-  }
-
-  $scope.attendTheEvent = function () {
-    if ($scope.attending) return;
+  $scope.attendEvent = function () {
+    if ($scope.event.attending) return;
     Events.attend($scope.event, function (err) {
       $scope.event.people.accepted.push(Global.me);
       $scope.event.people.invited = _.without($scope.event.people.invited,
@@ -191,11 +61,12 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
                                                 {id: Global.me.id}
                                               )
                                             );
-      $scope.attending = (_.findWhere($scope.event.people.accepted, {id: Global.me.id}))?true:false;
+      $scope.event.attending = true;
     });
   }
 
-  $scope.quitTheEvent = function () {
+  $scope.quitEvent = function () {
+    if (!$scope.event.attending) return;
     Events.quit($scope.event, function (err) {
       $scope.event.people.invited.push(Global.me);
       $scope.event.people.accepted = _.without($scope.event.people.accepted,
@@ -204,7 +75,7 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
                                                   {id: Global.me.id}
                                                 )
                                               );
-      $scope.attending = (_.findWhere($scope.event.people.accepted, {id: Global.me.id}))?true:false;
+      $scope.event.attending = false;
     });
   }
 
@@ -231,8 +102,7 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
   };
 
   $scope.deleteEvent = function() {
-      var input = $('#eventNameToDelete textarea').val();
-      if(input === $scope.event.name){
+      if(deletedEventName === $scope.originalName){
           Events.remove($scope.event, function(err) {
             if(!err){
                 $('#deleteModal').toggle();
@@ -268,10 +138,15 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
 
   $scope.getDescription = function () {
     var desc;
-
-    if (Global.screenSize === 'lg') desc = $('.hidden-xs .event-description textarea.eventDescriptionField').val();
-    else desc = $('.visible-xs .event-description textarea.eventDescriptionField').val();
-
+    if (Global.screenSize === 'lg') {
+      $('#rightSidebar .description textarea').each(function () {
+        desc = $(this).val();
+      });
+    } else if (Global.screenSize === 'xs') {
+      $('.visible-xs .description textarea').each(function () {
+        desc = $(this).val();
+      });
+    }
     desc = '<div>' + desc + '</div>';
     descHtml = $(desc);
     $(descHtml).each(function () {
@@ -288,7 +163,7 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
     $scope.event.desc = $scope.getDescription();
 
     if (!$scope.event.name || $scope.event.name.length < 1 || $scope.event.name > 20) {
-      Notifications.error($('#header'), 'Name should not be empty and should not be longer than 20 characters');
+      Notifications.error($('#error'), 'Name should not be empty and should not be longer than 20 characters');
       return;
     }
     var event = new Events($scope.event);
@@ -296,20 +171,27 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
     event.$save(function (res) {
       window.location.pathname = "/events/" + res.id;
     }, function (res) {
-      Notifications.error($('#header'),res.data);
+      Notifications.error($('#error'),res.data);
     });
   }
 
-  $scope.modifyEvent = function () {
+  $scope.editEvent = function () {
     $scope.event.desc = $scope.getDescription();
 
     if (!$scope.event.name || $scope.event.name.length < 1 || $scope.event.name > 20) {
-      Notifications.error($('#header'), 'Name should not be empty and should not be longer than 20 characters');
+      Notifications.error($('#error'), 'Name should not be empty and should not be longer than 20 characters');
       return;
     }
 
     $scope.event = Events.update({eventId: $scope.event.id}, $scope.event, function () {
       window.location.reload();
     });
+  }
+
+  $scope.cancel = function () {
+    if ($scope.eventId === 'new') {
+      return history.back();
+    }
+    return window.location.reload();
   }
 }]);

@@ -2,187 +2,10 @@ doctype html
 html(lang="en", ng-app="EventorioApp")
   include ../layouts/head.server.jade
   include ../layouts/scripts.server.jade
-  body(style="background-image: url(/img/bg_opacity.jpeg)")
+  body
     include ../layouts/header.server.jade
-    .content-fluid(ng-controller="EventController", ng-init="edit=#{event.edit}", ng-show="show")
-      .row
-        img.img-responsive.img-event-header(src="/img/event_background.png")
-
-        .col-lg-4.col-lg-offset-1.col-xs-12.col-xs-offset-0#leftSidebar
-          .row
-            .event-thumbnail.col-lg-12.col-xs-4
-              img.img-responsive.img-thumbnail.col-lg-8(src="/img/event_logo.jpg")
-            .event-name.col-xs-8.visible-xs
-              a.editable(ng-if="mode === 'Create'") Event name
-              a.editable(ng-if="mode === 'Edit'") {{event.name}}
-              span(ng-if="mode === 'Normal'") {{event.name}}
-          .row
-            .col-lg-12.event-organizator.text-left(ng-if="mode === 'Normal'")
-              p(style="color: grey") Organized by&nbsp;&nbsp;
-                span(style="color: black")
-                  a(href="/users/{{event.organizator.username}}", style="font-size: 2em")
-                    | {{event.organizator.username}}
-          .row
-            .event-details.col-lg-8.col-lg-offset-0.col-xs-12.col-xs-offset-0
-              .row
-                .event-date.col-lg-12.col-xs-12
-                  a.big-text.editable(ng-if="mode === 'Create'", data-toggle="modal", data-target="#dateAndTimePicker") {{event.date.format('Do MMMM YYYY')}} {{event.date.format('HH:mm')}}
-                  a.big-text.editable(ng-if="mode === 'Edit'", data-toggle="modal", data-target="#dateAndTimePicker") {{event.date.format('Do MMMM YYYY')}} {{event.date.format('HH:mm')}}
-                  p.big-text(ng-if="mode === 'Normal'") {{event.date.format('Do MMMM YYYY')}} {{event.date.format('HH:mm')}}
-              .row
-                .event-location.col-lg-12.col-xs-12
-                  a.big-text.editable(ng-if="mode === 'Create'", data-toggle="modal", data-target="#locationPicker") {{event.location.name || 'Location'}}
-                  a.big-text.editable(ng-if="mode === 'Edit'", data-toggle="modal", data-target="#locationPicker") {{event.location.name || 'Location'}}
-                  a.big-text(ng-if="mode === 'Normal' && event.location", data-toggle="modal", data-target="#locationPicker") {{event.location.name}}
-                  p(ng-if="mode === 'Normal' && !event.location", style="color: grey") No location precised
-
-              .row.hidden-xs(style="color: grey")
-                .row.text-right
-                  .event-visibility.col-lg-12.col-lg-offset-0.col-xs-11.col-xs-offset-1
-                    a.editable(ng-if="mode === 'Create'") Event is visible to everyone
-                    a.editable(ng-if="mode === 'Edit' && (event.permissions.visibility === 'public' || !event.permissions.visibility)")
-                      | Event is visible to everyone
-                    a.editable(ng-if="mode === 'Edit' && event.permissions.visibility === 'followers'")
-                      | Event is visible only to your followers
-                    a.editable(ng-if="mode === 'Edit' && event.permissions.visibility === 'invitations'")
-                      | Event is visible only to invited people
-
-                    span(ng-if="mode === 'Normal' && event.permissions.visibility === 'public'")
-                      | Event is visible to everyone
-                    span(ng-if="mode === 'Normal' && event.permissions.visibility === 'followers'")
-                      | Event is visible only to your followers
-                    span(ng-if="mode === 'Normal' && event.permissions.visibility === 'invitations'")
-                      | Event is visible only to invited people
-                .row.text-right
-                  .event-attendance.col-lg-12.col-lg-offset-0.col-xs-11.col-xs-offset-1
-                    a.editable(ng-if="mode === 'Create'") Everyone can attend this event
-                    a.editable(ng-if="mode === 'Edit' && (event.permissions.attendance === 'public' || !event.permissions.attendance)")
-                      | Everyone can attend this event
-                    a.editable(ng-if="mode === 'Edit' && event.permissions.attendance === 'followers'")
-                      | Only your followers can attend this event
-                    a.editable(ng-if="mode === 'Edit' && event.permissions.attendance === 'invitations'")
-                      | Only invited people can attend this event
-
-                    span(ng-if="mode === 'Normal' && event.permissions.attendance === 'public'")
-                      | Everyone can attend this event
-                    span(ng-if="mode === 'Normal' && event.permissions.attendance === 'followers'")
-                      | Only your followers can attend this event
-                    span(ng-if="mode === 'Normal' && event.permissions.attendance === 'invitations'")
-                      | Only invited people can attend this event
-
-              .row(ng-if="mode === 'Normal' && event.canAttend")
-                h3.event-user-attendance.col-lg-12.col-xs-12
-                  button.btn.btn-info.col-lg-12.col-xs-12(
-                    ng-if="!attending"
-                    ng-click="attendTheEvent()") I will go
-                  button.btn.btn-default.col-lg-12.col-xs-12(
-                    ng-if="attending"
-                    ng-click="quitTheEvent()") I will not go
-
-              .row(ng-if="mode === 'Normal' && global.me.id === event.organizator.id")
-                .col-lg-11.col-xs-12.text-center(style="padding: 0px")
-                  button.btn.btn-info.col-lg-12.col-xs-10.col-xs-offset-1(data-toggle="modal", data-target="#invitationModal") Invite!
-              .row(ng-if="mode === 'Edit' && global.me.id === event.organizator.id")
-                .col-lg-11.col-xs-12.text-center(style="padding: 0px")
-                  button.btn.btn-warning.col-lg-12.col-xs-10.col-xs-offset-1(data-toggle="modal", data-target="#deleteModal") Delete Event!
-
-              .row.hidden-xs(ng-if="mode === 'Normal'")
-                .col-lg-12.text-right
-                  a.big-text(
-                    data-toggle="modal"
-                    data-target="#participantsModal") Show everybody on this event
-              .margin-xs-10
-              .row.visible-xs(ng-if="mode === 'Normal'")
-                ul.nav.nav-tabs
-                  li#descriptionTab.active(role="presentation")
-                    a(href="#", ng-click="showDescription()") Description
-                  li#commentsTab(role="presentation")
-                    a(href="#", ng-click="showComments()") Comments
-                  li#peopleTab(role="presentation")
-                    a(href="#", ng-click="showPeople()") People
-
-              .row.visible-xs(ng-show="view==='description'")
-                .margin-xs-10
-                .event-description.col-xs-12.visible-xs
-                  i.glyphicon.glyphicon-pencil.pull-right(ng-if="mode === 'Normal' && global.me.id === event.organizator.id",
-                                                        ng-click="setEditable(true, 'Edit')")
-                  textarea.eventDescriptionField.col-lg-10(ng-show="mode !== 'Normal'", rows="10")
-                  p(ng-if="mode === 'Normal'", ng-bind-html="event.desc")
-
-              .row.visible-xs(ng-if="mode === 'Normal'", ng-show="view==='comments'")
-                .margin-xs-10
-                .event-comments.col-lg-12
-                  .comment-line(ng-repeat="comment in event.comments.comments", comment, item="comment")
-                  .form-inline
-                    .col-xs-4
-                      .row
-                        img.col-xs-12.img.img-responsive.img-thumbnail(ng-src="{{global.me.picture}}")
-                      .margin-xs-10
-                      .row
-                        label.label.label-default.col-xs-12 {{global.me.username}}
-                    .form-group.col-xs-8
-                      textarea.form-control.comment-input-xs(rows="3")
-                    button.btn.btn-info.col-xs-offset-8(ng-click="comment()") Comment
-              .row.visible-xs(ng-if="mode === 'Normal'", ng-show="view==='people'")
-                .margin-xs-10
-                .row
-                  .col-xs-10.col-xs-offset-2
-                    ul.nav.nav-pills
-                      li.peopleAcceptedTab.active(role="presentation", ng-click="showPeopleAccepted()")
-                        a(href="#") Participants
-                      li.peopleInvitedTab(role="presentation", ng-click="showPeopleInvited()")
-                        a(href="#") Invited
-                .row
-                  .col-xs-12(ng-show="peopleView === 'accepted'")
-                    .col-xs-4(ng-if="event.people.accepted.length > 0", ng-repeat="us in event.people.accepted", user-small, user="us")
-                    .col-xs-12.text-center.big-text(ng-if="event.people.accepted.length === 0", style="color: grey") No people yet
-                  .col-xs-12(ng-show="peopleView === 'invited'")
-                    .col-xs-3(ng-repeat="us in event.people.invited", user-small, user="us")
-                    .col-xs-12.text-center.big-text(ng-if="event.people.invited.length === 0", style="color: grey") No people yet
-
-        .col-lg-7.col-lg-offset-5#rightSidebar
-          .row.hidden-xs
-            .event-name.col-lg-12
-              a.editable(ng-if="mode === 'Create'") Event name
-              a.editable(ng-if="mode === 'Edit'") {{event.name}}
-              span(ng-if="mode === 'Normal'") {{event.name}}
-          .row.hidden-xs
-            .margin-lg-10
-            .event-description.col-lg-12
-              textarea.eventDescriptionField.col-lg-10(ng-show="mode !== 'Normal'", rows="10")
-              p(ng-if="mode === 'Normal'", ng-bind-html="event.desc")
-          .row.hidden-xs(ng-if="mode === 'Normal'")
-            h3 Comments:
-            .event-comments.col-lg-12
-              .comment-line(ng-repeat="comment in event.comments.comments", comment, item="comment")
-              .form
-                .col-lg-2
-                  .row
-                    img.col-lg-12.img.img-responsive.img-thumbnail(ng-src="{{global.me.picture}}")
-                  .margin-lg-10
-                  .row
-                    label.label.label-default.col-lg-10.col-lg-offset-1 {{global.me.username}}
-                .form-group.col-lg-10
-                  textarea.form-control.comment-input(rows="5")
-                button.btn.btn-info.col-lg-offset-10(ng-click="comment()") Comment
-
-        .col-xs-10.col-xs-offset-1.visible-xs(role="group")
-          button.btn.btn-info(ng-if="mode === 'Create'", type="button", ng-click="createEvent()") Create!
-          button.btn.btn-info(ng-if="mode === 'Edit'", type="button", ng-click="modifyEvent()") Save
-          button.btn.btn-default(ng-if="mode === 'Create'", type="button", ng-click="goBack()") Cancel
-          button.btn.btn-default(ng-if="mode === 'Edit'", type="button", ng-click="cancel()") Cancel
-
-      #eventButtons.hidden-xs(role="group", ng-if="mode !== 'Normal'")
-        button.btn.btn-info.btn-lg(ng-if="mode === 'Create'", type="button", ng-click="createEvent()") Create!
-        button.btn.btn-info.btn-lg(ng-if="mode === 'Edit'", type="button", ng-click="modifyEvent()") Save
-        span(style="margin-left: 10px")
-        button.btn.btn-default.btn-lg(ng-if="mode === 'Create'", type="button", ng-click="goBack()") Cancel
-        button.btn.btn-default.btn-lg(ng-if="mode === 'Edit'", type="button", ng-click="cancel()") Cancel
-
-      #editButton.hidden-xs(ng-if="mode === 'Normal' && global.me.id === event.organizator.id"
-                  ng-click="setEditable(true, 'Edit')")
-        button.btn.btn-default
-          i.glyphicon.glyphicon-pencil
+    .content-fluid(ng-controller="EventController")
+      div(event-layout, event="event", ng-if="show", ng-init="isNew=#{isNew}")
 
       #invitationModal.modal.fade(tabindex="-1", role="dialog", aria-hidden="true")
         .modal-dialog
@@ -213,12 +36,12 @@ html(lang="en", ng-app="EventorioApp")
                       button.close(type='button', data-dismiss='modal')
                           span(aria-hidden='true') ×
                           span.sr-only Close
-                      h4.modal-title Remove event : "{{event.name}}"!
+                      h4.modal-title Delete event : "{{originalName}}"!
                   .modal-body
                       .row
                           .col-lg-12
                               h4 Are you sure you want to delete this event, can't be undone
-                              p Enter the event name ("{{event.name}}") to delete it !
+                              p Enter the event name ("{{originalName}}") to delete it !
                       .row
                           .col-lg-12
                               form.form(role="form")
@@ -227,7 +50,7 @@ html(lang="en", ng-app="EventorioApp")
                                       label
                   .modal-footer
                       button.btn.btn-default(type='button', data-dismiss='modal') Cancel
-                      button.btn.btn-success(type='button', ng-click="deleteEvent()", ng-disabled="deletedEventName != event.name") Delete
+                      button.btn.btn-danger(type='button', ng-click="deleteEvent()", ng-disabled="deletedEventName !== originalName") Delete
 
       #participantsModal.modal.fade(tabindex="-1", role="dialog", aria-hidden="true", ng-init="participantsTab = 'attendees'")
         .modal-dialog
@@ -300,8 +123,7 @@ html(lang="en", ng-app="EventorioApp")
                 .event-location.col-lg-10.col-lg-offset-1
                   div(location-autocomplete, ng-model='event.location')
             .modal-footer
-              .pull-left
-                label.big-text.label.label-success(ng-show="event.location") {{event.location.name}}
-              button.btn.btn-success(type='button', data-dismiss='modal') Done
-
-
+              .row.text-left
+                .col-lg-10.col-xs-10.big-text(ng-show="event.location") {{event.location.name}}
+                .col-lg-2.col-xs-2
+                  button.btn.btn-success(type='button', data-dismiss='modal') Done

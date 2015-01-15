@@ -1,0 +1,69 @@
+.row
+  .annotation.col-lg-12.col-xs-12.text-left
+
+.row.text-center
+  .table-responsive
+    table.table
+      tr
+        td
+          a(href="#", data-toggle="modal", data-target="#peopleModal", ng-click="people='followers'")
+            span {{user.followers.length || 0}}
+            br
+            span Followers
+
+        td
+          a(href="#", data-toggle="modal", data-target="#peopleModal", ng-click="people='following'")
+            span {{user.following.length || 0}}
+            br
+            span Following
+
+.row.visible-xs
+  .col-xs-12.description {{description}}
+.margin-xs-10
+
+.row(ng-if="!controller.editable")
+  .col-lg-8.col-lg-offset-2.text-center
+    button.btn.btn-success.col-lg-12(
+      ng-if="controller.global.me.following.indexOf(user.id) === -1"
+      ng-click="controller.follow()") Follow
+    button.btn.btn-default.btn-sm.col-lg-6.col-lg-offset-3(
+      ng-if="controller.global.me.following.indexOf(user.id) !== -1"
+      ng-click="controller.unfollow()") Unfollow
+
+.row.visible-xs
+  .content.col-xs-12
+
+.row(ng-if="controller.editable").text-center
+  .row(ng-show="!changePasswordView")
+    button.btn.btn-info.col-lg-10.col-lg-offset-1(ng-click="changePasswordView=true") Change password
+
+  .row(ng-show="changePasswordView")
+    form.form-horizontal.col-lg-8.col-lg-offset-2.col-xs-10.col-xs-offset-1
+      .form-group
+        input.form-control(ng-model="controller.credentials.oldPassword", type="password", placeholder="Old password")
+      .form-group
+        input.form-control(ng-model="controller.credentials.newPassword", type="password", placeholder="New password")
+      .form-group
+        input.form-control(ng-model="controller.credentials.newPasswordRepeat", type="password", placeholder="New password")
+      .form-group
+        .changePasswordError
+      .btn-group(role="group")
+        button.btn.btn-warning(type="submit", ng-click="controller.changePassword()") Change
+        button.btn.btn-default(type="submit", ng-click="changePasswordView = false") Cancel
+
+#peopleModal.modal.fade(tabindex="-1", role="dialog", aria-hidden="true")
+  .modal-dialog
+    .modal-content
+      .modal-header
+        button.close(type='button', data-dismiss='modal')
+          span(aria-hidden='true') ×
+          span.sr-only Close
+        h4.modal-title(ng-if="people==='followers'") Followers
+        h4.modal-title(ng-if="people==='following'") Following
+      .modal-body
+        .row(ng-if="people === 'followers'")
+          .col-lg-3.col-xs-4(ng-repeat="u in user.followers", user-small, user="u")
+        .row(ng-if="people === 'following'")
+          .col-lg-3.col-xs-4(ng-repeat="u in user.following", user-small, user="u")
+      .modal-footer
+        button.btn.btn-default(type='button', data-dismiss='modal') Ok

@@ -44,11 +44,11 @@ exports.update = function (req, res) {
     desc: req.body.desc,
     location: req.body.location,
     date: req.body.date,
-    isAllDay: req.body.allDay,
     picture: req.body.picture,
     visibility: req.body.visibility,
     attendance: req.body.attendance
   };
+
   req.event.modify(fields, req.user, function (err, event) {
     if (err) return app.err(err, res);
     return res.jsonp(event.toJSON());
@@ -92,7 +92,7 @@ exports.getParticipants = function (req, res) {
 }
 
 exports.createPage = function (req, res) {
-  return res.render('app/event.server.jade', {event: {edit: true}});
+  return res.render('app/event-create.server.jade');
 }
 
 exports.query = function (req, res) {
@@ -130,7 +130,7 @@ exports.show = function (req, res) {
 
   res.format({
     html: function () {
-      return res.render('app/event.server.jade', {event: {}});
+      return res.render('app/event.server.jade');
     },
     json: function () {
       var jsonEvent = event.toJSON();

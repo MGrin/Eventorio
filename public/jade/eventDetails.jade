@@ -1,0 +1,104 @@
+.row.text-left
+  .annotation.col-lg-12.col-xs-12
+    span.text-grey Organized by&nbsp;&nbsp;
+    span.big-text-lg
+      a(href="/users/{{event.organizator.username}}") {{event.organizator.username}}
+.row.text-left
+  .event-date.col-lg-12.col-xs-12
+    p.big-text {{event.date.format('Do MMMM YYYY')}}, {{event.date.format('HH:mm')}}
+
+.row.text-left
+  .event-location.col-lg-12.col-xs-12
+    a.big-text.clickable(ng-if="event.location", data-toggle="modal", data-target="#locationPicker") {{event.location.name}}
+      p.text-grey(ng-if="!event.location") No location precised
+
+.margin-lg-10
+.margin-xs-10
+.row.visible-xs
+  ul.nav.nav-tabs.xs-menu-tabs
+    li#descriptionTab.active(role="presentation")
+      a(href="#", ng-click="showDescription()") Description
+    li#commentsTab(role="presentation")
+      a(href="#", ng-click="showComments()") Comments
+    li#peopleTab(role="presentation")
+      a(href="#", ng-click="showPeople()") People
+
+.row.visible-xs(ng-show="view==='description'")
+  .margin-xs-10
+  .description.col-xs-12
+
+.row.visible-xs(ng-show="view==='comments'")
+  .margin-xs-10
+  .content.col-xs-12
+    .comment-line(ng-repeat="comment in event.comments.comments", comment, item="comment")
+    .form-inline
+      .col-xs-4
+        .row
+          img.col-xs-12.img.img-responsive.img-thumbnail(ng-src="{{global.me.picture}}")
+        .margin-xs-10
+        .row
+          label.label.label-default.col-xs-12 {{global.me.username}}
+      .form-group.col-xs-8
+        textarea.form-control.comment-input-xs(rows="3")
+      button.btn.btn-info.col-xs-offset-8(ng-click="comment()") Comment
+
+.row.visible-xs(ng-show="view==='people'")
+  .margin-xs-10
+  .row
+    .col-xs-10.col-xs-offset-2
+      ul.nav.nav-pills
+        li.peopleAcceptedTab.active(role="presentation", ng-click="showPeopleAccepted()")
+          a(href="#") Participants
+        li.peopleInvitedTab(role="presentation", ng-click="showPeopleInvited()")
+          a(href="#") Invited
+  .margin-xs-10
+  .row
+    .col-xs-12(ng-show="controller.peopleView === 'accepted'")
+      .user-small.col-xs-4(ng-if="event.people.accepted.length > 0", ng-repeat="us in event.people.accepted", user-small, user="us")
+      .col-xs-12.text-center.big-text(ng-if="event.people.accepted.length === 0", style="color: grey") No people yet
+    .col-xs-12(ng-show="controller.peopleView === 'invited'")
+      .user-small.col-xs-4(ng-repeat="us in event.people.invited", user-small, user="us")
+      .col-xs-12.text-center(ng-if="event.people.invited.length === 0", style="color: grey") No people not confirmed their attendance
+.margin-xs-10
+.row.text-right
+  .event-permisssions.col-lg-12.col-xs-12.text-grey
+    .event-visibility
+    .event-attendance
+
+.margin-lg-10
+.margin-xs-10
+.row
+  .attendance-btn.col-lg-12.col-xs-12
+    button.btn(ng-click="attendButtonAction")
+  .invitation-btn.col-lg-12.col-xs-12
+    button.btn.btn-info.col-lg-10.col-lg-offset-1.col-xs-12(data-toggle="modal", data-target="#invitationModal") Invite
+
+.margin-lg-10
+.margin-xs-10
+.row.hidden-xs
+  .show-people-btn.col-lg-12.text-right
+    a.big-text.col-lg-10.col-lg-offset-1(data-toggle="modal", data-target="#participantsModal")
+      span.label.label-primary Show everybody on this event
+
+.margin-lg-10
+.row.text-center(ng-if="canEdit")
+  .col-lg-12.edit-btn
+    label.label.label-default
+      a(href="#", ng-click="edit()") Edit event
+        i.glyphicon.glyphicon-pencil
+.row
+  #error.col-lg-12.col-xs-12
+
+.margin-lg-10
+.margin-xs-10
+
+.row
+  .edit-btn-group.col-lg-12.col-xs-12.text-center.btn-group.hide(role="group")
+    button.col-lg-4.col-xs-4.btn.btn-info(ng-click="controller.editEvent()") Save
+    button.col-lg-4.col-xs-4.btn.btn-default(ng-click="controller.cancel()") Cancel
+    button.col-lg-4.col-xs-4.btn.btn-danger(data-toggle="modal", data-target="#deleteModal") Delete
+  .create-btn-group.col-lg-12.col-xs-12.text-center.btn-group.hide(role="group")
+    button.col-lg-4.col-xs-4.btn.btn-success(ng-click="controller.createEvent()") Create
+    button.col-lg-4.col-xs-4.btn.btn-default(ng-click="controller.cancel()") Cancel
+.margin-lg-10
+.margin-xs-10

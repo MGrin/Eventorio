@@ -135,6 +135,7 @@ UserSchema.methods = {
   },
 
   update: function (field, value, cb) {
+    if (field !== 'name' && field !== 'desc') return cb(new Error ('Non authorized!'));
     this[field] = value;
     return this.save(cb);
   },

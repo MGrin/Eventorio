@@ -1,0 +1,36 @@
+.row-fluid
+  img.img-responsive(ng-src="{{header}}")
+
+  #sticked.col-lg-4.col-lg-offset-1.col-xs-12.col-xs-offset-0
+    .row
+      .thumb.col-lg-12.col-xs-4
+        img.img-responsive.img-thumbnail.col-lg-8(ng-src="{{thumbnail}}")
+      .title.col-xs-8.visible-xs {{title}}
+
+    .row-fluid
+      .details.col-lg-8.col-lg-offset-0.col-xs-12.col-xs-offset-0(ng-include='detailsTemplate' onload='fillUpDetails()')
+
+  #rightSidebar.col-lg-7.col-lg-offset-5.hidden-xs
+    .row
+      .title.col-lg-12 {{title}}
+
+    .row
+      .margin-lg-10
+      .description.col-lg-12
+
+    .row
+      .margin-lg-10
+      .content.col-lg-12
+        div(ng-if="view === 'comments'")
+          p.big-text Comments:
+            .comment-line(ng-repeat="comment in event.comments.comments", comment, item="comment")
+            form.form
+              .col-lg-2
+                .row
+                  img.col-lg-12.img.img-responsive.img-thumbnail(ng-src="{{global.me.picture}}")
+                .margin-lg-10
+                .row
+                  label.label.label-default.col-lg-12 {{global.me.username}}
+              .form-group.col-lg-10
+                textarea.form-control.comment-input(rows="5")
+              button.btn.btn-info.col-lg-offset-10(ng-click="comment()") Comment

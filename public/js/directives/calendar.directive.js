@@ -1,11 +1,13 @@
-app.directive('calendar', ['$rootScope', function ($rootScope) {
+app.directive('calendar', ['$rootScope', 'Events', function ($rootScope, Events) {
   return {
     templateUrl: '/view/calendar.html',
     link: function ($scope, element, attrs) {
       $(element).find('.prevMonth').click($scope.prevMonth);
       $(element).find('.nextMonth').click($scope.nextMonth);
+
+      Events.updateMonthlyList($scope.now, function () {});
       $(element).find('.responsive-calendar').responsiveCalendar({
-        monthChangeAnimation: false,
+        monthChangeAnimation: true,
         onDayClick: function (events) {
           var year = $(this).data('year');
           var month = ($(this).data('month') > 9) ? $(this).data('month') : '0' + $(this).data('month');

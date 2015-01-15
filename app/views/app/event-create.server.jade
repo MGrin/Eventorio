@@ -1,0 +1,57 @@
+doctype html
+html(lang="en", ng-app="EventorioApp")
+  include ../layouts/head.server.jade
+  include ../layouts/scripts.server.jade
+  body
+    include ../layouts/header.server.jade
+    .content-fluid(ng-controller="EventController")
+      div(event-layout, event="event", ng-if="show")
+      #dateAndTimePicker.modal.fade(tabindex="-1", role="dialog", aria-hidden="true")
+        .modal-dialog
+          .modal-content
+            .modal-header
+              button.close(type='button', data-dismiss='modal')
+                span(aria-hidden='true') ×
+                span.sr-only Close
+              h4.modal-title Choose date and time for your event
+            .model-body
+              .clearfix(style="margin-top: 10px")
+              .row
+                .col-lg-4.col-lg-offset-4
+                  .input-group.clockpicker(data-placement="bottom", data-align="top", data-autoclose="true")
+                    input.form-control(type="text", placeholder="Time")
+                    span.input-group-addon
+                        span.glyphicon.glyphicon-time
+              .row
+                .col-lg-10.col-lg-offset-1(ng-controller="CalendarController")
+                  .row(calendar)
+              .row
+                .col-lg-12(ng-controller="DaylyController")
+                  .row
+                    .col-lg-12
+                      .col-lg-10.col-lg-offset-1.text-center(ng-if="events.length === 0")
+                      .col-lg-11.col-lg-offset-1.col-xs-12(ng-if="events.length !== 0")
+                        .row(ng-repeat="event in events", event-line, event="event")
+            .modal-footer
+              .pull-left
+                label.big-text.label.label-success(ng-show="event.date") {{event.date.format('DD MMMM YYYY')}} {{event.date.format('HH:mm')}}
+              button.btn.btn-success(type='button', data-dismiss='modal') Done
+
+      #locationPicker.modal.fade(ng-if="show", tabindex="-1", role="dialog", aria-hidden="true")
+        .modal-dialog
+          .modal-content
+            .modal-header
+              button.close(type='button', data-dismiss='modal')
+                span(aria-hidden='true') ×
+                span.sr-only Close
+              h4.modal-title Choose your event location
+            .model-body
+              .margin-lg-10
+              .row
+                .event-location.col-lg-10.col-lg-offset-1
+                  div(location-autocomplete, ng-model='event.location')
+            .modal-footer
+              .row.text-left
+                .col-lg-10.col-xs-10.big-text(ng-show="event.location") {{event.location.name}}
+                .col-lg-2.col-xs-2
+                  button.btn.btn-success(type='button', data-dismiss='modal') Done

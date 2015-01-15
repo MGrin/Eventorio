@@ -16,56 +16,30 @@ app.controller('UserController', ['$scope', 'Global', 'Users', 'Events', 'Notifi
         if (err) return alert(err);
         $scope.user.events = events;
       });
-      setTimeout(function () {
-        $scope.setupEditable();
-      }, 1000);
+
       $scope.show = true;
     });
   });
 
-  $scope.setupEditable = function () {
-    $('.user-name .editable').editable({
-      type: 'text',
-      url: window.location.pathname,
-      ajaxOptions: {
-        type: 'PUT',
-        dataType: 'json'
-      },
-      pk: '',
-      mode: 'popup',
-      name: 'name',
-      title: 'Enter your name',
-      showbuttons: 'right'
-    });
-
-    $('.user-description .editable').editable({
-      type: 'textarea',
-      url: window.location.pathname,
-      ajaxOptions: {
-        type: 'PUT',
-        dataType: 'json'
-      },
-      pk: '',
-      mode: 'popup',
-      name: 'desc',
-      title: 'Describe yourself',
-      showbuttons: 'right'
-    });
+  $scope.updateUser = function (field, value) {
+    Global.me[field] = value;
+    $scope.user[field] = value;
+    Users.update({username: Global.me.username}, {name: field, value: value});
   };
 
   $scope.follow = function () {
     Users.follow($scope.user.id, function (err) {
       if (err) return alert(err);
-      Global.me.following.push($scope.user.id);
-      $scope.user.followers.push(Global.me.id);
+      Global.me.following.push($scope.user);
+      $scope.user.followers.push(Global.me);
     })
   }
 
   $scope.unfollow = function () {
     Users.unfollow($scope.user.id, function (err) {
       if (err) return alert(err);
-      Global.me.following.splice(Global.me.following.indexOf($scope.user.id), 1);
-      $scope.user.followers.splice($scope.user.followers.indexOf(Global.me.id), 1);
+      Global.me.following.splice(Global.me.following.indexOf($scope.user), 1);
+      $scope.user.followers.splice($scope.user.followers.indexOf(Global.me), 1);
     })
   }
 
@@ -78,7 +52,7 @@ app.controller('UserController', ['$scope', 'Global', 'Users', 'Events', 'Notifi
   $scope.changePassword = function () {
     Users.changePassword($scope.credentials, function (err) {
       if (err) {
-        return Notifications.error($('.changePasswordForm'), err);
+        return Notifications.error($('.changePasswordError'), err);
       }
       $scope.credentials = {
         oldPassword: '',
@@ -86,7 +60,7 @@ app.controller('UserController', ['$scope', 'Global', 'Users', 'Events', 'Notifi
         newPasswordRepeat: ''
       };
 
-      Notifications.info($('.changePasswordForm'), 'Password successfully changed!');
+      Notifications.info($('.changePasswordError'), 'Password successfully changed!');
       $scope.changePasswordView = false;
     });
   }
