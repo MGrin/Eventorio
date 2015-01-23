@@ -45,6 +45,15 @@ app.factory('Events', ['$rootScope', '$resource', '$http', 'Global', function ($
       });
   };
 
+  event.inviteAllFollowers = function (event, cb) {
+    $http.post('/events/' + event.id + '/invite/')
+      .success(function (response) {
+        return cb();
+      }).error(function (response) {
+        return cb(response);
+      });
+  };
+
   event.attend = function (event, cb) {
     $http.post('/events/' + event.id + '/attend')
       .success(function (response) {

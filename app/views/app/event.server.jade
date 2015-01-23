@@ -197,7 +197,7 @@ html(lang="en", ng-app="EventorioApp")
               .row-fluid
                 h3(style="margin-top: 0") Followers
               .row
-                form.form.col-lg-6.col-xs-8
+                form.form.col-lg-9.col-xs-12
                   input.form-control(type="text", ng-model="followerQuery", placeholder="Invite your followers")
               .margin-lg-10
               .margin-xs-10
@@ -205,7 +205,7 @@ html(lang="en", ng-app="EventorioApp")
                 .col-lg-12.invite-followers
                   .panel.panel-default
                     .panel-body
-                      .col-lg-2(ng-repeat="us in followers")
+                      .col-lg-2.col-xs-6(ng-repeat="us in followers")
                         a(href="#", ng-if="us.active", ng-click="inviteFollower(us.id)")
                           .user-line
                             img.img.img-responsive.img-circle(ng-src="{{us.picture}}")
@@ -215,14 +215,27 @@ html(lang="en", ng-app="EventorioApp")
                           img.img.img-responsive.img-circle(ng-src="{{us.picture}}")
                           label.label.label-default {{us.username}}
                           i.glyphicon.glyphicon-ok
+              .row
+                .col-xs-12.hidden-xs
+                  button.btn.btn-warning(type="button", ng-click='inviteAllFollowers()', disabled="!canInviteFollowers")
+                    i.glyphicon.glyphicon-send &nbsp;
+                    | Invite all followers
+                .col-xs-12.visible-xs
+                  button.btn.btn-warning.pull-right(type="button", ng-click='inviteAllFollowers()', disabled="!canInviteFollowers")
+                    i.glyphicon.glyphicon-send &nbsp;
+                    | Invite all followers
+              .margin-lg-10
               .row-fluid
                 h3(style="margin-top: 0") Invite by email or username
               .row
                 .col-lg-12
                   form.form(role="form")
-                    .form-group.col-lg-9#emailsToInvite
-                      input.form-control.col-lg-12(type="text", placeholder="Emails or usernames separated with a comma")
-                    button.btn.btn-success.col-lg-3(type='button', ng-click="inviteByEmail()")
+                    .form-group.col-lg-9.col-xs-12#emailsToInvite
+                      input.form-control(type="text", placeholder="Emails or usernames separated with a comma")
+                    button.btn.btn-success.col-lg-3.hidden-xs(type='button', ng-click="inviteByEmail()")
+                      i.glyphicon.glyphicon-send &nbsp;
+                      | Invite
+                  button.btn.btn-success.pull-right.visible-xs(type='button', ng-click="inviteByEmail()")
                       i.glyphicon.glyphicon-send &nbsp;
                       | Invite
             .modal-footer

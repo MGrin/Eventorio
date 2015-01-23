@@ -67,7 +67,7 @@ exports.invite = function (req, res) {
       if (err) return app.err(err, res);
       return res.sendStatus(200);
     });
-  } else if (email && email.length !== 0) { // Invite users based on emails
+  } else if (emails && emails.length !== 0) { // Invite users based on emails
     var parallelTasks = [];
     _.each(emails, function (email) {
       parallelTasks.push(function (next) {
