@@ -17,7 +17,7 @@ app.controller('EventInviteController', ['$scope', 'Global', 'Notifications', 'E
       if (find) follower.active = false;
       else {
         follower.active = true;
-        if (!$scope.canInviteFollowers) $scope.canInviteFollowers = false;
+        if (!$scope.canInviteFollowers) $scope.canInviteFollowers = true;
       }
     });
   });

@@ -205,7 +205,7 @@ html(lang="en", ng-app="EventorioApp")
                 .col-lg-12.invite-followers
                   .panel.panel-default
                     .panel-body
-                      .col-lg-2.col-xs-6(ng-repeat="us in followers")
+                      .col-lg-3.col-xs-6(ng-repeat="us in followers")
                         a(href="#", ng-if="us.active", ng-click="inviteFollower(us.id)")
                           .user-line
                             img.img.img-responsive.img-circle(ng-src="{{us.picture}}")
