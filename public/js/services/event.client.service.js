@@ -27,13 +27,31 @@ app.factory('Events', ['$rootScope', '$resource', '$http', 'Global', function ($
       });
   };
 
-  event.invite = function (emails, event, cb) {
+  event.inviteByEmail = function (emails, event, cb) {
     $http.post('/events/' + event.id + '/invite', emails)
       .success(function (response) {
         return cb();
       }).error(function (response) {
         return cb(response);
-      })
+      });
+  };
+
+  event.inviteFollower = function (userId, event, cb) {
+    $http.post('/events/' + event.id + '/invite/' + userId)
+      .success(function (response) {
+        return cb();
+      }).error(function (response) {
+        return cb(response);
+      });
+  };
+
+  event.inviteAllFollowers = function (event, cb) {
+    $http.post('/events/' + event.id + '/invite/')
+      .success(function (response) {
+        return cb();
+      }).error(function (response) {
+        return cb(response);
+      });
   };
 
   event.attend = function (event, cb) {
@@ -63,7 +81,7 @@ app.factory('Events', ['$rootScope', '$resource', '$http', 'Global', function ($
       });
   };
 
-  event.people = $resource('/events/:eventId/people', {eventId: '@_id'}, {update: {method: 'POST'}});
+  event.people = $resource('/events/:eventId/users', {eventId: '@_id'}, {update: {method: 'POST'}});
 
   return event;
 }]);

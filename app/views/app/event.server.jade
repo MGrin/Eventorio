@@ -104,8 +104,6 @@ html(lang="en", ng-app="EventorioApp")
               .row.visible-xs(ng-show="view==='description'")
                 .margin-xs-10
                 .event-description.col-xs-12.visible-xs
-                  i.glyphicon.glyphicon-pencil.pull-right(ng-if="mode === 'Normal' && global.me.id === event.organizator.id",
-                                                        ng-click="setEditable(true, 'Edit')")
                   textarea.eventDescriptionField.col-lg-10(ng-show="mode !== 'Normal'", rows="10")
                   p(ng-if="mode === 'Normal'", ng-bind-html="event.desc")
 
@@ -139,6 +137,14 @@ html(lang="en", ng-app="EventorioApp")
                   .col-xs-12(ng-show="peopleView === 'invited'")
                     .col-xs-3(ng-repeat="us in event.people.invited", user-small, user="us")
                     .col-xs-12.text-center.big-text(ng-if="event.people.invited.length === 0", style="color: grey") No people yet
+
+              .margin-lg-10
+              .margin-xs-10
+              .row
+                .col-lg-12.col-xs-12
+                    label.col-lg-4.col-lg-offset-4.col-xs-4.col-xs-offset-4.label.label-default(ng-if="mode === 'Normal' && global.me.id === event.organizator.id", ng-click="setEditable(true, 'Edit')")
+                      a(href="#") Edit
+                        i.glyphicon.glyphicon-pencil
 
         .col-lg-7.col-lg-offset-5#rightSidebar
           .row.hidden-xs
@@ -179,11 +185,6 @@ html(lang="en", ng-app="EventorioApp")
         button.btn.btn-default.btn-lg(ng-if="mode === 'Create'", type="button", ng-click="goBack()") Cancel
         button.btn.btn-default.btn-lg(ng-if="mode === 'Edit'", type="button", ng-click="cancel()") Cancel
 
-      #editButton.hidden-xs(ng-if="mode === 'Normal' && global.me.id === event.organizator.id"
-                  ng-click="setEditable(true, 'Edit')")
-        button.btn.btn-default
-          i.glyphicon.glyphicon-pencil
-
       #invitationModal.modal.fade(tabindex="-1", role="dialog", aria-hidden="true")
         .modal-dialog
           .modal-content
@@ -192,19 +193,53 @@ html(lang="en", ng-app="EventorioApp")
                 span(aria-hidden='true') ×
                 span.sr-only Close
               h4.modal-title Invite people to "{{event.name}}"!
-            .modal-body
+            .modal-body(ng-controller="EventInviteController")
+              .row-fluid
+                h3(style="margin-top: 0") Followers
               .row
-                .col-lg-12
-                  h4 We will send invitation emails to these users
+                form.form.col-lg-9.col-xs-12
+                  input.form-control(type="text", ng-model="followerQuery", placeholder="Invite your followers")
+              .margin-lg-10
+              .margin-xs-10
+              .row
+                .col-lg-12.invite-followers
+                  .panel.panel-default
+                    .panel-body
+                      .col-lg-2.col-xs-6(ng-repeat="us in followers")
+                        a(href="#", ng-if="us.active", ng-click="inviteFollower(us.id)")
+                          .user-line
+                            img.img.img-responsive.img-circle(ng-src="{{us.picture}}")
+                            label.label.label-default {{us.username}}
+                            i.glyphicon.glyphicon-send
+                        .user-line(ng-if="!us.active", style="opacity: 0.6")
+                          img.img.img-responsive.img-circle(ng-src="{{us.picture}}")
+                          label.label.label-default {{us.username}}
+                          i.glyphicon.glyphicon-ok
+              .row
+                .col-xs-12.hidden-xs
+                  button.btn.btn-warning(type="button", ng-click='inviteAllFollowers()', disabled="!canInviteFollowers")
+                    i.glyphicon.glyphicon-send &nbsp;
+                    | Invite all followers
+                .col-xs-12.visible-xs
+                  button.btn.btn-warning.pull-right(type="button", ng-click='inviteAllFollowers()', disabled="!canInviteFollowers")
+                    i.glyphicon.glyphicon-send &nbsp;
+                    | Invite all followers
+              .margin-lg-10
+              .row-fluid
+                h3(style="margin-top: 0") Invite by email or username
               .row
                 .col-lg-12
                   form.form(role="form")
-                    .form-group#emailsToInvite
-                      textarea.form-control.col-lg-12(placeholder="Emails separated with a comma")
-                      label
+                    .form-group.col-lg-9.col-xs-12#emailsToInvite
+                      input.form-control(type="text", placeholder="Emails or usernames separated with a comma")
+                    button.btn.btn-success.col-lg-3.hidden-xs(type='button', ng-click="inviteByEmail()")
+                      i.glyphicon.glyphicon-send &nbsp;
+                      | Invite
+                  button.btn.btn-success.pull-right.visible-xs(type='button', ng-click="inviteByEmail()")
+                      i.glyphicon.glyphicon-send &nbsp;
+                      | Invite
             .modal-footer
-              button.btn.btn-default(type='button', data-dismiss='modal') Cancel
-              button.btn.btn-success(type='button', ng-click="invite()") Invite
+              button.btn.btn-default(type='button', data-dismiss='modal') Done
 
       #deleteModal.modal.fade(tabindex="-1", role="dialog", aria-hidden="true")
           .modal-dialog

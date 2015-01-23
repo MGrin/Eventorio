@@ -185,13 +185,13 @@ UserSchema.methods = {
     }
   },
 
-  canAttend: function (event) {
+  canAttendEvent: function (event) {
     return event.organizator.id !== this.id && (event.permissions.attendance === 'public'
             || (event.permissions.attendance === 'followers' && this.isFollowing(event.organizator))
             || (event.permissions.attendance === 'invitations' && this.isInvitedTo(event)));
   },
 
-  canView: function (event) {
+  canViewEvent: function (event) {
     return this.id === event.organizator.id || (event.permissions.visibility === 'public'
         || (event.permissions.visibility === 'followers' && this.isFollowing(event.organizator))
         || (event.permissions.visibility === 'invitations' && this.isInvitedTo(event)));
@@ -219,6 +219,34 @@ UserSchema.methods = {
     event.save(cb);
   },
 
+  inviteToEventByEmailOrUsername: function (event, email, cb) {
+    var usernameRE = new RegExp('^' + email + '$', 'i');
+    var actor = this;
+    app.User.findOne({$or: [{email: email}, {username: usernameRE}]}, function (err, user) {
+      if (err) return cb(err);
+      if (!user) {
+        app.email.sendInvitationMail(actor, {email: email, username: email}, event);
+        if (event.invitedEmails.indexOf(email) === -1) {
+          event.invitedEmails.push(email);
+          event.save();
+        }
+        return cb();
+      } else {
+        actor.inviteToEvent(event, user, cb);
+      }
+    });
+  },
+
+  inviteToEvent: function (event, user, cb) {
+    app.email.sendInvitationMail(this, user, event);
+    if (event.invitedUsers.indexOf(user._id) === -1 && event.attendees.indexOf(user._id) === -1) {
+      app.Action.newInviteAction(this, user, event);
+      event.invitedUsers.push(user._id);
+      event.save();
+    }
+    return cb();
+  },
+
   isInvitedTo: function (event) {
     return (event.invitedUsers.indexOf(this._id) !== -1) || (event.attendees.indexOf(this._id) !== -1);
   },
@@ -237,8 +265,13 @@ UserSchema.methods = {
 };
 
 UserSchema.statics = {
-  loadByUsername: function (username, cb) {
-    app.User.find({username: new RegExp('^' + decodeURI(username) +'$', 'i')})
+  loadUser: function (username, cb) {
+    var query;
+
+    if (mongoose.Types.ObjectId.isValid(username)) query = {_id: username};
+    else query = {username: new RegExp('^' + decodeURI(username) +'$', 'i')};
+
+    app.User.find(query)
       .populate('following followers')
       .exec(function (err, users) {
         if (err) return cb(err);

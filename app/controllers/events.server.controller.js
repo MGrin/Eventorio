@@ -56,21 +56,40 @@ exports.update = function (req, res) {
 }
 
 exports.invite = function (req, res) {
-  var user = req.user;
-  var emails = req.body;
+  var actor = req.user;
+  var loadedUser = req.loadedUser; // Used for one user invitation
+  var emails = req.body; // Used for invitations by email
   var event = req.event;
   var organizator = event.organizator;
 
-  var parallelTasks = [];
-  _.each(emails, function (email) {
-    parallelTasks.push(function (next) {
-      event.invite(user, email, next);
+  if (loadedUser) { // Invite one user
+    actor.inviteToEvent(event, loadedUser, function (err) {
+      if (err) return app.err(err, res);
+      return res.sendStatus(200);
     });
-  });
-  async.parallel(parallelTasks, function (err) {
-    if (err) return app.err(err, res);
-    return res.send(200);
-  });
+  } else if (emails && emails.length !== 0) { // Invite users based on emails
+    var parallelTasks = [];
+    _.each(emails, function (email) {
+      parallelTasks.push(function (next) {
+        actor.inviteToEventByEmailOrUsername(event, email, next);
+      });
+    });
+    async.parallel(parallelTasks, function (err) {
+      if (err) return app.err(err, res);
+      return res.sendStatus(200);
+    });
+  } else { // Invite all followers of user loggedIn
+    var parallelTasks = [];
+    _.each(actor.followers, function (follower) {
+      parallelTasks.push(function (next) {
+        actor.inviteToEvent(event, follower, next);
+      });
+    });
+    async.parallel(parallelTasks, function (err) {
+      if (err) return app.err(err, res);
+      return res.sendStatus(200);
+    })
+  }
 }
 
 exports.remove = function(req, res) {
@@ -135,7 +154,7 @@ exports.show = function (req, res) {
     json: function () {
       var jsonEvent = event.toJSON();
       if (user || event.permissions.visibility === 'public') {
-        jsonEvent.canAttend = user.canAttend(event);
+        jsonEvent.canAttend = user.canAttendEvent(event);
         return res.jsonp(jsonEvent);
       } else {
         return res.jsonp(404);
