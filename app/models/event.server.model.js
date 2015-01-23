@@ -123,29 +123,6 @@ EventSchema.methods = {
     });
   },
 
-  invite: function (actor, email, cb) {
-    var event = this;
-    var usernameRE = new RegExp('^' + email + '$', 'i');
-    app.User.findOne({$or: [{email: email}, {username: usernameRE}]}, function (err, user) {
-      if (err) return cb(err);
-      if (!user) {
-        app.email.sendInvitationMail(actor, {email: email, username: email}, event);
-        if (event.invitedEmails.indexOf(email) === -1) {
-          event.invitedEmails.push(email);
-          event.save();
-        }
-      } else {
-
-        app.email.sendInvitationMail(actor, user, event);
-        app.Action.newInviteAction(actor, user, event);
-        if (event.invitedUsers.indexOf(user._id) === -1 && event.attendees.indexOf(user._id) === -1) {
-          event.invitedUsers.push(user._id);
-          event.save();
-        }
-      }
-    });
-  },
-
   removeEvent: function (organizator, cb) {
       if (this.organizator.id !== organizator.id) return cb(new Error('Not authorized'));
       var event = this;
@@ -356,7 +333,7 @@ EventSchema.statics = {
             if (err) cb(err);
             return cb(false, events.filter(
                 function (event) {
-                    return user.canView(event);
+                    return user.canViewEvent(event);
                 }));
         });
     });

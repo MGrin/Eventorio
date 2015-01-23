@@ -83,7 +83,7 @@ exports.update = function (req, res) {
   var value = req.body.value;
   var user = req.user;
 
-  if (req.user.id !== req.userToShow.id) return app.err('Not authorized!', res);
+  if (req.user.id !== req.loadedUser.id) return app.err('Not authorized!', res);
 
   user.update(field, value, function (err) {
     if (err) return app.err(err, res);
@@ -161,17 +161,16 @@ exports.news = function (req, res) {
   });
 }
 
-exports.loadByUsername = function (req, res, next, username) {
+exports.followers = function (req, res) {
+  var user = req.user;
+
+  return res.send(user.followers);
+}
+
+var loadUser = function (req, res, next, username) {
   if (username === 'me') {
     if (req.user) {
-      return res.format({
-        html: function () {
-          res.redirect('/users/'+req.user.username);
-        },
-        json: function () {
-          res.jsonp(req.user.toJSON());
-        }
-      });
+      return loadUser(req, res, next, req.user.username);
     } else {
       return res.format({
         html: function () {
@@ -183,24 +182,16 @@ exports.loadByUsername = function (req, res, next, username) {
       });
     }
   }
-  app.User.loadByUsername(username, function (err, user) {
+  app.User.loadUser(username, function (err, user) {
     if (err) return app.err(err, res);
     if (!user) return app.err(new Error('No user found: ' + username), res);
 
-    req.userToShow = user;
+    req.loadedUser = user;
+    if (req.user.id === req.loadedUser.id) req.user = user;
     return next();
   })
 };
-
-exports.loadById = function (req, res, next, id) {
-  app.User.findById(id, function (err, user) {
-    if (err) return app.err(err, res);
-    if (!user) return app.err(new Error('No user found: ' + username), res);
-
-    req.userToShow = user;
-    return next();
-  });
-};
+exports.loadUser = loadUser;
 
 exports.loadByActivationCode = function (req, res, next, activationCode) {
   app.User.findOne({activationCode: activationCode}, function (err, user) {
@@ -218,7 +209,7 @@ exports.show = function (req, res) {
       res.render('app/user.server.jade');
     },
     json: function () {
-      return res.jsonp(req.userToShow.toJSON());
+      return res.jsonp(req.loadedUser.toJSON());
     }
   });
 }
@@ -251,5 +242,4 @@ exports.query = function (req, res) {
             return user.toJSON();
         }));
     });
-
 };

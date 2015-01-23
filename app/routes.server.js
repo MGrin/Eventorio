@@ -19,18 +19,22 @@ module.exports = function (app, passport) {
   /** User routes */
   app.route('/login')
     .post(users.login);
-  app.route('/users')
-    .get(users.requiresLogin, users.query)
-    .post(users.signup);
-  app.route('/logout')
-    .get(users.logout);
-  app.route('/users/:username')
-    .get(users.show)
-    .put(users.requiresLogin, users.update);
   app.route('/restorePassword')
     .post(users.restorePassword);
   app.route('/changePassword')
     .post(users.requiresLogin, users.changePassword);
+  app.route('/logout')
+    .get(users.logout);
+
+  app.route('/users')
+    .get(users.requiresLogin, users.query)
+    .post(users.signup);
+  app.route('/users/:user')
+    .get(users.show)
+    .put(users.requiresLogin, users.update);
+  app.route('/users/:user/followers')
+    .get(users.requiresLogin, users.followers);
+
 
   app.route('/activation/:activationCode')
     .get(users.activate);
@@ -45,8 +49,10 @@ module.exports = function (app, passport) {
     .get(events.isAccessible, events.show)
     .post(users.requiresLogin, events.update)
     .delete(users.requiresLogin, events.remove);
-  app.route('/events/:eventId/people')
+  app.route('/events/:eventId/users')
     .get(events.getParticipants);
+  app.route('/events/:eventId/invite/:user')
+    .post(users.requiresLogin, events.invite);
   app.route('/events/:eventId/invite')
     .post(users.requiresLogin, events.invite);
   app.route('/events/:eventId/attend')
@@ -71,6 +77,5 @@ module.exports = function (app, passport) {
     .get(events.getParticipants);
 
   app.param('eventId', events.load);
-  app.param('username', users.loadByUsername);
-  app.param('userId', users.loadById);
+  app.param('user', users.loadUser);
 };
