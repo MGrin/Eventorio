@@ -72,22 +72,24 @@ app.controller('EventInviteController', ['$scope', 'Global', 'Notifications', 'E
     });
   };
 
+  $scope.emails = '';
+
   $scope.inviteByEmail = function () {
     $('#emailsToInvite').removeClass('has-error');
 
-    var text = $('#emailsToInvite > input').val();
-    if (!text || text === '') {
+    if (!$scope.emails || $scope.emails === '') {
       $('#emailsToInvite').addClass('has-error');
       Notifications.error($('#emailsToInvite'), 'Please enter at least one email');
       return;
     }
 
+    var text = $scope.emails;
     text = text.replace(/\s/g, '');
-    var emails = text.split(',');
+    var emailsArray = text.split(',');
 
-    Events.inviteByEmail(emails, $scope.event, function (err) {
+    Events.inviteByEmail(emailsArray, $scope.event, function (err) {
       if (err) return Notifications.error($('#emailsToInvite'), err);
-      $('#emailsToInvite > input').val('');
+      $scope.emails = '';
     });
   };
 }]);

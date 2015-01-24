@@ -233,11 +233,11 @@ html(lang="en", ng-app="EventorioApp")
                 .col-lg-12
                   form.form(role="form")
                     .form-group.col-lg-9.col-xs-12#emailsToInvite
-                      input.form-control(type="text", placeholder="Emails or usernames separated with a comma")
-                    button.btn.btn-success.col-lg-3.hidden-xs(type='button', ng-click="inviteByEmail()")
+                      input.form-control(type="text", placeholder="Emails or usernames separated with a comma", ng-model='emails')
+                    button.btn.btn-success.col-lg-3.hidden-xs(type='button', ng-click="inviteByEmail()", ng-disabled="emails !== ''")
                       i.glyphicon.glyphicon-send &nbsp;
                       | Invite
-                  button.btn.btn-success.pull-right.visible-xs(type='button', ng-click="inviteByEmail()")
+                  button.btn.btn-success.pull-right.visible-xs(type='button', ng-click="inviteByEmail()", ng-disabled="emails !== ''")
                       i.glyphicon.glyphicon-send &nbsp;
                       | Invite
             .modal-footer
