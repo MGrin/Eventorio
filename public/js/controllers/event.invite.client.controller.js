@@ -75,7 +75,7 @@ app.controller('EventInviteController', ['$scope', 'Global', 'Notifications', 'E
   $scope.inviteByEmail = function () {
     $('#emailsToInvite').removeClass('has-error');
 
-    var text = $('#emailsToInvite textarea').val();
+    var text = $('#emailsToInvite > input').val();
     if (!text || text === '') {
       $('#emailsToInvite').addClass('has-error');
       Notifications.error($('#emailsToInvite'), 'Please enter at least one email');
