@@ -4,6 +4,7 @@ html(lang="en", ng-app="EventorioApp")
   include ../layouts/scripts.server.jade
   body(style="background-image: url(/img/bg_opacity.jpeg)")
     include ../layouts/header.server.jade
+
     .content-fluid(ng-controller="EventController", ng-init="edit=#{event.edit}", ng-show="show")
       .row-fluid
         img.img-responsive.img-event-header(src="/img/event_background.png")
@@ -33,7 +34,8 @@ html(lang="en", ng-app="EventorioApp")
                 .event-location.col-lg-12.col-xs-12
                   a.big-text.editable(ng-if="mode === 'Create'", data-toggle="modal", data-target="#locationPicker") {{event.location.name || 'Location'}}
                   a.big-text.editable(ng-if="mode === 'Edit'", data-toggle="modal", data-target="#locationPicker") {{event.location.name || 'Location'}}
-                  a.big-text(ng-if="mode === 'Normal' && event.location", data-toggle="modal", data-target="#locationPicker") {{event.location.name}}
+                  p.big-text(ng-if="mode === 'Normal' && event.location") {{event.location.name}}
+                  a.pull-right.text-grey(ng-if="mode === 'Normal' && event.location", data-toggle="modal", data-target="#locationPicker") Show on map
                   p(ng-if="mode === 'Normal' && !event.location", style="color: grey") No location precised
 
               .row.hidden-xs(style="color: grey")
@@ -335,8 +337,7 @@ html(lang="en", ng-app="EventorioApp")
                 .event-location.col-lg-10.col-lg-offset-1
                   div(location-autocomplete, ng-model='event.location')
             .modal-footer
-              .pull-left
-                label.big-text.label.label-success(ng-show="event.location") {{event.location.name}}
+              .big-text(ng-show="event.location") {{event.location.address}}
               button.btn.btn-success(type='button', data-dismiss='modal') Done
 
 
