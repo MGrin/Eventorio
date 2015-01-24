@@ -46,7 +46,7 @@ app.directive('locationAutocomplete', function () {
         });
         var infowindow = new google.maps.InfoWindow();
 
-        if (model.$modelValue) showLocation(model.$modelValue, map, marker);
+        if (model.$modelValue.coordinates) showLocation(model.$modelValue, map, marker);
 
         if (newMode !== 'Normal') {
           var input = /** @type {HTMLInputElement} */ $(element).find('#pac-input')[0];
