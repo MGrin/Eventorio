@@ -168,6 +168,7 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
       Notifications.error($('.event-thumbnail'), 'Name should not be empty and should not be longer than 20 characters');
       return;
     }
+
     var event = new Events($scope.event);
 
     event.$save(function (res) {
