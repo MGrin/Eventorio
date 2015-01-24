@@ -12,6 +12,12 @@ app.controller('UserController', ['$scope', 'Global', 'Users', 'Events', 'Notifi
       }
       $scope.userEventsOffset = 0;
 
+      var meInFollowersList = _.find($scope.user.followers, function (follower) {
+        return follower.id === Global.me.id;
+      });
+
+      $scope.isFollowing = (meInFollowersList) ? true : false;
+
       Events.getUserEvents($scope.user, 0, function (err, events) {
         if (err) return alert(err);
         $scope.user.events = events;
@@ -22,6 +28,46 @@ app.controller('UserController', ['$scope', 'Global', 'Users', 'Events', 'Notifi
       $scope.show = true;
     });
   });
+
+  $scope.follow = function () {
+    Users.follow($scope.user.id, function (err) {
+      if (err) return Notifications.error($('.user-thumbnail'), err);
+      Global.me.following.push($scope.user);
+      $scope.user.followers.push(Global.me);
+      $scope.isFollowing = true;
+    })
+  }
+
+  $scope.unfollow = function () {
+    Users.unfollow($scope.user.id, function (err) {
+      if (err) return Notifications.error($('.user-thumbnail'), err);
+      Global.me.following.splice(Global.me.following.indexOf($scope.user), 1);
+      $scope.user.followers.splice($scope.user.followers.indexOf(Global.me.id), 1);
+      $scope.isFollowing = false;
+    })
+  }
+
+  $scope.credentials = {
+    oldPassword: '',
+    newPassword: '',
+    newPasswordRepeat: ''
+  }
+
+  $scope.changePassword = function () {
+    Users.changePassword($scope.credentials, function (err) {
+      if (err) {
+        return Notifications.error($('.changePasswordForm'), err);
+      }
+      $scope.credentials = {
+        oldPassword: '',
+        newPassword: '',
+        newPasswordRepeat: ''
+      };
+
+      Notifications.info($('.changePasswordForm'), 'Password successfully changed!');
+      $scope.changePasswordView = false;
+    });
+  };
 
   $scope.setupEditable = function () {
     $('.user-name .editable').editable({
@@ -52,42 +98,4 @@ app.controller('UserController', ['$scope', 'Global', 'Users', 'Events', 'Notifi
       showbuttons: 'right'
     });
   };
-
-  $scope.follow = function () {
-    Users.follow($scope.user.id, function (err) {
-      if (err) return alert(err);
-      Global.me.following.push($scope.user.id);
-      $scope.user.followers.push(Global.me.id);
-    })
-  }
-
-  $scope.unfollow = function () {
-    Users.unfollow($scope.user.id, function (err) {
-      if (err) return alert(err);
-      Global.me.following.splice(Global.me.following.indexOf($scope.user.id), 1);
-      $scope.user.followers.splice($scope.user.followers.indexOf(Global.me.id), 1);
-    })
-  }
-
-  $scope.credentials = {
-    oldPassword: '',
-    newPassword: '',
-    newPasswordRepeat: ''
-  }
-
-  $scope.changePassword = function () {
-    Users.changePassword($scope.credentials, function (err) {
-      if (err) {
-        return Notifications.error($('.changePasswordForm'), err);
-      }
-      $scope.credentials = {
-        oldPassword: '',
-        newPassword: '',
-        newPasswordRepeat: ''
-      };
-
-      Notifications.info($('.changePasswordForm'), 'Password successfully changed!');
-      $scope.changePasswordView = false;
-    });
-  }
 }]);

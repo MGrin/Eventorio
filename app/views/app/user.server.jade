@@ -54,10 +54,10 @@ html(lang="en", ng-app="EventorioApp")
               .row-fluid.hidden-xs(ng-if="global.me && !editable")
                 .col-lg-8.text-center
                   button.btn.btn-success.col-lg-12(
-                    ng-if="global.me.following.indexOf(user.id) === -1"
+                    ng-if="!isFollowing"
                     ng-click="follow()") Follow
                   button.btn.btn-default.btn-sm.col-lg-6.col-lg-offset-3(
-                    ng-if="global.me.following.indexOf(user.id) !== -1"
+                    ng-if="isFollowing"
                     ng-click="unfollow()") Unfollow
 
             .user-username.col-lg-7.col-xs-8 {{user.username}}
