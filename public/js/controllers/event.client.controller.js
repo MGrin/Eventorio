@@ -68,6 +68,11 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
     $('.peopleAcceptedTab').removeClass('active');
   };
 
+  $scope.getImgThumbnailTop = function () {
+    var headerMargin = parseInt($('#header').css('margin-top'));
+    return $('.img-event-header').height() + $('#header').height() + headerMargin - 120;
+  }
+
   $scope.goBack = function () {
     window.history.back();
   }

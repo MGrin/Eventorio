@@ -9,7 +9,7 @@ html(lang="en", ng-app="EventorioApp")
       .row-fluid
         img.img-responsive.img-event-header(src="/img/event_background.png")
 
-        .col-lg-4.col-lg-offset-1.col-xs-12.col-xs-offset-0(sticky, init-margin="120", top-offset="10")
+        .col-lg-4.col-lg-offset-1.col-xs-12.col-xs-offset-0(sticky, init-top-fn="getImgThumbnailTop()", top-offset="10")
           .row
             .event-thumbnail.col-lg-12.col-xs-4
               img.img-responsive.img-thumbnail.col-lg-8(src="/img/event_logo.jpg")
