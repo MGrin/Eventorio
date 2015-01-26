@@ -5,14 +5,18 @@ app.directive('sticky', ['Global', function (Global) {
     },
     link: function ($scope, element, attrs) {
       var elementTopMargin = parseInt(attrs['topOffset']) || 10;
-      console.log($scope.initTopFn);
+      var windowTopLimit = parseInt(attrs['topLimit']) || 0;
       var stick = function () {
-        var initTop = $scope.initTopFn();
-        if (initTop < 0) return stick();
+        var initTop;
+        var updateInitTop = function () {
+          initTop = $scope.initTopFn();
+          if (initTop < 0) setTimeout(updateInitTop, 250);
+        };
+        updateInitTop();
         var windowTop = $(window).scrollTop();
 
-        if (windowTop > initTop) {
-          $(element).css('top', elementTopMargin);
+        if (windowTop + windowTopLimit > initTop) {
+          $(element).css('top', elementTopMargin + windowTopLimit);
         } else {
           $(element).css('top', initTop - windowTop);
         }

@@ -1,8 +1,3 @@
-body
-  background url(/img/bg_opacity.jpeg)
-  background-repeat no-repeat
-  background-attachment fixed
-
 #signup-box
   .jumbotron
     padding-top: 30px
@@ -17,27 +12,41 @@ body
 .landing-text
   background: rgba(255,255,255,0.7)
 
-#news-feed
-  min-height: 600px
-
-#currentDay
-  // xs
+#application-content
   @media (max-width: 768px)
-    font-size 1.2em
-  // lg
+    margin-top 60px
   @media (min-width: 1200px)
-    font-size: 2em
-
-#daily-events
-  // lg
+    margin-top 80px
+.content-fluid
+  @media (max-width: 768px)
+    margin-top 50px
   @media (min-width: 1200px)
-    height 300px
-    overflow auto
+    margin-top 60px
 
-#eventCreationDialog
-  padding-top: 10px
-  border: 1px solid #767D80
-  border-radius: 5px
+#calendar-well
+  @media (max-width: 768px)
+    height 330px
+  @media (min-width: 1200px)
+    position fixed
+    height 400px
+    width 31%
+#daily-events-well
+  @media (min-width: 1200px)
+    position fixed
+    bottom 0
+    overflow-y auto
+    max-height 400px
+    width 31%
+
+#createEventFloating
+  z-index 50
+  position fixed
+  @media (max-width: 768px)
+    bottom 10px
+    right 10px
+  @media (min-width: 1200px)
+    bottom 50px
+    left 33%
 
 a, .clickable
   color: inherit
@@ -52,14 +61,19 @@ a, .clickable
 .big-text-lg
   @media (min-width: 1200px)
     font-size: 1.5em
+.day
+  .badge
+    top -3px !important
+    right -5px !important
 
-.day.active
-  a
-    background-color: inherit !important
-    color: #000 !important
-    &:hover
-      background-color: #eee !important
+.day
+  &.active
+    a
+      background-color: inherit !important
       color: #000 !important
+      &:hover
+        background-color: #eee !important
+        color: #000 !important
 
 .event-name, .user-username
   // all screens
@@ -69,12 +83,9 @@ a, .clickable
     color: #000
     font-size: 0.7em
   // xs
-  font-size: 1.5em
-  margin-top: -30px
-  // md
-  @media (min-width: 992px)
-    margin-top: -70px
-    font-size: 3em
+  @media (max-width: 768px)
+    font-size: 1.5em
+    margin-top: -50px
   // lg
   @media (min-width: 1200px)
     margin-top: -100px
@@ -93,7 +104,8 @@ a, .clickable
     margin-top: -120px
 
 .event-thumbnail
-  margin-top: -40px
+  @media (max-width: 768px)
+    margin-top: -50px
   // sm
   @media (min-width: 768px)
     margin-top: -75px
@@ -155,10 +167,6 @@ a, .clickable
 .margin-lg-10
   @media (min-width: 1200px)
     height: 10px
-
-.search-input
-  margin-top: 8px
-  width: 250px
 
 .search-item
   height: 80px

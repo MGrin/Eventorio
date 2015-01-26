@@ -111,7 +111,7 @@ exports.getParticipants = function (req, res) {
 }
 
 exports.createPage = function (req, res) {
-  return res.render('app/event.server.jade', {event: {edit: true}});
+  return res.render('app/event.server.jade', {event: {edit: true}, date: req.query.d || Date.now()});
 }
 
 exports.query = function (req, res) {

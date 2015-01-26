@@ -5,40 +5,41 @@ html(lang="en", ng-app="EventorioApp")
     include ../layouts/header.server.jade
 
     #application-content(ng-controller="ApplicationController")
-    if (visible === 'full')
-      .row-fluid.hidden-xs(ng-if="global.screenSize !== 'xs'")
-        .col-lg-4(sticky)
-          .row-fluid
-            #calendars.col-lg-12(ng-controller="CalendarController")
-              .row(calendar)
-          .row-fluid
-            #day-events.col-lg-12(ng-controller="DaylyController")
-              include daily.server.jade
+      a#createEventFloating.btn.btn-fab.btn-success.btn-raised
+        i.mdi-content-add-box
+      if (visible === 'full')
+        .row-fluid.hidden-xs(ng-if="global.screenSize !== 'xs'")
+          .col-lg-4
+            .row
+              .col-lg-12(ng-controller="CalendarController")
+                #calendar-well.well(calendar)
+            .row
+              .col-lg-12(ng-controller="DaylyController")
+                #daily-events-well.well(daily-events)
 
-        .col-lg-8.col-lg-offset-4
-          #news-feed.col-lg-12(ng-controller="NewsFeedController")
+          .col-lg-8.col-lg-offset-4
+            .col-lg-12(ng-controller="NewsFeedController")
+              include newsfeed.server.jade
+
+        .row-fluid.visible-xs(ng-if="global.screenSize === 'xs'")
+          .row-fluid
+            .col-lg-12(ng-controller="CalendarController")
+              #calendar-well.well(calendar)
+          .row-fluid
+            .col-lg-12(ng-controller="DaylyController")
+              #daily-events-well.well(daily-events)
+      else if (visible === 'calendar')
+        .row-fluid
+          .col-xs-12(ng-controller="CalendarController")
+            #calendar-well.well(calendar)
+
+        .row-fluid
+          .col-xs-12(ng-controller="DaylyController")
+            #daily-events-well.well(daily-events)
+
+      else if (visible === 'news')
+        .row-fluid
+          .col-xs-12(ng-controller="NewsFeedController")
             include newsfeed.server.jade
-
-      .row-fluid.visible-xs(ng-if="global.screenSize === 'xs'")
-        .row-fluid
-          #calendars.col-lg-12(ng-controller="CalendarController")
-            .row(calendar)
-        .row-fluid
-          #day-events.col-lg-12(ng-controller="DaylyController")
-            include daily.server.jade
-    else if (visible === 'calendar')
-      .row-fluid
-        #calendars.col-xs-12(ng-controller="CalendarController")
-          .row(calendar)
-
-      .row-fluid
-        #day-events.col-xs-12(ng-controller="DaylyController")
-          include daily.server.jade
-
-    else if (visible === 'news')
-      .row-fluid
-        #news-feed.col-xs-12(ng-controller="NewsFeedController")
-          include newsfeed.server.jade
-
 
   include ../layouts/scripts.server.jade
