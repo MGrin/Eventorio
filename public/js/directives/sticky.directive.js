@@ -5,11 +5,12 @@ app.directive('sticky', ['Global', function (Global) {
     },
     link: function ($scope, element, attrs) {
       var elementTopMargin = parseInt(attrs['topOffset']) || 10;
-
+      console.log($scope.initTopFn);
       var stick = function () {
         var initTop = $scope.initTopFn();
         if (initTop < 0) return stick();
         var windowTop = $(window).scrollTop();
+
         if (windowTop > initTop) {
           $(element).css('top', elementTopMargin);
         } else {
