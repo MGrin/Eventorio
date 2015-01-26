@@ -30,11 +30,6 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
     });
   });
 
-  if (Global.screenSize === 'lg') {
-    $('#leftSidebar').addClass('affix');
-    $('#leftSidebar').addClass('affix-top');
-  }
-
   $scope.showDescription = function () {
     if ($scope.view === 'description') return;
     $scope.view = 'description';

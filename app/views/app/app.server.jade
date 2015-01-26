@@ -7,7 +7,7 @@ html(lang="en", ng-app="EventorioApp")
     #application-content(ng-controller="ApplicationController")
     if (visible === 'full')
       .row-fluid.hidden-xs(ng-if="global.screenSize !== 'xs'")
-        .col-lg-4.affix.affix-top
+        .col-lg-4(sticky)
           .row-fluid
             #calendars.col-lg-12(ng-controller="CalendarController")
               .row(calendar)
