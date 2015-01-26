@@ -33,39 +33,24 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
   $scope.showDescription = function () {
     if ($scope.view === 'description') return;
     $scope.view = 'description';
-    $('#descriptionTab').addClass('active');
-    $('#commentsTab').removeClass('active');
-    $('#peopleTab').removeClass('active');
   };
   $scope.showComments = function () {
     if ($scope.view === 'comments') return;
     $scope.view = 'comments';
-    $('#commentsTab').addClass('active');
-    $('#descriptionTab').removeClass('active');
-    $('#peopleTab').removeClass('active');
   };
   $scope.showPeople = function () {
     if ($scope.view === 'people') return;
     $scope.view = 'people';
-    $('#peopleTab').addClass('active');
-    $('#descriptionTab').removeClass('active');
-    $('#commentsTab').removeClass('active');
   };
 
   $scope.showPeopleAccepted = function () {
-    console.log('showPeopleAccepted');
     if ($scope.peopleView === 'accepted') return;
     $scope.peopleView = 'accepted';
-    $('.peopleAcceptedTab').addClass('active');
-    $('.peopleInvitedTab').removeClass('active');
   };
 
   $scope.showPeopleInvited = function () {
-    console.log('showPeopleInvited');
     if ($scope.peopleView === 'invited') return;
     $scope.peopleView = 'invited';
-    $('.peopleInvitedTab').addClass('active');
-    $('.peopleAcceptedTab').removeClass('active');
   };
 
   $scope.getImgThumbnailTop = function () {
@@ -195,8 +180,10 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
     if (status) {
       $scope.mode = mode;
       if (mode === 'Create') {
+        var creationDate = $scope.date?moment($scope.date):moment();
+        creationDate.hours($scope.now.hours()).minutes($scope.now.minutes());
         $scope.event = {
-          date: moment(),
+          date: creationDate,
           visibility: 'public',
           attendance: 'public',
           location: {}

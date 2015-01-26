@@ -72,17 +72,17 @@ html(lang="en", ng-app="EventorioApp")
               .row(ng-show="!changePasswordView")
                 button.btn.btn-info.col-lg-12(ng-click="changePasswordView=true") Change password
               .row(ng-show="changePasswordView")
-                form.form.col-lg-8.col-xs-12
+                form.form.col-lg-10.col-lg-offset-1.col-xs-12
                   .form-group
-                    input.col-lg-10.form-control(ng-model="credentials.oldPassword", type="password", placeholder="Old password")
+                    input.col-lg-12.form-control(ng-model="credentials.oldPassword", type="password", placeholder="Old password")
                   .form-group
                     input.col-lg-10.form-control(ng-model="credentials.newPassword", type="password", placeholder="New password")
                   .form-group
                     input.col-lg-10.form-control(ng-model="credentials.newPasswordRepeat", type="password", placeholder="New password")
                   .changePasswordForm
-                  .btn-group
-                    button.btn.btn-warning(type="submit", ng-click="changePassword()") Change
-                    button.btn.btn-default(type="submit", ng-click="changePasswordView = false") Cancel
+                .btn-group.btn-group.justified
+                  a.btn.btn-warning(type="submit", ng-click="changePassword()") Change
+                  a.btn.btn-default(type="submit", ng-click="changePasswordView = false") Cancel
         .col-lg-7
           .row.hidden-xs
             .user-username {{user.username}}

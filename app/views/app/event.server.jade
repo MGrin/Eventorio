@@ -2,17 +2,17 @@ doctype html
 html(lang="en", ng-app="EventorioApp")
   include ../layouts/head.server.jade
   include ../layouts/scripts.server.jade
-  body(style="background-image: url(/img/bg_opacity.jpeg)")
+  body
     include ../layouts/header.server.jade
 
-    .content-fluid(ng-controller="EventController", ng-init="edit=#{event.edit}", ng-show="show")
+    .content-fluid(ng-controller="EventController", ng-init="edit=#{event.edit}; date=#{date}", ng-show="show")
       .row-fluid
         img.img-responsive.img-event-header(src="/img/event_background.png")
 
-        .col-lg-4.col-lg-offset-1.col-xs-12.col-xs-offset-0(sticky, init-top-fn="getImgThumbnailTop()")
+        .col-lg-3.col-lg-offset-1.col-xs-12.col-xs-offset-0.well(sticky, top-limit='75', top-offset='5', init-top-fn="getImgThumbnailTop()")
           .row
             .event-thumbnail.col-lg-12.col-xs-4
-              img.img-responsive.img-thumbnail.col-lg-8(src="/img/event_logo.jpg")
+              img.img-responsive(src="/img/event_logo.jpg")
             .event-name.col-xs-8.visible-xs
               a.editable(ng-if="mode === 'Create'") Event name
               a.editable(ng-if="mode === 'Edit'") {{event.name}}
@@ -20,11 +20,10 @@ html(lang="en", ng-app="EventorioApp")
           .row
             .col-lg-12.event-organizator.text-left(ng-if="mode === 'Normal'")
               p(style="color: grey") Organized by&nbsp;&nbsp;
-                span(style="color: black")
-                  a(href="/users/{{event.organizator.username}}", style="font-size: 2em")
-                    | {{event.organizator.username}}
+                a.btn.btn-default(href="/users/{{event.organizator.username}}") {{event.organizator.username}}
+
           .row
-            .event-details.col-lg-8.col-lg-offset-0.col-xs-12.col-xs-offset-0
+            .event-details.col-lg-12.col-lg-offset-0.col-xs-12.col-xs-offset-0
               .row
                 .event-date.col-lg-12.col-xs-12
                   a.big-text.editable(ng-if="mode === 'Create'", data-toggle="modal", data-target="#dateAndTimePicker") {{event.date.format('Do MMMM YYYY')}} {{event.date.format('HH:mm')}}
@@ -35,7 +34,7 @@ html(lang="en", ng-app="EventorioApp")
                   a.big-text.editable(ng-if="mode === 'Create'", data-toggle="modal", data-target="#locationPicker") {{event.location.name || 'Location'}}
                   a.big-text.editable(ng-if="mode === 'Edit'", data-toggle="modal", data-target="#locationPicker") {{event.location.name || 'Location'}}
                   p.big-text(ng-if="mode === 'Normal' && event.location") {{event.location.name}}
-                  a.pull-right.text-grey(ng-if="mode === 'Normal' && event.location", data-toggle="modal", data-target="#locationPicker") Show on map
+                  button.btn.btn-default.text-grey(ng-if="mode === 'Normal' && event.location", data-toggle="modal", data-target="#locationPicker") Show on map
                   p(ng-if="mode === 'Normal' && !event.location", style="color: grey") No location precised
 
               .row.hidden-xs(style="color: grey")
@@ -74,34 +73,28 @@ html(lang="en", ng-app="EventorioApp")
 
               .row(ng-if="mode === 'Normal' && event.canAttend")
                 h3.event-user-attendance.col-lg-12.col-xs-12
-                  button.btn.btn-info.col-lg-12.col-xs-12(
+                  button.btn.btn-info.btn-raised.col-lg-12.col-xs-12(
                     ng-if="!attending"
                     ng-click="attendTheEvent()") I will go
                   button.btn.btn-default.col-lg-12.col-xs-12(
                     ng-if="attending"
                     ng-click="quitTheEvent()") I will not go
 
-              .row(ng-if="mode === 'Normal' && global.me.id === event.organizator.id")
-                .col-lg-11.col-xs-12.text-center(style="padding: 0px")
-                  button.btn.btn-info.col-lg-12.col-xs-10.col-xs-offset-1(data-toggle="modal", data-target="#invitationModal") Invite!
               .row(ng-if="mode === 'Edit' && global.me.id === event.organizator.id")
-                .col-lg-11.col-xs-12.text-center(style="padding: 0px")
+                .col-lg-10.col-lg-offset-1.col-xs-12.text-center(style="padding: 0px")
                   button.btn.btn-warning.col-lg-12.col-xs-10.col-xs-offset-1(data-toggle="modal", data-target="#deleteModal") Delete Event!
 
               .row.hidden-xs(ng-if="mode === 'Normal'")
-                .col-lg-12.text-right
-                  a.big-text(
+                .col-lg-12.text-center
+                  button.btn.btn-default(
                     data-toggle="modal"
                     data-target="#participantsModal") Show everybody on this event
               .margin-xs-10
               .row.visible-xs(ng-if="mode === 'Normal'")
-                ul.nav.nav-tabs
-                  li#descriptionTab.active(role="presentation")
-                    a(href="#", ng-click="showDescription()") Description
-                  li#commentsTab(role="presentation")
-                    a(href="#", ng-click="showComments()") Comments
-                  li#peopleTab(role="presentation")
-                    a(href="#", ng-click="showPeople()") People
+                .btn-group.btn-group-justified
+                  a.btn.btn-default.btn-xs(role="presentation", ng-click="showDescription()") Description
+                  a.btn.btn-default.btn-xs(role="presentation", ng-click="showComments()") Comments
+                  a.btn.btn-default.btn-xs(role="presentation", ng-click="showPeople()") People
 
               .row.visible-xs(ng-show="view==='description'")
                 .margin-xs-10
@@ -140,13 +133,14 @@ html(lang="en", ng-app="EventorioApp")
                     .col-xs-4(ng-repeat="us in event.people.invited", user-small, user="us")
                     .col-xs-12.text-center.big-text(ng-if="event.people.invited.length === 0", style="color: grey") No people yet
 
-              .margin-lg-10
-              .margin-xs-10
+              .row(ng-if="mode === 'Normal' && global.me.id === event.organizator.id")
+                .col-lg-8.col-lg-offset-2.col-xs-8.col-xs-offset-2.text-center(style="padding: 0px")
+                  button.btn.btn-info.btn-raised.col-lg-12.col-xs-12(data-toggle="modal", data-target="#invitationModal") Invite!
+
               .row
-                .col-lg-12.col-xs-12
-                    label.col-lg-4.col-lg-offset-4.col-xs-4.col-xs-offset-4.label.label-default(ng-if="mode === 'Normal' && global.me.id === event.organizator.id", ng-click="setEditable(true, 'Edit')")
-                      a(href="#") Edit
-                        i.glyphicon.glyphicon-pencil
+                .col-lg-12.col-xs-12.text-center
+                  button.btn.btn-primary(ng-if="mode === 'Normal' && global.me.id === event.organizator.id", ng-click="setEditable(true, 'Edit')")
+                    i.glyphicon.glyphicon-pencil Edit
 
         .col-lg-7.col-lg-offset-5#rightSidebar
           .row.hidden-xs
@@ -205,18 +199,16 @@ html(lang="en", ng-app="EventorioApp")
               .margin-xs-10
               .row
                 .col-lg-12.invite-followers
-                  .panel.panel-default
-                    .panel-body
-                      .col-lg-3.col-xs-6(ng-repeat="us in followers")
-                        a(href="#", ng-if="us.active", ng-click="inviteFollower(us.id)")
-                          .user-line
-                            img.img.img-responsive.img-circle(ng-src="{{us.picture}}")
-                            label.label.label-default {{us.username}}
-                            i.glyphicon.glyphicon-send
-                        .user-line(ng-if="!us.active", style="opacity: 0.6")
-                          img.img.img-responsive.img-circle(ng-src="{{us.picture}}")
-                          label.label.label-default {{us.username}}
-                          i.glyphicon.glyphicon-ok
+                  .col-lg-3.col-xs-6(ng-repeat="us in followers")
+                    a(href="#", ng-if="us.active", ng-click="inviteFollower(us.id)")
+                      .user-line
+                        img.img.img-responsive.img-circle(ng-src="{{us.picture}}")
+                        label.label.label-default {{us.username}}
+                        i.glyphicon.glyphicon-send
+                    .user-line(ng-if="!us.active", style="opacity: 0.6")
+                      img.img.img-responsive.img-circle(ng-src="{{us.picture}}")
+                      label.label.label-default {{us.username}}
+                      i.glyphicon.glyphicon-ok
               .row
                 .col-xs-12.hidden-xs
                   button.btn.btn-warning(type="button", ng-click='inviteAllFollowers()', disabled="!canInviteFollowers")
@@ -275,12 +267,11 @@ html(lang="en", ng-app="EventorioApp")
                 span.sr-only Close
               h4.modal-title "{{event.name}}" participants!
             .modal-body
-              .row
-                ul.nav.nav-tabs
-                  li.peopleAcceptedTab.active(role="presentation", ng-click="showPeopleAccepted()")
-                    a(href="#") Participants
-                  li.peopleInvitedTab(role="presentation", ng-click="showPeopleInvited()")
-                    a(href="#") Invited
+              .row.text-center
+                  button.btn.btn-default.peopleAcceptedTab(role="presentation", ng-click="showPeopleAccepted()")
+                    | Participants
+                  button.btn.btn-default.peopleInvitedTab(role="presentation", ng-click="showPeopleInvited()")
+                    | Invited
               .row
                 .col-lg-12(ng-show="peopleView === 'accepted'")
                   .col-lg-3(ng-if="event.people.accepted.length > 0", ng-repeat="us in event.people.accepted", user-small, user="us")

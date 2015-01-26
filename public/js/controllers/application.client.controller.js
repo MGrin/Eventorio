@@ -7,4 +7,7 @@ app.controller('ApplicationController', ['$rootScope', '$scope', 'Global', 'Even
       return moment(event.date).format('YYYYMMDD') === $scope.now.format('YYYYMMDD');
     }));
   });
+  $scope.$on('day', function (info, date) {
+    $('#createEventFloating').attr('href', '/events/new?d=' + date)
+  });
 }]);

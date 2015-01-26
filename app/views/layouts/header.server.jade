@@ -1,5 +1,5 @@
 div(ng-controller="HeaderController")
-  nav#header.navbar.navbar-default(role="navigation")
+  nav#header.navbar.navbar-fixed.navbar-fixed-top.navbar-material-indigo-300(role="navigation")
     .container-fluid
       .navbar-header
         button.navbar-toggle.collapsed(type="button", data-toggle="collapse", data-target="#navbar")
@@ -8,10 +8,10 @@ div(ng-controller="HeaderController")
           span.icon-bar
 
         a.navbar-brand.hidden-xs(style="padding-top: 12px", href="/app")
-          img.img-circle.pull-left(alt="{{global.config.appName}}", style="height: 30px; margin-right: 10px", src="/img/logo_white_on_blue.png")
+          img.img-circle.pull-left(alt="{{global.config.appName}}", style="height: 30px; margin-right: 10px", src="/img/logo_white.png")
           span {{global.config.appName}}
         a.navbar-brand.visible-xs(style="padding-top: 12px", href="/calendar")
-          img.img-circle.pull-left(alt="{{global.config.appName}}", style="height: 30px; margin-right: 10px", src="/img/logo_white_on_blue.png")
+          img.img-circle.pull-left(alt="{{global.config.appName}}", style="height: 30px; margin-right: 10px", src="/img/logo_black.png")
           span {{global.config.appName}}
 
       #navbar.collapse.navbar-collapse.text-center
@@ -27,7 +27,7 @@ div(ng-controller="HeaderController")
                 span.glyphicon.glyphicon-off(style="margin-right: 10px")
                 span Login
             li(ng-if="global.me", ng-controller="SearchController")
-              .form-group
+              .navbar-form.navbar-left
                 input.search-input.sfTypeahead.form-control(
                     type="text"
                     placeholder="Search"
@@ -40,7 +40,7 @@ div(ng-controller="HeaderController")
                 img.img.img-rounded(style="height: 18px; margin-right: 10px", ng-src="{{global.me.picture}}")
                 span {{global.me.username}}
                 span.caret
-              ul.dropdown-menu(role="menu", style="padding: 17px")
+              ul.dropdown-menu(role="menu")
                 li
                   a(href="/users/{{global.me.username}}")
                     | Profile
@@ -60,6 +60,7 @@ div(ng-controller="HeaderController")
                 img.img.img-rounded(style="height: 30px; margin-right: 10px", ng-src="{{global.me.picture}}")
                 span {{global.me.username}}
             li#search-menu(ng-if="global.me", ng-controller="SearchController")
+              .navbar-form.navbar-left
                 input.search-input.sfTypeahead.form-control(
                     type="text"
                     placeholder="Search"
