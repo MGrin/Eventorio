@@ -114,8 +114,8 @@ html(lang="en", ng-app="EventorioApp")
                       .row
                         label.label.label-default.col-xs-12 {{global.me.username}}
                     .form-group.col-xs-8
-                      textarea.form-control.comment-input-xs(rows="3")
-                    button.btn.btn-info.col-xs-offset-8(ng-click="comment()") Comment
+                      textarea.form-control.comment-input(rows="3", placeholder="Comment...", ng-model="newComment")
+                    button.btn.btn-info.pull-right(ng-click="comment(newComment); newComment = null", ng-disabled="!newComment || newComment===''") Comment
               .row.visible-xs(ng-if="mode === 'Normal'", ng-show="view==='people'")
                 .margin-xs-10
                 .row-fluid
@@ -150,12 +150,12 @@ html(lang="en", ng-app="EventorioApp")
               span(ng-if="mode === 'Normal'") {{event.name}}
           .row.hidden-xs
             .margin-lg-10
-            .event-description.col-lg-12
+            .event-description.col-lg-9
               textarea.eventDescriptionField.col-lg-10(ng-show="mode !== 'Normal'", rows="10")
               p(ng-if="mode === 'Normal'", ng-bind-html="event.desc")
           .row.hidden-xs(ng-if="mode === 'Normal'")
             h3 Comments:
-            .event-comments.col-lg-12
+            .event-comments.col-lg-9
               .comment-line(ng-repeat="comment in event.comments.comments", comment, item="comment")
               .form
                 .col-lg-2
@@ -165,8 +165,8 @@ html(lang="en", ng-app="EventorioApp")
                   .row
                     label.label.label-default.col-lg-10.col-lg-offset-1 {{global.me.username}}
                 .form-group.col-lg-10
-                  textarea.form-control.comment-input(rows="5")
-                button.btn.btn-info.col-lg-offset-10(ng-click="comment()") Comment
+                  textarea.form-control.comment-input(rows="5", placeholder="Comment...", ng-model="newComment")
+                button.btn.btn-info.pull-right(ng-click="comment(newComment); newComment=null;", ng-disabled="!newComment || newComment===''") Comment
 
         .col-xs-10.col-xs-offset-1.visible-xs(role="group")
           button.btn.btn-info(ng-if="mode === 'Create'", type="button", ng-click="createEvent()") Create!
