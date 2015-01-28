@@ -104,25 +104,12 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
       }
   };
 
-  $scope.comment = function () {
-    var comment;
-    if (Global.screenSize === 'xs') comment = $('textarea.form-control.comment-input-xs').val();
-    else comment = $('textarea.form-control.comment-input').val();
+  $scope.comment = function (newComment) {
+    if (!newComment || newComment === '') return;
 
-    comment = '<div>' + comment + '</div>';
-    commentHtml = $(comment);
-    $(commentHtml).each(function () {
-      $(this).find('img').each(function () {
-        $(this).addClass('img');
-        $(this).addClass('img-responsive');
-      });
-    });
-
-    var comment = new Comments({content: $(commentHtml).prop('outerHTML'), event: $scope.event});
+    var comment = new Comments({content: newComment, event: $scope.event});
     comment.$save(function (res) {
       $scope.event.comments.comments.push(res);
-      $('textarea.form-control.comment-input-xs').val('');
-      $('textarea.form-control.comment-input').val();
     }, function (res) {
       Notifications.error($('.event-thumbnail'),res.data);
     })
@@ -264,20 +251,9 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
       });
 
       $('textarea.eventDescriptionField').html($scope.event.desc);
-      $('textarea.eventDescriptionField').wysihtml5({
-        "events": {
-          "load": function() {
-          },
-          "blur": function() {
-          }
-        }
-      });
+      $('textarea.eventDescriptionField').wysihtml5();
     } else {
       $scope.mode = 'Normal';
-
-      setTimeout(function () {
-        $('textarea.form-control.comment-input').wysihtml5();
-      }, 250);
     }
   }
 }]);
