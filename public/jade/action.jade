@@ -1,18 +1,19 @@
-.panel.panel-info.shadow-z-2
-  .panel-body
-    .row-fluid
-      a#subjectImgLink.col-lg-2.col-xs-3.text-center
-        .row
-          img#subjectImg.col-lg-12.col-xs-12.img.img-responsive
-        .margin-lg-10
-        .row
-          label.label.label-default.col-lg-10.col-lg-offset-1.col-xs-12.col-xs-offset-0#subjectName
-      #actionContent.big-text-lg.col-lg-8.col-xs-9
-      a#objectImgLink.col-lg-2.hidden-xs.text-center(ng-show="objectImgSrc")
-        .row
-          img#objectImg.col-lg-12.img.img-responsive
-        .margin-lg-10
-        .row
-          label.label.label-default.col-lg-10.col-lg-offset-1#objectName
-  .panel-footer.text-right
-    span#actionTimestamp
+.shadow-z-2
+  .panel.panel-info
+    .panel-body
+      .row-fluid
+        a#subjectImgLink.col-lg-2.col-xs-3.text-center
+          .row
+            img#subjectImg.col-lg-12.col-xs-12.img.img-responsive
+          .margin-lg-10
+          .row
+            label.label.label-default.col-lg-10.col-lg-offset-1.col-xs-12.col-xs-offset-0#subjectName
+        #actionContent.big-text-lg.col-lg-8.col-xs-9
+        a#objectImgLink.col-lg-2.hidden-xs.text-center(ng-show="objectImgSrc")
+          .row
+            img#objectImg.col-lg-12.img.img-responsive
+          .margin-lg-10
+          .row
+            label.label.label-default.col-lg-10.col-lg-offset-1#objectName
+    .panel-footer.text-right
+      span#actionTimestamp
