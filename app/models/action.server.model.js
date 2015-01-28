@@ -188,8 +188,8 @@ ActionSchema.methods = {
       delete jsonActor._id;
 
       if (!actor.userId && !actor.eventId) return;
-      if (actor._type === 'User') jsonActor.userId = actor.userId.toJSON();
-      if (actor._type === 'Event') jsonActor.eventId = actor.eventId.toJSON();
+      if (actor._type === 'User' && actor.userId) jsonActor.userId = actor.userId.toJSON();
+      if (actor._type === 'Event' && actor.eventId) jsonActor.eventId = actor.eventId.toJSON();
 
       res.object.push(jsonActor);
     });
@@ -198,8 +198,9 @@ ActionSchema.methods = {
       var jsonActor = actor.toObject();
       delete jsonActor._id;
 
-      if (actor._type === 'User') jsonActor.userId = actor.userId.toJSON();
-      if (actor._type === 'Event') jsonActor.eventId = actor.eventId.toJSON();
+      if (!actor.userId && !actor.eventId) return;
+      if (actor._type === 'User' && actor.userId) jsonActor.userId = actor.userId.toJSON();
+      if (actor._type === 'Event' && actor.eventId) jsonActor.eventId = actor.eventId.toJSON();
       res.subject.push(jsonActor);
     });
 
