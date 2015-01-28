@@ -1,57 +1,43 @@
 doctype html
-html(lang="en", ng-app="EventorioApp")
-  include ../layouts/head.server.jade
-  include ../layouts/scripts.server.jade
-  body
-    include ../layouts/header.server.jade
+html
+  head
+    title Eventorio
+  meta(name="viewport", content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no")
+  link(rel="stylesheet", href="/lib/bootstrap/dist/css/bootstrap.min.css")
+  link(rel="stylesheet", href="/lib/bootstrap-material-design/dist/css/material-wfont.min.css")
+  link(rel="stylesheet", href="/css/landing.css")
+  script(src="/lib/jquery/dist/jquery.min.js")
+  script(src="/lib/bootstrap/dist/js/bootstrap.min.js")
+  script(src="/lib/bootstrap-material-design/dist/js/material.min.js")
+  script(src="/js/landing/landing.js")
+  body(style="background-image: url(img/landing/#{landing.file}.jpg)")
+    .header
+      img.img.img-responsive(src="/img/logo_white.png")
+      h1.hidden-xs Eventorio
+    button#login-btn.btn.btn-raised.btn-success.btn-lg.login-btn(data-toggle="modal", data-target="#login-modal") Login
 
-    .container-fluid(ng-controller="LandingController")
-      .col-lg-9.hidden-xs.landing-text
-        .col-lg-3.hidden-sm
-          img#big-logo.img-responsive.img-circle(src="/img/logo_white_on_black.png")
-        .page-header.col-lg-9
-          h1 Welcome to Eventorio!
-          h2 Blablabla
-          p More blabla nad blablabla
-      if !user
-        #signup-box.col-lg-3.col-xs-12.pull-right
-          .jumbotron
-            h2.title
-              | Sign up!
+    .motivation
+      .jumbotron
+        h1 #{landing.message}
+        h1.text-right Plan it with &nbsp;
+          b Eventorio!
+
+    include landing.signup.server.jade
+
+    #login-modal.modal.fade(tabindex="-1", role="dialog", aria-hidden="true")
+      .modal-dialog
+        .modal-content
+          .modal-header
+            button.close(type='button', data-dismiss='modal')
+              span(aria-hidden='true') ×
+              span.sr-only Close
+            h4.modal-title Login to Eventorio
+          .modal-body
             form.form(role="form")
               .form-group
-                input.form-control(type="text"
-                                    placeholder="Username"
-                                    name="username"
-                                    ng-model="credentials.username"
-                                    ng-pattern="/^[a-zA-Z0-9]{4,20}$/"
-                                    required)
+                input.form-control(type="text", placeholder="Username", name="username")
               .form-group
-                input.form-control(type="email"
-                                    placeholder="Email"
-                                    name="email"
-                                    ng-model='credentials.email'
-                                    required)
-              .form-group
-                input.form-control(type="password"
-                                    placeholder="Password"
-                                    name="password"
-                                    ng-model='credentials.password'
-                                    ng-pattern="/^.{8,}$/"
-                                    required)
-              .form-group
-                input.form-control(type="password"
-                                    placeholder="Repeat password"
-                                    name="repeatPassword"
-                                    ng-model='credentials.repeatPassword'
-                                    required)
-            button.btn.btn-success.pull-right(ng-click="signup()") Create account
-
-      .col-xs-12.visible-xs.landing-text
-        .col-lg-3.hidden-sm
-          img#big-logo.img-responsive.img-circle(src="/img/logo_white_on_black.png")
-        .page-header.col-lg-9
-          h1 Welcome to Eventorio!
-          h2 Blablabla
-          p More blabla nad blablabla
-
+                input.form-control(type="password", placeholder="Password", name="password")
+          .modal-footer
+            button.btn.btn-default(type='button', data-dismiss='modal') Cancel
+            button#login-action.btn.btn-success(type='button') Login

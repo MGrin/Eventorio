@@ -37,6 +37,7 @@ module.exports = function (app, passport) {
   app.set('views', config.root + '/app/views');
   app.set('view engine', 'jade');
 
+
   // enable jsonp
   app.enable('jsonp callback');
 
