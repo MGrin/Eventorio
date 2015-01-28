@@ -293,13 +293,13 @@ UserSchema.statics = {
       function (next) {
         app.User.count({email: email}, function (err, count) {
           if (err) return next(err);
-          if (count > 0) return next(new Error('User with email \"' + email + '\" already registered!'));
+          if (count > 0) return next(new Error('email:User with email \"' + email + '\" already registered!'));
           return next();
         });
       }, function (next) {
         app.User.count({username: new RegExp('^' + username +'$', 'i')}, function (err, count) {
           if (err) return next(err);
-          if (count > 0) return next(new Error('User with username \"' + username + '\" already registered.'));
+          if (count > 0) return next(new Error('username:User with username \"' + username + '\" already registered.'));
           return next();
         });
       }, function (next) {

@@ -1,16 +1,20 @@
 'use strict';
 
 var app;
+var landings;
 
 exports.init = function (myApp) {
   app = myApp;
+  landings = [
+    {file: 'beer', message: 'Want to get a beer with your friends?'},
+    {file: 'ski', message: 'Want to ride with your friends?'}];
 };
 
-/**
- * Forwards the user to welcome page or home page depending on whether she is logged in
- */
 exports.index = function (req, res) {
-  res.render('index/landing.server.jade', {user: req.user});
+  if (req.user) return res.redirect('/app');
+  var randomLanding = landings[app.lib.randomInt(0, landings.length - 1)];
+
+  return res.render('index/landing.server.jade', {user: req.user, landing: randomLanding});
 };
 
 exports.app = function (req, res) {

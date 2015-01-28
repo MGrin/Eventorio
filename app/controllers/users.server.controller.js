@@ -27,7 +27,7 @@ exports.login = function (req, res) {
       if (err) {
         return app.err(err, res);
       }
-      return res.redirect('/app');
+      return res.sendStatus(200);
     });
   })(req, res);
 };
