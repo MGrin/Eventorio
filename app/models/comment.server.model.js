@@ -11,12 +11,22 @@ var _ = require('underscore');
 var async = require('async');
 var ObjectId = Schema.ObjectId;
 var troop = require('mongoose-troop');
+var sanitizeHtml = require('sanitize-html');
+
+var sanitizeConfig;
 
 /**
  * Models
  */
 exports.initModel = function (myApp) {
   app = myApp;
+  sanitizeConfig = {
+    allowedTags: ['b', 'i', 'em', 'strong', 'a', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
+    allowedAttributes: {
+      'a': ['href'],
+      'img': ['src']
+    }
+  };
 };
 
 var CommentSchema = exports.Schema = new Schema({
@@ -33,6 +43,7 @@ var CommentSchema = exports.Schema = new Schema({
 
 CommentSchema.statics = {
   create: function (author, eventId, content, cb) {
+    content = sanitizeHtml(content, sanitizeConfig);
     var comment = new app.Comment({
       content: content,
       creator: author,

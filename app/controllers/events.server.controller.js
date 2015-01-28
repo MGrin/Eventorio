@@ -3,11 +3,20 @@
 var moment = require('moment');
 var _ = require('underscore');
 var async = require('async');
+var sanitizeHtml = require('sanitize-html');
 
 var app;
+var sanitizeConfig;
 
 exports.init = function (myApp) {
   app = myApp;
+  sanitizeConfig = {
+    allowedTags: ['b', 'i', 'em', 'strong', 'a', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
+    allowedAttributes: {
+      'a': ['href'],
+      'img': ['src']
+    }
+  };
 };
 
 exports.load = function (req, res, next, id) {
@@ -24,7 +33,7 @@ exports.load = function (req, res, next, id) {
 exports.create = function (req, res) {
   var fields = {
     name: req.body.name,
-    desc: req.body.desc,
+    desc: sanitizeHtml(req.body.desc, sanitizeConfig),
     location: req.body.location,
     date: req.body.date,
     picture: req.body.picture,
@@ -41,7 +50,7 @@ exports.create = function (req, res) {
 exports.update = function (req, res) {
   var fields = {
     name: req.body.name,
-    desc: req.body.desc,
+    desc: sanitizeHtml(req.body.desc, sanitizeConfig),
     location: req.body.location,
     date: req.body.date,
     isAllDay: req.body.allDay,

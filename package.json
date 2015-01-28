@@ -44,6 +44,7 @@
     "passport": "latest",
     "passport-local": "latest",
     "randomstring": "latest",
+    "sanitize-html": "^1.5.2",
     "serve-favicon": "latest",
     "stylus": "latest",
     "underscore": "latest",
