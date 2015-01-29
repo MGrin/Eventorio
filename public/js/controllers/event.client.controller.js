@@ -111,7 +111,11 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
     comment.$save(function (res) {
       $scope.event.comments.comments.push(res);
     }, function (res) {
-      Notifications.error($('.event-thumbnail'),res.data);
+      if (Global.screenSize === 'lg') {
+        Notifications.error($('.event-comments .form .error-field'), res.data);
+      } else if (Global.screenSize === 'xs') {
+        Notifications.error($('.event-comments .form-inline .error-field'), res.data);
+      }
     })
   }
 

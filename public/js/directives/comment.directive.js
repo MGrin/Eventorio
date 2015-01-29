@@ -5,7 +5,7 @@ app.directive('comment', ['Global', function (Global) {
     },
     templateUrl: '/view/comment.html',
     link: function ($scope, element, attrs) {
-      if (!$scope.comment.content) return $(element).remove();
+      if (!$scope.comment.content) return $(element).addClass('hide');
 
       $(element).find('#userLink').attr('href', '/users/' + $scope.comment.creator.username);
       $(element).find('#userImg').attr('src', $scope.comment.creator.picture);
