@@ -6,6 +6,7 @@ app.directive('sticky', ['Global', function (Global) {
     link: function ($scope, element, attrs) {
       var elementTopMargin = parseInt(attrs['topOffset']) || 10;
       var windowTopLimit = parseInt(attrs['topLimit']) || 0;
+      $(element).css('max-height', $(window).height() - 2 * elementTopMargin - $('#header').height());
       var stick = function () {
         var initTop;
         var updateInitTop = function () {

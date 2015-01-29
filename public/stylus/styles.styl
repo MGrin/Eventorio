@@ -68,6 +68,10 @@ a, .clickable
         background-color: #eee !important
         color: #000 !important
 
+.event-details
+  @media (min-width: 1200px)
+    overflow-y auto
+
 .event-name, .user-username
   // all screens
   background-color: rgba(255, 255, 255, 0.4)
@@ -106,8 +110,12 @@ a, .clickable
   @media (min-width: 992px)
     margin-top: -90px
 
-   @media (min-width: 1200px)
+  @media (min-width: 1200px)
     margin-top: 0
+
+  img
+    margin-left auto
+    margin-right auto
 
 .invite-followers
   max-height 300px
