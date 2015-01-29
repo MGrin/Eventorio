@@ -44,6 +44,8 @@ var CommentSchema = exports.Schema = new Schema({
 CommentSchema.statics = {
   create: function (author, eventId, content, cb) {
     content = sanitizeHtml(content, sanitizeConfig);
+
+    if (!content) return cb(new Error('HTML comments are not allowed'));
     var comment = new app.Comment({
       content: content,
       creator: author,
