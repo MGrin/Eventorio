@@ -64,7 +64,7 @@ html(lang="en", ng-app="EventorioApp")
               p.text-center(ng-if="user.events.length === 0", style="color: grey; opacity: 0.7") No upcoming events
               p.text-center(ng-if="user.events.length !== 0 && !editable") {{user.username}}'s upcoming events:
               p.text-center(ng-if="user.events.length !== 0 && editable") Your upcoming events:
-              .col-lg-6(ng-repeat="event in user.events" event-line event="event")
+              .col-xs-12(ng-repeat="event in user.events" event-line event="event")
 
           .margin-xs-10
           .row(ng-if="global.me && editable")
