@@ -6,7 +6,7 @@ app.directive('sticky', ['Global', function (Global) {
     link: function ($scope, element, attrs) {
       var elementTopMargin = parseInt(attrs['topOffset']) || 10;
       var windowTopLimit = parseInt(attrs['topLimit']) || 0;
-      $(element).css('max-height', $(window).height() - 2 * elementTopMargin - $('#header').height());
+
       var stick = function () {
         var initTop;
         var updateInitTop = function () {
@@ -25,6 +25,7 @@ app.directive('sticky', ['Global', function (Global) {
 
       if (Global.screenSize === 'lg') {
         $(element).addClass('affix affix-top');
+        $(element).css('max-height', $(window).height() - 2 * elementTopMargin - $('#header').height());
         $(window).scroll(stick);
         stick();
       }
