@@ -85,7 +85,7 @@ html(lang="en", ng-app="EventorioApp")
                   a.btn.btn-default(type="submit", ng-click="changePasswordView = false") Cancel
         .col-lg-7
           .row.hidden-xs
-            .user-username {{user.username}}
+            .user-username.well {{user.username}}
           .row.hidden-xs
             .user-description.col-lg-12.big-text
               div(ng-if="user.desc")
