@@ -106,7 +106,7 @@ html(lang="en", ng-app="EventorioApp")
                 .margin-xs-10
                 .event-comments.col-lg-12
                   .comment-line(ng-repeat="comment in event.comments.comments", comment, item="comment")
-                  .form-inline
+                  .form-inline(ng-show="global.me != null")
                     .col-xs-4
                       .row
                         img.col-xs-12.img.img-responsive(ng-src="{{global.me.picture}}")
@@ -158,7 +158,7 @@ html(lang="en", ng-app="EventorioApp")
             h3 Comments:
             .event-comments.col-lg-9
               .comment-line(ng-repeat="comment in event.comments.comments", comment, item="comment")
-              .form
+              .form(ng-show="global.me != null")
                 .col-lg-2
                   .row
                     img.col-lg-12.img.img-responsive(ng-src="{{global.me.picture}}")
