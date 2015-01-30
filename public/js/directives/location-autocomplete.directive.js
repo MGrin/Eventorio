@@ -27,6 +27,8 @@ app.directive('locationAutocomplete', function () {
     link: function ($scope, element, attrs, model) {
       $scope.$watch('mode', function (newMode) {
         var mapOptions;
+        if (!model.$modelValue) model.$modelValue = {};
+
         if (!model.$modelValue.coordinates) {
           mapOptions = {
             center: new google.maps.LatLng(46.519056,6.566758),
