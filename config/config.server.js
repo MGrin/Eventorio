@@ -23,6 +23,11 @@ var config = {
         clientId: '777903649350-2qekprt60e60u24sk2q43pl98bkb4duj.apps.googleusercontent.com',
         clientSecret: '777903649350-2qekprt60e60u24sk2q43pl98bkb4duj@developer.gserviceaccount.com'
       }
+    },
+    constants: {
+      users: {
+        maxFollowerAutoFollow: 50
+      }
     }
   },
 
@@ -43,6 +48,11 @@ var config = {
       maps: {
         clientId: '777903649350-2qekprt60e60u24sk2q43pl98bkb4duj.apps.googleusercontent.com',
         clientSecret: '777903649350-2qekprt60e60u24sk2q43pl98bkb4duj@developer.gserviceaccount.com'
+      }
+    },
+    constants: {
+      users: {
+        maxFollowerAutoFollow: 50
       }
     }
   }

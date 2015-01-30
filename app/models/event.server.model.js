@@ -165,11 +165,30 @@ EventSchema.statics = {
       if (err) return cb(err);
       if (!events || events.length === 0) return cb();
 
-      async.eachSeries(events, function (event, next) {
-        event.invitedEmails.splice(event.invitedEmails.indexOf(user.email), 1);
-        event.invitedUsers.push(user._id);
-        event.save(next);
-      }, function (err) {
+      var organizatorsToFollow = [];
+      async.series([
+        function (next) {
+          async.eachSeries(events, function (event, next) {
+            event.invitedEmails.splice(event.invitedEmails.indexOf(user.email), 1);
+            event.invitedUsers.push(user._id);
+            organizatorsToFollow.push(event.organizator)
+            event.save(next);
+          }, function (err) {
+            return next(err);
+          });
+        },
+        function (next) {
+          app.User.find({_id: {$in: organizatorsToFollow}}, function (err, organizators){
+            if (err) return next(err);
+            _.each(organizators, function(organizator) {
+              if(organizator.followers.length < app.config.constants.users.maxFollowerAutoFollow) {
+                user.follow(organizator);
+              }
+            });
+          });
+          next();
+        }
+      ], function (err) {
         return cb(err);
       });
     });
