@@ -162,10 +162,13 @@ exports.show = function (req, res) {
     },
     json: function () {
       var jsonEvent = event.toJSON();
-      if (user || event.permissions.visibility === 'public') {
+      if (user) {
         jsonEvent.canAttend = user.canAttendEvent(event);
         return res.jsonp(jsonEvent);
-      } else {
+      }
+      else if (event.permissions.visibility === 'public') {
+        return res.jsonp(jsonEvent);
+      }else {
         return res.jsonp(404);
       }
     }
