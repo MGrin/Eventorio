@@ -187,7 +187,6 @@ var loadUser = function (req, res, next, username) {
     if (!user) return app.err(new Error('No user found: ' + username), res);
 
     req.loadedUser = user;
-    if (req.user.id === req.loadedUser.id) req.user = user;
     return next();
   })
 };
