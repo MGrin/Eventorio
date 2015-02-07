@@ -65,7 +65,7 @@ module.exports = function (app, passport) {
   app.route('/comments')
     .post(users.requiresLogin, comments.create);
   app.route('/comments/:eventId')
-    .get(users.requiresLogin, comments.query);
+    .get(comments.query);
 
   app.route('/api/follow')
     .post(users.requiresLogin, users.follow);
