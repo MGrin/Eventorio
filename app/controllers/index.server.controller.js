@@ -27,4 +27,8 @@ exports.calendar = function (req, res) {
 
 exports.news = function (req, res) {
   res.render('app/app.server.jade', {user: req.user, visible: 'news'});
-}
+};
+
+exports.policy = function (req, res) {
+  res.render('index/policy.jade');
+};

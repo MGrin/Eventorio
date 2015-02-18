@@ -16,6 +16,9 @@ module.exports = function (app, passport) {
   app.route('/news')
     .get(users.requiresLogin, index.news);
 
+  app.route('/policy')
+    .get(index.policy);
+
   /** User routes */
   app.route('/login')
     .post(users.login);
