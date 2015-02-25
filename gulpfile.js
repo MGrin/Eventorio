@@ -49,6 +49,7 @@ gulp.task('clean', function () {
 
 gulp.task('default', ['clean', 'compile', 'compress'], function() {
   nodemon({
+    ignore: ['public/pictures/'],
     script: 'app.js'
   }).on('change', ['clean', 'compile', 'compress']);
 });

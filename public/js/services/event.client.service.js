@@ -81,6 +81,17 @@ app.factory('Events', ['$rootScope', '$resource', '$http', 'Global', function ($
       });
   };
 
+  event.removeTemporaryEvent = function (event, cb) {
+    if (!event.tempId || !(event.headerPicture || event.picture)) return cb();
+
+    $http.delete('/events?tempId=' + event.tempId)
+      .success(function () {
+        return cb();
+      }).error(function (response) {
+        return cb(response);
+      });
+  };
+
   event.people = $resource('/events/:eventId/users', {eventId: '@_id'}, {update: {method: 'POST'}});
 
   return event;

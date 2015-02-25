@@ -3,6 +3,36 @@ app.controller('UserController', ['$scope', 'Global', 'Users', 'Events', 'Notifi
   $scope.global = Global;
   $scope.changePasswordView = false;
 
+  $('.user-header ul').hover(function () {
+    $(this).removeClass('hide');
+  });
+
+  $('.user-header').hover(function () {
+    $('.user-header ul').removeClass('hide');
+  }, function () {
+    $('.user-header ul').addClass('hide');
+  });
+
+  $('.user-thumbnail ul').hover(function () {
+    $(this).removeClass('hide');
+  });
+
+  $('.user-thumbnail img').hover(function () {
+    $('.user-thumbnail ul').removeClass('hide');
+  }, function () {
+    $('.user-thumbnail ul').addClass('hide');
+  });
+
+  $scope.$watch('choosingCover', function (newVal) {
+    if (newVal) $('#user-content').css('margin-top', 120);
+    else $('#user-content').css('margin-top', 0);
+  });
+
+  $scope.$on('user:update:header', function (info, img) {
+    $scope.user.headerPicture = img;
+    $scope.$apply();
+  });
+
   $scope.$on('me', function () {
     $scope.user = Users.get({username: window.location.pathname.split('/')[2]}, function () {
       if (Global.me) {
@@ -11,7 +41,6 @@ app.controller('UserController', ['$scope', 'Global', 'Users', 'Events', 'Notifi
         $scope.editable = false
       }
       $scope.userEventsOffset = 0;
-
       var meInFollowersList = _.find($scope.user.followers, function (follower) {
         return follower.id === Global.me.id;
       });

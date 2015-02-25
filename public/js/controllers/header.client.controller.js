@@ -1,4 +1,4 @@
-app.controller('HeaderController', ['$scope', '$rootScope', '$location', 'Global', 'Users', 'Auth', 'Notifications',
+app.controller('HeaderController', ['$scope', '$rootScope', '$location', 'Global', 'Users', 'Notifications',
   function ($scope, $rootScope, $location, Global, Users, Auth, Notifications) {
   $scope.global = Global;
   $scope.view = 'login';
@@ -64,68 +64,6 @@ app.controller('HeaderController', ['$scope', '$rootScope', '$location', 'Global
 
       $('#loginModal').toggle();
       Notifications.info($('#header'), 'Email with new password was sent to you');
-    });
-  };
-
-  $scope.login = function () {
-    $scope.clearErrors();
-    if (!$scope.credentials.username) {
-      Notifications.error($('#loginModal form'), 'Wrong username');
-      $scope.addErrorClass('username');
-      return;
-    }
-
-    if (!$scope.credentials.password) {
-      Notifications.error($('#loginModal form'), 'Wrong password');
-      $scope.addErrorClass('password');
-      return;
-    }
-
-    Auth.login($scope.credentials.username, $scope.credentials.password, function (err) {
-      if (err) {
-        Notifications.error($('#loginModal form'), err);
-        return
-      }
-
-      if (Global.screenSize === 'lg') window.location = '/app';
-      else if (Global.screenSize === 'xs') window.location = '/calendar';
-    });
-  };
-
-  $scope.signup = function () {
-    $scope.clearErrors();
-    if (!$scope.credentials.username) {
-      Notifications.error($('#loginModal form'), 'Username should contain only letters or digits and have more than 4 characters');
-      $scope.addErrorClass('username');
-      return;
-    }
-
-    if (!$scope.credentials.email) {
-      Notifications.error($('#loginModal form'), 'Email is required');
-      $scope.addErrorClass('email');
-      return;
-    }
-
-    if (!$scope.credentials.password) {
-      Notifications.error($('#loginModal form'), 'Wrong password');
-      $scope.addErrorClass('password');
-      return;
-    }
-
-    if (!$scope.credentials.repeatPassword && $scope.credentials.repeatPassword !== $scope.credentials.password) {
-      Notifications.error($('#loginModal form'), 'Passwords are not equal');
-      $scope.addErrorClass('repeatPassword');
-      return;
-    }
-
-    Auth.signup($scope.credentials, function (err) {
-      if (err) {
-         Notifications.error($('#loginModal form'), err);
-         return;
-      }
-
-      if (Global.screenSize === 'lg') window.location = '/app';
-      else if (Global.screenSize === 'xs') window.location = '/calendar';
     });
   };
 

@@ -36,9 +36,11 @@ exports.create = function (req, res) {
     desc: sanitizeHtml(req.body.desc, sanitizeConfig),
     location: req.body.location,
     date: req.body.date,
+    headerPicture: req.body.headerPicture,
     picture: req.body.picture,
     visibility: req.body.visibility,
-    attendance: req.body.attendance
+    attendance: req.body.attendance,
+    tempId: req.body.tempId,
   };
   var creator = req.user;
   app.Event.create(fields, creator, function (err, event) {
@@ -53,7 +55,7 @@ exports.update = function (req, res) {
     desc: sanitizeHtml(req.body.desc, sanitizeConfig),
     location: req.body.location,
     date: req.body.date,
-    isAllDay: req.body.allDay,
+    headerPicture: req.body.headerPicture,
     picture: req.body.picture,
     visibility: req.body.visibility,
     attendance: req.body.attendance
@@ -102,13 +104,27 @@ exports.invite = function (req, res) {
 }
 
 exports.remove = function(req, res) {
-    var user = req.user;
-    var event = req.event;
+  var user = req.user;
+  var event = req.event;
 
-    event.removeEvent(user, function (err) {
-        if (err) return app.err(err, res);
-        return res.sendStatus(200);
-    });
+  event.removeEvent(user, function (err) {
+      if (err) return app.err(err, res);
+      return res.sendStatus(200);
+  });
+}
+
+exports.removeTemporaryEvent = function (req, res) {
+  var user = req.user;
+  var tempId = req.query.tempId;
+
+  user.removeTemporaryEvent(tempId, function (err) {
+    if (err) return app.err(err);
+  });
+
+  app.pictures.removeTemporaryEvent(tempId, function (err) {
+    if (err) return app.err(err, res);
+    return res.sendStatus(200);
+  });
 }
 
 exports.getParticipants = function (req, res) {
@@ -120,7 +136,11 @@ exports.getParticipants = function (req, res) {
 }
 
 exports.createPage = function (req, res) {
-  return res.render('app/event.server.jade', {event: {edit: true}, date: req.query.d || Date.now()});
+  var date = moment(parseInt(req.query.d));
+  app.Event.loadEmptyEvent(date, req.user, function (err, event) {
+    if (err) return app.err(err, res);
+    return res.render('app/event.server.jade', {event: JSON.stringify(event)});
+  });
 }
 
 exports.query = function (req, res) {
@@ -158,7 +178,7 @@ exports.show = function (req, res) {
 
   res.format({
     html: function () {
-      return res.render('app/event.server.jade', {event: {}});
+      return res.render('app/event.server.jade');
     },
     json: function () {
       var jsonEvent = event.toJSON();

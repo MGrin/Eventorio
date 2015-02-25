@@ -1,4 +1,4 @@
-app.directive('comment', ['Global', function (Global) {
+app.directive('comment', ['Global', '$compile', function (Global, $compile) {
   return {
     scope: {
       comment: '=item'
@@ -7,8 +7,11 @@ app.directive('comment', ['Global', function (Global) {
     link: function ($scope, element, attrs) {
       if (!$scope.comment.content) return $(element).addClass('hide');
 
+      $(element).find('#userThumbnail').each(function () {
+        $(this).html($compile('<div picture item-type="user" type="avatar" item="comment.creator" class="img img-circle"></div>')($scope));
+      });
       $(element).find('#userLink').attr('href', '/users/' + $scope.comment.creator.username);
-      $(element).find('#userImg').attr('src', $scope.comment.creator.picture);
+      // $(element).find('#userImg').attr('src', $scope.comment.creator.picture);
       $(element).find('#username').text($scope.comment.creator.username);
 
       var contentSplit = $scope.comment.content.split(' ');
