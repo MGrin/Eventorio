@@ -14,7 +14,7 @@ var ObjectId = Schema.ObjectId;
 var gravatar = require('gravatar');
 var randomstring = require('randomstring');
 var textSearch = require('mongoose-text-search');
-
+var moment = require('moment');
 /**
  * Models
  */
@@ -33,6 +33,7 @@ var UserSchema = exports.Schema = new Schema({
   provider: String,
   gender: String, // male or female
 
+  headerPicture: String,
   hashPassword: {type: String, select: false},
   salt: {type: String, select: false},
 
@@ -47,6 +48,11 @@ var UserSchema = exports.Schema = new Schema({
   }],
 
   activationCode: {type: String, select: false},
+
+  tempEvents: [{
+    created: Date,
+    id: String
+  }]
 });
 
 /**
@@ -66,6 +72,12 @@ UserSchema
   .virtual('id')
   .get(function () {
     return this._id.toString();
+  });
+
+UserSchema
+  .virtual('gravatarHash')
+  .get(function () {
+    return app.lib.md5(this.email);
   });
 
 UserSchema
@@ -261,6 +273,32 @@ UserSchema.methods = {
 
     this.password = credentials.newPassword;
     return this.save(cb);
+  },
+
+  addTemporaryEvent: function (tempId){
+    var tempEvent = _.find(this.tempEvents, function (el) {
+      return el.id === tempId;
+    });
+    if (tempEvent) return;
+
+    this.tempEvents.push({created: moment(), id: tempId});
+    this.save(function (err) {
+      if (err) return app.err(err);
+    });
+  },
+
+  removeTemporaryEvent: function (tempId, cb) {
+    var index = _.findWhere(this.tempEvents, function (el) {
+      return el.id === tempId;
+    });
+
+    if (!index) {
+      app.err(new Error('No tempId ' + tempId + ' found'));
+      return cb();
+    }
+
+    this.tempEvents.splice(index, 1);
+    this.save(cb);
   }
 };
 

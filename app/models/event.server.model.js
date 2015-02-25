@@ -11,8 +11,11 @@ var _ = require('underscore');
 var async = require('async');
 var ObjectId = Schema.ObjectId;
 var textSearch = require('mongoose-text-search');
+var fs = require('fs-extra');
+var randomstring = require('randomstring');
 
 var visLevels = ['public', 'followers', 'invitations'];
+
 /**
  * Models
  */
@@ -33,6 +36,7 @@ var EventSchema = exports.Schema = new Schema({
   },
   date: Date,
   picture: String,
+  headerPicture: String,
   permissions: {
     visibility: {
       type: String,
@@ -79,12 +83,50 @@ EventSchema.methods = {
     delete fields.visibility;
     delete fields.attendance;
 
-    var that = this;
-    _.each(_.keys(fields), function (key) {
-      that[key] = fields[key];
-    });
+    var event = this;
 
-    return that.save(cb);
+    if (!fields.headerPicture && !fields.picture) return this.save(cb);
+
+    if (fields.headerPicture || fields.picture) {
+      async.series([
+        function (next) {
+          if (fields.headerPicture && fields.headerPicture !== event.headerPicture) {
+            fs.unlink(app.config.pictures.event.pwd + event.id + '/header_' + event.headerPicture + '.png', function (err) {
+              if (err) app.err(err);
+
+              var oldPath = app.config.pictures.event.pwd + event.id + '/temp/header_' + fields.headerPicture + '.png';
+              var newPath = app.config.pictures.event.pwd + event.id + '/header_' + fields.headerPicture + '.png';
+              fs.rename(oldPath, newPath, next);
+            });
+          } else {
+            next();
+          }
+        }, function (next) {
+          if (fields.picture && event.picture && fields.picture !== event.picture) {
+            fs.unlink(app.config.pictures.event.pwd + event.id + '/avatar_' + event.picture + '.png', function (err) {
+              if (err) return cb(err);
+
+              var oldPath = app.config.pictures.event.pwd + event.id + '/temp/avatar_' + fields.picture + '.png';
+              var newPath = app.config.pictures.event.pwd + event.id + '/avatar_' + fields.picture + '.png'
+              fs.rename(oldPath, newPath, next);
+            });
+          } else {
+            next();
+          }
+        }, function (next) {
+          _.each(_.keys(fields), function (key) {
+            event[key] = fields[key] || event[key];
+          });
+          event.save(function (err, modifiedEvent) {
+            if (err) return next(err);
+            event = modifiedEvent;
+            return next();
+          });
+        }
+      ], function (err) {
+        return cb(err, event);
+      })
+    }
   },
 
   getPeople: function (cb) {
@@ -158,6 +200,20 @@ EventSchema.statics = {
       .findById(id)
       .populate('organizator')
       .exec(cb);
+  },
+
+  loadEmptyEvent: function (date, creator, cb) {
+    var tempId = randomstring.generate(20);
+    var event = {
+      tempId: tempId,
+      date: date,
+      permissions: {
+        visibility: visLevels[0],
+        attendance: visLevels[0]
+      },
+      organizator: creator.toJSON()
+    };
+    return cb(null, event);
   },
 
   replaceInvitations: function (user, cb) {
@@ -324,6 +380,7 @@ EventSchema.statics = {
   },
 
   create: function (fields, creator, cb) {
+    var tempId = fields.tempId;
     var permissions = {
       visibility: fields.visibility || visLevels[0],
       attendance: fields.attendance || visLevels[0]
@@ -331,11 +388,30 @@ EventSchema.statics = {
 
     delete fields.visibility;
     delete fields.attendance;
+    delete fields.tempId;
+
     fields.permissions = permissions;
     fields.date = moment(fields.date).utc();
     var event = new app.Event(fields);
     event.organizator = creator;
-    event.save(function (err, createdEvent) {
+
+    var createdEvent;
+    async.series([
+      function (next) {
+        event.save(function (err, savedEvent) {
+          if (err) return next(err);
+          createdEvent = savedEvent;
+          return next();
+        });
+      }, function (next) {
+        app.pictures.movePicturesForNewEvent(creator, createdEvent, tempId, function (err) {
+          if (err) app.err(err);
+          return next();
+        });
+      }, function (next) {
+        creator.removeTemporaryEvent(tempId, next);
+      }
+    ], function (err) {
       if (!err) app.Action.newCreateEventAction(createdEvent);
       return cb(err, createdEvent);
     });

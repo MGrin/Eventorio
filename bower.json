@@ -14,6 +14,7 @@
     "clockpicker": "~0.0.7",
     "angular-typeahead": "~0.2.1",
     "typeahead.js": "~0.10.5",
-    "bootstrap-material-design": "~0.2.2"
+    "bootstrap-material-design": "~0.2.2",
+    "angular-cropme": "~0.2.9"
   }
 }

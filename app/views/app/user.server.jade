@@ -6,13 +6,22 @@ html(lang="en", ng-app="EventorioApp")
     include ../layouts/header.server.jade
 
     .content-fluid(ng-controller="UserController", ng-show="show")
-      .row-fluid
-        img.img-responsive.img-user-header(src="/img/user_background.png")
-
+      .row(style="margin: 0;")
+        .col-lg-12(ng-show="choosingCover", img-upload-cover, is-visible="choosingCover", item-type="user", item="user")
+        .user-header.col-lg-12(ng-show="!choosingCover", picture, item-type="user", item="user", type="header")
+          ul.pager.col-lg-12.hide.hidden-xs(ng-show="editable")
+            li
+              a(href="#", ng-click="choosingCover=true") Upload new cover image &nbsp;
+                i.mdi-content-create
+      #user-content.row-fluid
         .col-lg-4.col-lg-offset-1.col-xs-12.col-xs-offset-0
           .row
-            .user-thumbnail.col-lg-12.col-xs-4
-              img.img-responsive.col-lg-8(ng-src="{{user.picture}}")
+            .user-thumbnail.col-lg-8.col-xs-4(picture, item-type="user", type="avatar", item="user")
+              ul.pager.col-lg-8.hide.hidden-xs(ng-show="editable")
+                li
+                  a(ng-href="//gravatar.com/{{user.gravatarHash}}", target="_blank") Edit your avatar on gravatar.com &nbsp;
+                    i.mdi-content-create
+              //- img.img-responsive.col-lg-8.col-xs-12(ng-src="{{user.picture}}")
             .user-username.col-xs-8.visible-xs {{user.username}}
             .user-name.visible-xs.col-xs-8.pull-right
               div(ng-if="user.name")

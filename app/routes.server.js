@@ -6,6 +6,7 @@ module.exports = function (app, passport) {
   var events = app.controllers.Events;
   var comments = app.controllers.Comments;
   var search = app.controllers.Search;
+  var pictures = app.controllers.Pictures;
 
   app.route('/')
      .get(index.index);
@@ -37,7 +38,8 @@ module.exports = function (app, passport) {
     .put(users.requiresLogin, users.update);
   app.route('/users/:user/followers')
     .get(users.requiresLogin, users.followers);
-
+  app.route('/users/:user/pictures')
+    .post(users.requiresLogin, pictures.uploadForUser);
 
   app.route('/activation/:activationCode')
     .get(users.activate);
@@ -45,13 +47,16 @@ module.exports = function (app, passport) {
 
   app.route('/events')
     .get(users.requiresLogin, events.query)
-    .post(users.requiresLogin, events.create);
+    .post(users.requiresLogin, events.create)
+    .delete(users.requiresLogin, events.removeTemporaryEvent);
   app.route('/events/new')
     .get(users.requiresLogin, events.createPage);
   app.route('/events/:eventId')
     .get(events.isAccessible, events.show)
     .post(users.requiresLogin, events.update)
     .delete(users.requiresLogin, events.remove);
+  app.route('/events/:eventId/pictures')
+    .post(users.requiresLogin, pictures.uploadForEvent);
   app.route('/events/:eventId/users')
     .get(events.getParticipants);
   app.route('/events/:eventId/invite/:user')
@@ -70,6 +75,9 @@ module.exports = function (app, passport) {
   app.route('/comments/:eventId')
     .get(comments.query);
 
+  app.route('/pictures/:pictureId')
+    .post(users.requiresLogin, pictures.uploadForEvent);
+
   app.route('/api/follow')
     .post(users.requiresLogin, users.follow);
   app.route('/api/unfollow')
@@ -81,4 +89,5 @@ module.exports = function (app, passport) {
 
   app.param('eventId', events.load);
   app.param('user', users.loadUser);
+  app.param('pictureId', pictures.loadTempPicture);
 };

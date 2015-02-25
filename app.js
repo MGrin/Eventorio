@@ -20,6 +20,7 @@ var app = express();
 app.config = require('./config/config.server');
 require('./config/logger.server')(app);
 require('./lib/email')(app);
+require('./lib/pictures')(app);
 
 app.gm = require('googlemaps');
 app.gm.config('google-client-id', app.config.google.maps.clientId);

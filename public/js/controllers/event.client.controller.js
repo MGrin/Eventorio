@@ -2,9 +2,15 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
   function ($scope, $rootScope, Global, Users, Events, Notifications, Comments) {
   $scope.global = Global;
   $scope.now = moment();
+  $scope.isNew = window.location.href.indexOf('new') >= 0;
 
   $scope.view = 'description';
   $scope.peopleView = 'accepted';
+
+  $scope.stickyParams = {
+    topLimit: 75,
+    topOffset: 5
+  };
 
   Events.updateMonthlyList($scope.now, function (err, events) {
     $rootScope.$broadcast('day', $scope.now, _.filter(events, function (event) {
@@ -12,22 +18,35 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
     }));
   });
 
+  $scope.$on('event:update:header', function (info, img) {
+    $scope.event.headerPicture = img;
+    $scope.$apply();
+  });
+
+  $scope.$on('event:update:avatar', function (info, img) {
+    $scope.event.picture = img;
+    $scope.$apply();
+  });
+
   $scope.$on('me', function () {
-    $scope.event = Events.get({eventId: window.location.pathname.split('/')[2]}, function () {
-      $scope.show = true;
-      $scope.setEditable($scope.edit, ($scope.edit)?'Create':'Normal');
-
-      $scope.event.date = moment($scope.event.date);
-
-      if ($scope.mode === 'Normal') {
+    if (!$scope.event) {
+      // Just loading the event page
+      $scope.event = Events.get({eventId: window.location.pathname.split('/')[2]}, function () {
+        $scope.setEditable(false);
+        $scope.event.date = moment($scope.event.date);
         $scope.event.comments = Comments.get({eventId: window.location.pathname.split('/')[2]});
         $scope.event.people = Events.people.get({eventId: $scope.event.id}, function () {
           $scope.event.people.accepted.push($scope.event.organizator);
           $scope.attending = (_.findWhere($scope.event.people.accepted, {id: Global.me.id})) ? true : false;
           $scope.$broadcast('currentEvent');
         });
-      }
-    });
+        $scope.show = true;
+      });
+    } else {
+      // Loading the event creation page
+      $scope.setEditable(true);
+      $scope.show = true;
+    }
   });
 
   $scope.showDescription = function () {
@@ -53,16 +72,16 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
     $scope.peopleView = 'invited';
   };
 
-  $scope.getImgThumbnailTop = function () {
-    var headerMargin = parseInt($('#header').css('margin-top'));
-    return $('.img-event-header').height() + $('#header').height() + headerMargin - 120;
-  }
-
-  $scope.goBack = function () {
-    window.history.back();
-  }
   $scope.cancel = function () {
-    window.location.reload();
+    Events.removeTemporaryEvent($scope.event, function (err) {
+      if (err) return Notifications.error($('.event-thumbnail'), err);
+      if (!$scope.isNew) {
+        window.location.reload();
+      } else {
+        window.location.href = '/app';
+      }
+    });
+
   }
 
   $scope.attendTheEvent = function () {
@@ -98,7 +117,7 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
           Events.remove($scope.event, function(err) {
             if(!err){
                 $('#deleteModal').toggle();
-                window.location.pathname = "/";
+                window.location.pathname = "/app";
             }
           });
       }
@@ -137,23 +156,6 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
     return descHtml.prop('outerHTML');
   };
 
-  $scope.createEvent = function () {
-    $scope.event.desc = $scope.getDescription();
-
-    if (!$scope.event.name || $scope.event.name.length < 1 || $scope.event.name > 20) {
-      Notifications.error($('.event-thumbnail'), 'Name should not be empty and should not be longer than 20 characters');
-      return;
-    }
-
-    var event = new Events($scope.event);
-
-    event.$save(function (res) {
-      window.location.pathname = "/events/" + res.id;
-    }, function (res) {
-      Notifications.error($('.event-thumbnail'),res.data);
-    });
-  }
-
   $scope.modifyEvent = function () {
     $scope.event.desc = $scope.getDescription();
 
@@ -162,24 +164,27 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
       return;
     }
 
-    $scope.event = Events.update({eventId: $scope.event.id}, $scope.event, function () {
-      window.location.reload();
-    });
+    if ($scope.event.id) {
+      Events.update({eventId: $scope.event.id}, $scope.event, function (data) {
+        data.comments = $scope.event.comments;
+        data.people = $scope.event.people;
+        data.date = moment(data.date);
+
+        $scope.event = data;
+        $scope.setEditable(false);
+      });
+    } else {
+      var event = new Events($scope.event);
+      event.$save(function (data) {
+        window.location.href = '/events/' + data.id;
+      });
+    }
+
   }
 
-  $scope.setEditable = function (status, mode) {
+  $scope.setEditable = function (status) {
     if (status) {
-      $scope.mode = mode;
-      if (mode === 'Create') {
-        var creationDate = $scope.date?moment($scope.date):moment();
-        creationDate.hours($scope.now.hours()).minutes($scope.now.minutes());
-        $scope.event = {
-          date: creationDate,
-          visibility: 'public',
-          attendance: 'public',
-          location: {}
-        };
-      }
+      $scope.mode = 'Edit';
       $scope.view='description';
 
       $('.event-name').editable({
@@ -188,7 +193,6 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
         placeholder: 'Event title',
         title: 'Enter event title',
         onblur: 'submit',
-        value: (mode === 'Create')?'':$scope.event.name,
         send: 'always',
         selector: '.editable',
         highlight: false,
@@ -248,14 +252,15 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
         $scope.event.date.minutes(parseInt(temp[1]));
         $scope.$apply();
       });
+
       $scope.$on('day', function (info, date, events) {
         date = moment(date);
         if (!$scope.event.date) $scope.event.date = date;
-        else $scope.event.date = $scope.event.date.year(date.year()).month(date.month()).date(date.date());
+        else $scope.event.date = moment($scope.event.date).year(date.year()).month(date.month()).date(date.date());
       });
 
       $('textarea.eventDescriptionField').html($scope.event.desc);
-      $('textarea.eventDescriptionField').wysihtml5();
+      $('textarea.eventDescriptionField.wysihtml5').wysihtml5();
     } else {
       $scope.mode = 'Normal';
     }

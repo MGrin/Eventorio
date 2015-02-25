@@ -11,6 +11,14 @@ var config = {
     port: 7000,
     serverUrl: 'http://eventorio.me/',
     name: 'Eventorio',
+    pictures: {
+      user: {
+        pwd: rootPath + '/public/pictures/users/'
+      },
+      event: {
+        pwd: rootPath + '/public/pictures/events/'
+      }
+    },
     gravatar: {
       s: '400',
       d: 'retro'
@@ -27,6 +35,9 @@ var config = {
     constants: {
       users: {
         maxFollowerAutoFollow: 50
+      },
+      pictures: {
+        timeout: 100 // 3 hours
       }
     }
   },
@@ -37,6 +48,14 @@ var config = {
     port: process.env.PORT || 80,
     serverUrl: 'http://eventorio.me/',
     name: 'Eventorio',
+    pictures: {
+      user: {
+        pwd: rootPath + '/public/pictures/users/'
+      },
+      event: {
+        pwd: rootPath + '/public/pictures/events/'
+      }
+    },
     gravatar: {
       s: '400',
       d: 'retro'
@@ -53,6 +72,9 @@ var config = {
     constants: {
       users: {
         maxFollowerAutoFollow: 50
+      },
+      pictures: {
+        timeout: 3 * 60 * 60 * 1000 // 3 hours
       }
     }
   }

@@ -41,7 +41,8 @@ app.controller('SearchController', ['$scope', '$compile',
       source: users.ttAdapter(),
       templates: {
         suggestion: function(user){
-          return $compile('<div class="search-item" search-item href="' + user.link + '" picture="' + user.picture + '" title="' + user.username + '" name="' + (user.name || 'No name') + '"></div>')($scope);
+          $scope.user = user;
+          return $compile('<div class="search-item" search-item item="user" item-type="user"></div>')($scope);
         }
       }
     }, {
@@ -49,7 +50,8 @@ app.controller('SearchController', ['$scope', '$compile',
       source: events.ttAdapter(),
       templates: {
         suggestion: function(event){
-          return $compile('<div class="search-item" search-item href="' + event.link + '" picture="' + (event.picture || '/img/event_logo.jpg') + '" title="' + event.name + '" name="' + event.organizator.username + '"></div>')($scope);
+          $scope.event = event;
+          return $compile('<div class="search-item" search-item item="event" item-type="event"></div>')($scope);
         }
       }
     }];
