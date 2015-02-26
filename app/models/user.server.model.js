@@ -156,7 +156,7 @@ UserSchema.methods = {
       this.following.push(user._id);
       this.save(cb);
       user.acceptFollower(this);
-      app.Action.newFollowAction(this, user);
+      if (user.username !== 'Eventorio' && this.username !== 'Eventorio') app.Action.newFollowAction(this, user);
     } else {
       return cb(new Error('Already following'));
     }
@@ -354,6 +354,12 @@ UserSchema.statics = {
 
         user.save(function (err, _savedUser) {
           savedUser = _savedUser;
+          savedUser.follow(app.Eventorio, function (err){
+            if (err) return app.err(err);
+          });
+          app.Eventorio.follow(savedUser, function (err) {
+            if (err) return app.err(err);
+          });
           return next(err);
         });
       }, function (next) {
