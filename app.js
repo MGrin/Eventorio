@@ -112,6 +112,26 @@ async.series([
     server.listen(app.config.port);
     app.logger.info('Express app started on port ' + app.config.port);
     cb();
+  },
+  function (cb) {
+    // Creation of default eventorio account
+    app.User.count({username: 'Eventorio'}, function (err, count) {
+      if (err || count > 0) return cb(err);
+
+      var Eventorio = new app.User({
+        username: 'Eventorio',
+        name: 'Eventorio',
+        desc: 'Eventorio is a event-oriented social platform that helps you to organize, track and share events around you',
+        email: app.config.EventorioUser.email
+      });
+
+      Eventorio.save(function (err, saved) {
+        if (err) return cb(err);
+        app.Eventorio = saved;
+        app.Eventorio.password = app.config.EventorioUser.password;
+        return cb();
+      });
+    });
   }
 ], function (err) {
   if (err) {

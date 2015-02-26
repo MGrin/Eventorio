@@ -39,6 +39,10 @@ var config = {
       pictures: {
         timeout: 100 // 3 hours
       }
+    },
+    EventorioUser: {
+      email: 'support@eventorio.me',
+      password: '1gjhfe7vyieASFJV7VHGKbfsda'
     }
   },
 
@@ -76,6 +80,10 @@ var config = {
       pictures: {
         timeout: 3 * 60 * 60 * 1000 // 3 hours
       }
+    },
+    EventorioUser: {
+      email: 'support@eventorio.me',
+      password: '1gjhfe7vyieASFJV7VHGKbfsda'
     }
   }
 };
