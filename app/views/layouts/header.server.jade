@@ -10,7 +10,7 @@ div(ng-controller="HeaderController")
         a.navbar-brand.hidden-xs(style="padding-top: 12px", ng-href="{{global.app.path.dashboard}}")
           img.img-circle.pull-left(alt="{{global.config.appName}}", style="height: 30px; margin-right: 10px", src="/img/logo_white.png")
           span {{global.config.appName}}
-        a.navbar-brand.visible-xs(style="padding-top: 12px", href="/calendar")
+        a.navbar-brand.visible-xs(style="padding-top: 12px", ng-href="{{global.app.path.calendar}}")
           img.img-circle.pull-left(alt="{{global.config.appName}}", style="height: 30px; margin-right: 10px", src="/img/logo_black.png")
           span {{global.config.appName}}
 
