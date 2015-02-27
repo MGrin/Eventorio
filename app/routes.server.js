@@ -8,26 +8,27 @@ module.exports = function (app, passport) {
   var search = app.controllers.Search;
   var pictures = app.controllers.Pictures;
 
-  app.route('/')
-     .get(index.index);
-  app.route('/app')
-    .get(users.requiresLogin, index.app);
-  app.route('/calendar')
-    .get(users.requiresLogin, index.calendar);
-  app.route('/news')
-    .get(users.requiresLogin, index.news);
+  require('../public/js/shared/routes.shared.js')(app);
 
-  app.route('/policy')
+  app.route(app.path.landing)
+     .get(index.index);
+  app.route(app.path.dashboard)
+    .get(users.requiresLogin, index.app);
+  app.route(app.path.calendar)
+    .get(users.requiresLogin, index.calendar);
+  app.route(app.path.news)
+    .get(users.requiresLogin, index.news);
+  app.route(app.path.policy)
     .get(index.policy);
 
   /** User routes */
-  app.route('/login')
+  app.route(app.path.login)
     .post(users.login);
-  app.route('/restorePassword')
+  app.route(app.path.restorePassword)
     .post(users.restorePassword);
-  app.route('/changePassword')
+  app.route(app.path.changePassword)
     .post(users.requiresLogin, users.changePassword);
-  app.route('/logout')
+  app.route(app.path.logout)
     .get(users.logout);
 
   app.route('/users')

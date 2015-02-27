@@ -54,7 +54,7 @@ exports.activate = function (req, res) {
   req.userToActivate.activationCode = undefined;
   res.userToActivate.save(function (err) {
     if (err) return app.err(err, res);
-    return res.redirect('/app');
+    return res.redirect(app.path.dashboard);
   });
 };
 

@@ -78,7 +78,7 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
       if (!$scope.isNew) {
         window.location.reload();
       } else {
-        window.location.href = '/app';
+        window.location.href = app.path.dashboard;
       }
     });
 
@@ -112,15 +112,15 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
   }
 
   $scope.deleteEvent = function() {
-      var input = $('#eventNameToDelete textarea').val();
-      if(input === $scope.event.name){
-          Events.remove($scope.event, function(err) {
-            if(!err){
-                $('#deleteModal').toggle();
-                window.location.pathname = "/app";
-            }
-          });
-      }
+    var input = $('#eventNameToDelete textarea').val();
+    if(input === $scope.event.name){
+      Events.remove($scope.event, function(err) {
+        if(!err){
+          $('#deleteModal').toggle();
+          window.location.pathname = app.path.dashboard;
+        }
+      });
+    }
   };
 
   $scope.comment = function (newComment) {

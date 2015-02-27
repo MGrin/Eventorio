@@ -1,7 +1,7 @@
 app.factory('Users', ['$resource', '$http', 'Global', function ($resource, $http, Global) {
   'use strict';
 
-  var user = $resource('/users/:username', {username: '@_id'}, {update: {method: 'POST'}});
+  var user = $resource('/users/:user', {user: '@_id'}, {update: {method: 'POST'}});
 
   user.getCurrentUser = function (cb) {
     if (Global.me) return cb();
@@ -36,7 +36,7 @@ app.factory('Users', ['$resource', '$http', 'Global', function ($resource, $http
   }
 
   user.login = function (username, password, cb) {
-    $http.post('/login', {username: username, password: password})
+    $http.post(app.path.login, {username: username, password: password})
       .success(function (data, status, header, config) {
         return cb();
       }).error(function (data, status, header, config) {
@@ -63,7 +63,7 @@ app.factory('Users', ['$resource', '$http', 'Global', function ($resource, $http
   }
 
   user.changePassword = function (credentials, cb) {
-    $http.post('/changePassword', credentials)
+    $http.post(app.path.changePassword, credentials)
       .success(function (response) {
         return cb();
       }).error(function (response) {

@@ -39,7 +39,7 @@ app.directive('newsItem', ['Global', '$compile', function (Global, $compile) {
 
       switch (action._type) {
         case Global.actionTypes.signup: {
-          objectHref = '/app';
+          objectHref = app.path.dashboard;
 
           contentHTML = [
             '<a href="' + subjectHref + '"><b>' + subjectName + '</b></a>,',
