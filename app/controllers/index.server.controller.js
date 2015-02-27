@@ -11,7 +11,7 @@ exports.init = function (myApp) {
 };
 
 exports.index = function (req, res) {
-  if (req.user) return res.redirect('/app');
+  if (req.user) return res.redirect(app.path.dashboard);
   var randomLanding = landings[app.lib.randomInt(0, landings.length - 1)];
 
   return res.render('index/landing.server.jade', {user: req.user, landing: randomLanding});

@@ -29,8 +29,8 @@ app.controller('HeaderController', ['$scope', '$rootScope', '$location', 'Global
     $scope.show = true;
     $rootScope.$broadcast('me');
 
-    if (window.location.pathname === '/calendar' || window.location.pathname === '/app') $('#calendar-menu').addClass('active');
-    if (window.location.pathname === '/news') $('#news-menu').addClass('active');
+    if (window.location.pathname === app.path.calendar || window.location.pathname === app.path.dashboard) $('#calendar-menu').addClass('active');
+    if (window.location.pathname === app.path.news) $('#news-menu').addClass('active');
     if (Global.me && window.location.pathname === '/users/' +  Global.me.username) $('#profile-menu').addClass('active')
   });
 
