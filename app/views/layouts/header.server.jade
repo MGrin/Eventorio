@@ -7,7 +7,7 @@ div(ng-controller="HeaderController")
           span.icon-bar
           span.icon-bar
 
-        a.navbar-brand.hidden-xs(style="padding-top: 12px", ng-href="global.app.path.dashboard")
+        a.navbar-brand.hidden-xs(style="padding-top: 12px", ng-href="{{global.app.path.dashboard}}")
           img.img-circle.pull-left(alt="{{global.config.appName}}", style="height: 30px; margin-right: 10px", src="/img/logo_white.png")
           span {{global.config.appName}}
         a.navbar-brand.visible-xs(style="padding-top: 12px", href="/calendar")
@@ -40,7 +40,7 @@ div(ng-controller="HeaderController")
                   a(href="/users/{{global.me.username}}")
                     | Profile
                 li
-                  a(ng-href="global.app.path.logout")
+                  a(ng-href="{{global.app.path.logout}}")
                     | Logout
 
         .visible-xs
@@ -65,22 +65,22 @@ div(ng-controller="HeaderController")
                     datasets="searchDatasets")
 
             li#calendar-menu
-              a(ng-href="global.app.path.calendar")
+              a(ng-href="{{global.app.path.calendar}}")
                 span.glyphicon.glyphicon-calendar(style="margin-right: 10px")
                 span Calendar
             li#news-menu
-              a(ng-href="global.app.path.news")
+              a(ng-href="{{global.app.path.news}}")
                 span.glyphicon.glyphicon-bullhorn(style="margin-right: 10px")
                 span News
-            li#create-event-menu
-              a(href="/events/new")
-                span.glyphicon.glyphicon-plus-sign(style="margin-right: 10px")
-                span Create event
+            //- li#create-event-menu
+            //-   a(href="/events/new")
+            //-     span.glyphicon.glyphicon-plus-sign(style="margin-right: 10px")
+            //-     span Create event
             .clearfix
             br
             br
             li
-              a(ng-href="global.app.path.logout")
+              a(ng-href="{{global.app.path.logout}}")
                 span.glyphicon.glyphicon-off(style="margin-right: 10px")
                 span Logout
 
