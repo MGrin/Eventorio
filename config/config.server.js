@@ -47,7 +47,7 @@ var config = {
   },
 
   production: {
-    db: 'mongodb://eventorio:Eventorio2014Mongolab@ds063779.mongolab.com:63779/eventorio',
+    db: 'mongodb://localhost:34563/eventorio',
     root: rootPath,
     port: process.env.PORT || 80,
     serverUrl: 'http://eventorio.me/',
