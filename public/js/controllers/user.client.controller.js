@@ -34,7 +34,7 @@ app.controller('UserController', ['$scope', 'Global', 'Users', 'Events', 'Notifi
   });
 
   $scope.$on('me', function () {
-    $scope.user = Users.get({username: window.location.pathname.split('/')[2]}, function () {
+    $scope.user = Users.get({user: window.location.pathname.split('/')[2]}, function () {
       if (Global.me) {
         $scope.editable = (Global.me.username === $scope.user.username);
       } else {
