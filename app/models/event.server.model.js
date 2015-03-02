@@ -417,23 +417,6 @@ EventSchema.statics = {
     });
   },
 
-  search: function(toSearch, user, limit, cb) {
-    app.Event.textSearch(toSearch, {limit: limit}, function (err, output) {
-        if (err) return cb(err);
-        var events = output.results.map(function (objWithScore) {
-            return objWithScore.obj;
-        });
-
-        app.User.populate(events, {path: 'organizator'}, function (err, events) {
-            if (err) cb(err);
-            return cb(false, events.filter(
-                function (event) {
-                    return user.canViewEvent(event);
-                }));
-        });
-    });
-  }
-
 }
 
 EventSchema.plugin(textSearch);

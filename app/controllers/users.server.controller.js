@@ -231,14 +231,3 @@ exports.requiresLogin = function (req, res, next) {
     res.redirect('/');
   }
 };
-
-exports.query = function (req, res) {
-    var searchQuery = req.query.q;
-    var searchLimit = req.query.limit || 5;
-    app.User.search(searchQuery, searchLimit, function (err, users){
-        if (err) return app.err(err, res);
-        res.jsonp(users.map(function(user){
-            return user.toJSON();
-        }));
-    });
-};

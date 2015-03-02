@@ -383,15 +383,6 @@ UserSchema.statics = {
       app.email.sendNewPassword(user, newPassword);
       return cb();
     });
-  },
-
-  search: function(searchQuery, limit, cb) {
-    app.User.textSearch(searchQuery, {limit: limit}, function(err, output){
-        if (err) return cb(err);
-        return cb(false, output.results.map(function (objWithScore){
-            return objWithScore.obj;
-        }));
-    });
   }
 }
 // Add joined and modified fields to the Schema

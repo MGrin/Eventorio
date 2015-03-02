@@ -32,7 +32,6 @@ module.exports = function (app, passport) {
     .get(users.logout);
 
   app.route('/users')
-    .get(users.requiresLogin, users.query)
     .post(users.signup);
   app.route('/users/:user')
     .get(users.show)
