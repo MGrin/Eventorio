@@ -36,6 +36,16 @@ module.exports = function (app, passport) {
   app.route('/auth/facebook/callback')
     .get(passport.authenticate('facebook', {successRedirect: app.path.dashboard,
                                             failureRedirect: app.path.landing}));
+
+  app.route('/auth/google')
+    .get(passport.authenticate('google',
+      {scope: [
+        'https://www.googleapis.com/auth/plus.login',
+        'https://www.googleapis.com/auth/userinfo.email'
+      ]}));
+  app.route('/auth/google/callback')
+    .get(passport.authenticate('google', {successRedirect: app.path.dashboard,
+                                          failureRedirect: app.path.landing}));
   app.route('/users')
     .post(users.signup);
   app.route('/users/:user')

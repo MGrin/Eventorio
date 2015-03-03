@@ -22,7 +22,7 @@ exports.initModel = function (myApp) {
   app = myApp;
 };
 
-var supportedProviders = ['facebook'];
+var supportedProviders = ['facebook', 'google'];
 
 /**
  * User Schema
@@ -37,6 +37,8 @@ var UserSchema = exports.Schema = new Schema({
   locale: String,
 
   facebook: Object,
+  google: Object,
+
   providerPicture: String,
   headerPicture: String,
   hashPassword: {type: String, select: false},
@@ -160,13 +162,27 @@ UserSchema.methods = {
     if (!this.providers) this.providers = [];
     if (this.providers.indexOf(profile.provider) < 0) this.providers.push(profile.provider);
 
-    if (!supportedProviders.indexOf(profile.provider) > -1) {
-      if (!this.desc) this.desc = profile._json.bio;
-      if (!this.locale) this.locale = profile._json.locale;
-      delete profile._json.verified;
-      delete profile._json.updated_time;
-      delete profile._raw;
-      this[profile.provider] = profile;
+    switch (profile.provider) {
+      case 'facebook': {
+        if (!this.desc) this.desc = profile._json.bio;
+        if (!this.locale) this.locale = profile._json.locale;
+        delete profile._json.verified;
+        delete profile._json.updated_time;
+        delete profile._raw;
+        this[profile.provider] = profile;
+        break;
+      }
+      case 'google': {
+        if (!this.locale) this.locale = profile._json.locale;
+        if (!this.providerPicture) this.providerPicture = profile._json.picture;
+        if (!this.gender && profile._json.gender !== 'other') this.gender = profile._json.gender;
+        delete profile._json.verified_email;
+        this[profile.provider] = profile;
+        break;
+      }
+      default: {
+        app.err('Provider ' + profile.provider + ' is not supported.');
+      }
     }
   },
 
@@ -448,7 +464,6 @@ UserSchema.statics = {
           name: profile.name.givenName + ' ' + profile.name.familyName,
           gender: profile.gender
         };
-        if (profile.photos && profile.photos.length > 0) fields.profilePicture = profile.photos[0].value;
 
         app.User.create(fields, function (user) {
           user.addProvider(profile);
