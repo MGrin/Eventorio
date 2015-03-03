@@ -22,6 +22,8 @@ exports.initModel = function (myApp) {
   app = myApp;
 };
 
+var supportedProviders = ['facebook'];
+
 /**
  * User Schema
  */
@@ -154,16 +156,18 @@ UserSchema.methods = {
     return this.save(cb);
   },
 
-  addProvider: function (profile, cb) {
-    if (this.providers && this.providers.indexOf[profile.provider] > -1) {
-      this[profile.provider] = profile;
-      return this.save(cb);
-    }
+  addProvider: function (profile) {
     if (!this.providers) this.providers = [];
-    if (!this.providersData) this.providersData = [];
-    this.providers.push(profile.provider);
-    this[profile.provider] = profile;
-    this.save(cb);
+    if (this.providers.indexOf(profile.provider) < 0) this.providers.push(profile.provider);
+
+    if (!supportedProviders.indexOf(profile.provider) > -1) {
+      if (!this.desc) this.desc = profile._json.bio;
+      if (!this.locale) this.locale = profile._json.locale;
+      delete profile._json.verified;
+      delete profile._json.updated_time;
+      delete profile._raw;
+      this[profile.provider] = profile;
+    }
   },
 
   follow: function (user, cb) {
@@ -314,6 +318,12 @@ UserSchema.methods = {
 
     this.tempEvents.splice(index, 1);
     this.save(cb);
+  },
+
+  getProviderUpdates: function (provider, cb) {
+    if (supportedProviders.indexOf(provider) < 0) return cb(new Error('Provider is not supported: ' + provider));
+    // TODO get updates from provider
+    return cb();
   }
 };
 
@@ -346,8 +356,9 @@ UserSchema.statics = {
 
   },
 
-  create: function (fields, cb) {
+  create: function (fields, customize, cb) {
     var user = new app.User(fields);
+    customize(user);
     user.save(function (err, savedUser) {
       if (err) return cb(err);
       savedUser.follow(app.Eventorio, function (err){
@@ -356,7 +367,6 @@ UserSchema.statics = {
       app.Eventorio.follow(savedUser, function (err) {
         if (err) return app.err(err);
       });
-      app.email.sendWelcomeMessage(savedUser);
       app.Action.newSignupAction(savedUser);
       app.Event.replaceInvitations(savedUser, function (err) {
         return cb(err, savedUser);
@@ -389,16 +399,15 @@ UserSchema.statics = {
           username: username,
           email: email,
           name: fields.name
-        }, function (err, user) {
-          if (err) return next(err);
+        }, function (user) {
           user.password = password;
           user.activationCode = randomstring.generate(10);
           user.providers = ['local'];
-          user.save(function (err, _savedUser) {
-            if (err) return next(err);
-            savedUser = _savedUser;
-            return next();
-          });
+        }, function (err, user) {
+          if (err) return next(err);
+          savedUser = user;
+          app.email.sendWelcomeMessage(savedUser);
+          return next();
         });
       }
     ], function (err) {
@@ -422,7 +431,10 @@ UserSchema.statics = {
   createOrUpdate: function (profile, cb) {
     app.User.findOne({email: {$in: _.pluck(profile.emails, 'value')}}, function (err, user) {
       if (err) return cb(err);
-      if (user) return user.addProvider(profile, cb);
+      if (user) {
+        user.addProvider(profile);
+        return user.save(cb);
+      }
 
       var username = profile.displayName;
       var usernameRE = new RegExp('^' + username + '$', 'i');
@@ -438,15 +450,14 @@ UserSchema.statics = {
         };
         if (profile.photos && profile.photos.length > 0) fields.profilePicture = profile.photos[0].value;
 
-        app.logger.info(profile);
-        app.User.create(fields, function (err, savedUser) {
+        app.User.create(fields, function (user) {
+          user.addProvider(profile);
+        }, function (err, savedUser) {
           if (err) return cb(err);
-          savedUser.desc = profile._json.bio;
-          savedUser.locale = profile._json.locale;
-          delete profile._json.verified;
-          delete profile._json.updated_time;
-          delete profile._raw;
-          savedUser.addProvider(profile, cb);
+
+          savedUser.getProviderUpdates(profile.provider, function (err) {
+            if (err) return app.err(err);
+          })
         });
       });
     });
