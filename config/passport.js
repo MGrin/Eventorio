@@ -10,6 +10,7 @@
 var app;
 var LocalStrategy = require('passport-local').Strategy;
 var FacebookStrategy = require('passport-facebook').Strategy;
+var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
 var createUser;
 var createOrUpdateUser;
@@ -52,6 +53,16 @@ module.exports = function (myApp, passport) {
     clientID: app.config.facebook.clientID,
     clientSecret: app.config.facebook.clientSecret,
     callbackURL: app.config.serverUrl + 'auth/facebook/callback'
+  }, function (accessToken, refreshToken, profile, done) {
+    app.User.createOrUpdate(profile, function (err, user) {
+      return done(err, user);
+    });
+  }));
+
+  passport.use(new GoogleStrategy({
+    clientID: app.config.google.clientID,
+    clientSecret: app.config.google.clientSecret,
+    callbackURL: app.config.serverUrl + 'auth/google/callback'
   }, function (accessToken, refreshToken, profile, done) {
     app.User.createOrUpdate(profile, function (err, user) {
       return done(err, user);

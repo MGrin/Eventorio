@@ -23,8 +23,8 @@ require('./lib/email')(app);
 require('./lib/pictures')(app);
 
 app.gm = require('googlemaps');
-app.gm.config('google-client-id', app.config.google.maps.clientId);
-app.gm.config('google-client-secret', app.config.google.maps.clientSecret);
+app.gm.config('google-client-id', app.config.google.clientID);
+app.gm.config('google-client-secret', app.config.google.clientSecret);
 
 app.err = function (err, next) {
   // error object passed and not a string
