@@ -1,4 +1,9 @@
-var app = window.exports = angular.module('EventorioApp', ['ngResource', 'ngSanitize', 'siyfion.sfTypeahead', 'cropme']);
+var app = window.exports = angular.module('EventorioApp', ['ngResource', 'ngSanitize', 'siyfion.sfTypeahead', 'cropme', 'xeditable']);
+app.run(function(editableOptions, editableThemes) {
+  editableThemes.bs3.buttonsClass = 'btn-sm';
+  editableThemes.bs3.inputClass = 'input-lg';
+  editableOptions.theme = 'bs3'; // bootstrap3 theme. Can be also 'bs2', 'default'
+});
 
 app.config = {
   img: {
@@ -12,7 +17,7 @@ app.config = {
     }
   }
 }
+
 $(document).ready(function () {
   'use strict';
-
 });

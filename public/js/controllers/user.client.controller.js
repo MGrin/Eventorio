@@ -13,16 +13,6 @@ app.controller('UserController', ['$scope', 'Global', 'Users', 'Events', 'Notifi
     $('.user-header ul').addClass('hide');
   });
 
-  $('.user-thumbnail ul').hover(function () {
-    $(this).removeClass('hide');
-  });
-
-  $('.user-thumbnail img').hover(function () {
-    $('.user-thumbnail ul').removeClass('hide');
-  }, function () {
-    $('.user-thumbnail ul').addClass('hide');
-  });
-
   $scope.$watch('choosingCover', function (newVal) {
     if (newVal) $('#user-content').css('margin-top', 120);
     else $('#user-content').css('margin-top', 0);
@@ -51,9 +41,6 @@ app.controller('UserController', ['$scope', 'Global', 'Users', 'Events', 'Notifi
         if (err) return alert(err);
         $scope.user.events = events;
       });
-      setTimeout(function () {
-        $scope.setupEditable();
-      }, 1000);
       $scope.show = true;
     });
   });
@@ -98,33 +85,7 @@ app.controller('UserController', ['$scope', 'Global', 'Users', 'Events', 'Notifi
     });
   };
 
-  $scope.setupEditable = function () {
-    $('.user-name .editable').editable({
-      type: 'text',
-      url: window.location.pathname,
-      ajaxOptions: {
-        type: 'PUT',
-        dataType: 'json'
-      },
-      pk: '',
-      mode: 'popup',
-      name: 'name',
-      title: 'Enter your name',
-      showbuttons: 'right'
-    });
-
-    $('.user-description .editable').editable({
-      type: 'textarea',
-      url: window.location.pathname,
-      ajaxOptions: {
-        type: 'PUT',
-        dataType: 'json'
-      },
-      pk: '',
-      mode: 'popup',
-      name: 'desc',
-      title: 'Describe yourself',
-      showbuttons: 'right'
-    });
+  $scope.updateUser = function (field, data) {
+    $scope.user.$update({user: $scope.user.username});
   };
 }]);

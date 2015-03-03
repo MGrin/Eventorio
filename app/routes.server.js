@@ -68,7 +68,7 @@ module.exports = function (app, passport) {
     .get(users.requiresLogin, events.createPage);
   app.route('/events/:eventId')
     .get(events.isAccessible, events.show)
-    .post(users.requiresLogin, events.update)
+    .put(users.requiresLogin, events.update)
     .delete(users.requiresLogin, events.remove);
   app.route('/events/:eventId/pictures')
     .post(users.requiresLogin, pictures.uploadForEvent);

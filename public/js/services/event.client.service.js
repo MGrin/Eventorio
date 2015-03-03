@@ -1,7 +1,7 @@
 app.factory('Events', ['$rootScope', '$resource', '$http', 'Global', function ($rootScope, $resource, $http, Global) {
   'use strict';
 
-  var event = $resource('/events/:eventId', {eventId: '@_id'}, {update: {method: 'POST'}});
+  var event = $resource('/events/:eventId', {eventId: '@_id'}, {update: {method: 'PUT'}});
 
   event.updateMonthlyList = function (date, cb) {
     var startDate = moment(date).subtract(1, 'month');

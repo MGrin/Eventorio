@@ -30,7 +30,6 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
 
   $scope.$on('me', function () {
     if (!$scope.event) {
-      // Just loading the event page
       $scope.event = Events.get({eventId: window.location.pathname.split('/')[2]}, function () {
         $scope.setEditable(false);
         $scope.event.date = moment($scope.event.date);
@@ -182,66 +181,44 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
 
   }
 
+  $scope.visibilities = [
+    {value: 'public', text: 'Event is visible to everyone'},
+    {value: 'followers', text: 'Event is visible only to your followers'},
+    {value: 'invitations', text: 'Event is visible only to invited people'}
+  ];
+
+  $scope.showVisibility = function () {
+    if (!$scope.event.permissions.visibility) return $scope.visibilities[0].text;
+    return _.find($scope.visibilities, function (el) {
+      return el.value === $scope.event.permissions.visibility;
+    }).text;
+  };
+
+  $scope.updateVisibility = function (data) {
+    $scope.event.permissions.visibility = data;
+  }
+
+  $scope.attendencies = [
+    {value: 'public', text: 'Everyone can attend this event'},
+    {value: 'followers', text: 'Only your followers can attend this event'},
+    {value: 'invitations', text: 'Only invited people can attend this event'}
+  ];
+
+  $scope.showAttendance = function () {
+    if (!$scope.event.permissions.attendance) return $scope.attendencies[0].text;
+    return _.find($scope.attendencies, function (el) {
+      return el.value === $scope.event.permissions.attendance;
+    }).text;
+  };
+
+  $scope.updateAttendance = function (data) {
+    $scope.event.permissions.attendance = data;
+  }
+
   $scope.setEditable = function (status) {
     if (status) {
       $scope.mode = 'Edit';
       $scope.view='description';
-
-      $('.event-name').editable({
-        type: 'text',
-        mode: 'inline',
-        placeholder: 'Event title',
-        title: 'Enter event title',
-        onblur: 'submit',
-        send: 'always',
-        selector: '.editable',
-        highlight: false,
-        showbuttons: false,
-        success: function (response, newValue) {
-          $scope.event.name = newValue;
-        }
-      });
-
-      $('.event-visibility').editable({
-        type: 'select',
-        mode: 'inline',
-        title: 'Event visibility',
-        send: 'always',
-        onblur: 'submit',
-        selector: '.editable',
-        value: 'public',
-        highlight: false,
-        placement: 'right',
-        showbuttons: false,
-        source: [
-          {value: 'public', text: 'Event is visible to everyone'},
-          {value: 'followers', text: 'Event is visible only to your followers'},
-          {value: 'invitations', text: 'Event is visible only to invited people'}
-        ],
-        success: function (response, newValue) {
-          $scope.event.visibility = newValue;
-        }
-      });
-
-      $('.event-attendance').editable({
-        type: 'select',
-        mode: 'inline',
-        title: 'Event attendance',
-        send: 'always',
-        selector: '.editable',
-        value: 'public',
-        onblur: 'submit',
-        highlight: false,
-        placement: 'right',
-        showbuttons: false,
-        source: [
-          {value: 'public', text: 'Everyone can attend this event'},
-          {value: 'followers', text: 'Only your followers can attend this event'},
-          {value: 'invitations', text: 'Only invited people can attend this event'}
-        ], success: function (response, newValue) {
-          $scope.event.attendance = newValue;
-        }
-      });
 
       $('.clockpicker').clockpicker({
         default: 'now'
