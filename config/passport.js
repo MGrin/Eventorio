@@ -10,6 +10,7 @@
 var app;
 var LocalStrategy = require('passport-local').Strategy;
 var FacebookStrategy = require('passport-facebook').Strategy;
+var GoogleStrategy = require('passport-google').Strategy;
 
 var createUser;
 var createOrUpdateUser;
@@ -53,6 +54,16 @@ module.exports = function (myApp, passport) {
     clientSecret: app.config.facebook.clientSecret,
     callbackURL: app.config.serverUrl + 'auth/facebook/callback'
   }, function (accessToken, refreshToken, profile, done) {
+    app.User.createOrUpdate(profile, function (err, user) {
+      return done(err, user);
+    });
+  }));
+
+  passport.use(new GoogleStrategy({
+    returnURL: app.config.serverUrl + 'auth/google/callback',
+    realm: app.config.serverUrl
+  }, function (identifier, profile, done) {
+    profile.provider = "google";
     app.User.createOrUpdate(profile, function (err, user) {
       return done(err, user);
     });
