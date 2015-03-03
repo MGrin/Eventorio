@@ -22,7 +22,7 @@ exports.initModel = function (myApp) {
   app = myApp;
 };
 
-var supportedProviders = ['facebook', 'google'];
+var supportedProviders = ['facebook'];
 
 /**
  * User Schema
@@ -37,8 +37,6 @@ var UserSchema = exports.Schema = new Schema({
   locale: String,
 
   facebook: Object,
-  google: Object,
-
   providerPicture: String,
   headerPicture: String,
   hashPassword: {type: String, select: false},
@@ -162,23 +160,13 @@ UserSchema.methods = {
     if (!this.providers) this.providers = [];
     if (this.providers.indexOf(profile.provider) < 0) this.providers.push(profile.provider);
 
-    switch (profile.provider) {
-      case 'facebook': {
-        if (!this.desc) this.desc = profile._json.bio;
-        if (!this.locale) this.locale = profile._json.locale;
-        delete profile._json.verified;
-        delete profile._json.updated_time;
-        delete profile._raw;
-        this[profile.provider] = profile;
-        break;
-      }
-      case 'google': {
-        this[profile.provider] = profile;
-        break;
-      }
-      default: {
-        app.err('Provider ' + profile.provider + ' is not supported.');
-      }
+    if (!supportedProviders.indexOf(profile.provider) > -1) {
+      if (!this.desc) this.desc = profile._json.bio;
+      if (!this.locale) this.locale = profile._json.locale;
+      delete profile._json.verified;
+      delete profile._json.updated_time;
+      delete profile._raw;
+      this[profile.provider] = profile;
     }
   },
 
