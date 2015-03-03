@@ -72,61 +72,49 @@ EventSchema
 EventSchema.index({ name: 'text', description: 'text'});
 
 EventSchema.methods = {
-  modify: function (fields, organizator, cb) {
+  modify: function (updates, organizator, cb) {
     if (this.organizator.id !== organizator.id) return cb(new Error('Not authorized'));
 
-    fields.permissions = {
-      visibility: fields.visibility || visLevels[0],
-      attendance: fields.attendance || visLevels[0]
-    }
-
-    delete fields.visibility;
-    delete fields.attendance;
-
+    updates = _.pick(updates, 'name', 'desc', 'date', 'permissions', 'picture', 'headerPicture');
     var event = this;
+    async.series([
+      function (next) {
+        if (updates.headerPicture && updates.headerPicture !== event.headerPicture) {
+          fs.unlink(app.config.pictures.event.pwd + event.id + '/header_' + event.headerPicture + '.png', function (err) {
+            if (err) app.err(err);
 
-    if (!fields.headerPicture && !fields.picture) return this.save(cb);
-
-    if (fields.headerPicture || fields.picture) {
-      async.series([
-        function (next) {
-          if (fields.headerPicture && fields.headerPicture !== event.headerPicture) {
-            fs.unlink(app.config.pictures.event.pwd + event.id + '/header_' + event.headerPicture + '.png', function (err) {
-              if (err) app.err(err);
-
-              var oldPath = app.config.pictures.event.pwd + event.id + '/temp/header_' + fields.headerPicture + '.png';
-              var newPath = app.config.pictures.event.pwd + event.id + '/header_' + fields.headerPicture + '.png';
-              fs.rename(oldPath, newPath, next);
-            });
-          } else {
-            next();
-          }
-        }, function (next) {
-          if (fields.picture && event.picture && fields.picture !== event.picture) {
-            fs.unlink(app.config.pictures.event.pwd + event.id + '/avatar_' + event.picture + '.png', function (err) {
-              if (err) return cb(err);
-
-              var oldPath = app.config.pictures.event.pwd + event.id + '/temp/avatar_' + fields.picture + '.png';
-              var newPath = app.config.pictures.event.pwd + event.id + '/avatar_' + fields.picture + '.png'
-              fs.rename(oldPath, newPath, next);
-            });
-          } else {
-            next();
-          }
-        }, function (next) {
-          _.each(_.keys(fields), function (key) {
-            event[key] = fields[key] || event[key];
+            var oldPath = app.config.pictures.event.pwd + event.id + '/temp/header_' + updates.headerPicture + '.png';
+            var newPath = app.config.pictures.event.pwd + event.id + '/header_' + updates.headerPicture + '.png';
+            fs.rename(oldPath, newPath, next);
           });
-          event.save(function (err, modifiedEvent) {
-            if (err) return next(err);
-            event = modifiedEvent;
-            return next();
-          });
+        } else {
+          next();
         }
-      ], function (err) {
-        return cb(err, event);
-      })
-    }
+      }, function (next) {
+        if (updates.picture && event.picture && updates.picture !== event.picture) {
+          fs.unlink(app.config.pictures.event.pwd + event.id + '/avatar_' + event.picture + '.png', function (err) {
+            if (err) return cb(err);
+
+            var oldPath = app.config.pictures.event.pwd + event.id + '/temp/avatar_' + updates.picture + '.png';
+            var newPath = app.config.pictures.event.pwd + event.id + '/avatar_' + updates.picture + '.png'
+            fs.rename(oldPath, newPath, next);
+          });
+        } else {
+          next();
+        }
+      }, function (next) {
+        _.each(_.keys(updates), function (key) {
+          event[key] = updates[key] || event[key];
+        });
+        event.save(function (err, modifiedEvent) {
+          if (err) return next(err);
+          event = modifiedEvent;
+          return next();
+        });
+      }
+    ], function (err) {
+      return cb(err, event);
+    })
   },
 
   getPeople: function (cb) {
@@ -379,20 +367,12 @@ EventSchema.statics = {
     });
   },
 
-  create: function (fields, creator, cb) {
-    var tempId = fields.tempId;
-    var permissions = {
-      visibility: fields.visibility || visLevels[0],
-      attendance: fields.attendance || visLevels[0]
-    }
+  create: function (updates, creator, cb) {
+    var tempId = updates.tempId;
 
-    delete fields.visibility;
-    delete fields.attendance;
-    delete fields.tempId;
-
-    fields.permissions = permissions;
-    fields.date = moment(fields.date).utc();
-    var event = new app.Event(fields);
+    updates.date = moment(updates.date).utc();
+    updates = _.pick(updates, 'name', 'desc', 'date', 'permissions', 'picture', 'headerPicture');
+    var event = new app.Event(updates);
     event.organizator = creator;
 
     var createdEvent;

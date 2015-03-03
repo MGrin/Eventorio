@@ -17,36 +17,26 @@ html(lang="en", ng-app="EventorioApp")
         .col-lg-4.col-lg-offset-1.col-xs-12.col-xs-offset-0
           .row
             .user-thumbnail.col-lg-8.col-xs-4(picture, item-type="user", type="avatar", item="user")
-              ul.pager.col-lg-8.hide.hidden-xs(ng-show="editable")
-                li
-                  a(ng-href="//gravatar.com/{{user.gravatarHash}}", target="_blank") Edit your avatar on gravatar.com &nbsp;
-                    i.mdi-content-create
-              //- img.img-responsive.col-lg-8.col-xs-12(ng-src="{{user.picture}}")
+
             .user-username.col-xs-8.visible-xs {{user.username}}
             .user-name.visible-xs.col-xs-8.pull-right
-              div(ng-if="user.name")
-                a.editable(ng-if="editable") {{user.name}}
-                p(ng-if="!editable") {{user.name}}
-              div(ng-if="!user.name")
-                a.editable(ng-if="editable", style="color: grey; opacity: 0.5;") Enter your name
-                p(ng-if="!editable", style="color: grey;") No name
+              div(ng-if="editable")
+                a(href="#" editable-text="user.name" buttons="no" e-required e-placeholder="Enter name" onaftersave="updateUser('name', $data)") {{user.name || 'No name'}}
+              div(ng-if="!editable")
+                p {{user.name || 'No name'}}
 
           .row.hidden-xs
             .user-name.col-lg-12.big-text
-              div(ng-if="user.name")
-                a.editable(ng-if="editable") {{user.name}}
-                p(ng-if="!editable") {{user.name}}
-              div(ng-if="!user.name")
-                a.editable(ng-if="editable", style="color: grey; opacity: 0.5;") Enter your name
-                p(ng-if="!editable", style="color: grey;") No name
+              div(ng-if="editable")
+                a(href="#" editable-text="user.name" buttons="no" e-required e-placeholder="Enter name" onaftersave="updateUser('name', $data)") {{user.name || 'empty'}}
+              div(ng-if="!editable")
+                p {{user.name || 'No name'}}
           .row.visible-xs
-            .user-description.col-lg-12.col-xs-12
-              div(ng-if="user.desc")
-                a.editable(ng-if="editable") {{user.desc}}
-                p(ng-if="!editable") {{user.desc}}
-              div(ng-if="!user.desc")
-                a.editable(ng-if="editable", style="opacity: 0.5;") Tell us something about you
-                p(ng-if="!editable") No description
+            .user-description.col-xs-12
+              div(ng-if="editable")
+                a(href="#" editable-textarea="user.desc" buttons="no" e-required e-placeholder="Tell us something about you" onaftersave="updateUser('desc', $data)") {{user.desc || 'No description'}}
+              div(ng-if="!editable")
+                p {{user.desc || 'No description'}}
           .row
             .col-lg-4.col-xs-6.text-center
               a(href="#", data-toggle="modal", data-target="#peopleModal", ng-click="people='followers'")
@@ -96,13 +86,11 @@ html(lang="en", ng-app="EventorioApp")
           .row.hidden-xs
             .user-username.well {{user.username}}
           .row.hidden-xs
-            .user-description.col-lg-12.big-text
-              div(ng-if="user.desc")
-                a.editable(ng-if="editable") {{user.desc}}
-                p(ng-if="!editable") {{user.desc}}
-              div(ng-if="!user.desc")
-                a.editable(ng-if="editable", style="opacity: 0.5;") Tell us something about you
-                p(ng-if="!editable") No description
+            .user-description.col-lg-12
+              div(ng-if="editable")
+                a(href="#" editable-textarea="user.desc" buttons="no" e-required e-rows=5 e-cols=80 e-placeholder="Tell us something about you" onaftersave="updateUser('desc', $data)") {{user.desc || 'No description'}}
+              div(ng-if="!editable")
+                p {{user.desc || 'No description'}}
           .row.hidden-xs
             .user-events.col-lg-12(ng-if="user.events")
               h3(ng-if="user.events.length === 0", style="color: grey; opacity: 0.7") No upcoming events

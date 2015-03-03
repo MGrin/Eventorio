@@ -31,36 +31,17 @@ exports.load = function (req, res, next, id) {
 };
 
 exports.create = function (req, res) {
-  var fields = {
-    name: req.body.name,
-    desc: sanitizeHtml(req.body.desc, sanitizeConfig),
-    location: req.body.location,
-    date: req.body.date,
-    headerPicture: req.body.headerPicture,
-    picture: req.body.picture,
-    visibility: req.body.visibility,
-    attendance: req.body.attendance,
-    tempId: req.body.tempId,
-  };
+  var updates = req.body;
   var creator = req.user;
-  app.Event.create(fields, creator, function (err, event) {
+  app.Event.create(updates, creator, function (err, event) {
     if (err) return app.err(err, res);
     res.jsonp(event.toJSON());
   });
 };
 
 exports.update = function (req, res) {
-  var fields = {
-    name: req.body.name,
-    desc: sanitizeHtml(req.body.desc, sanitizeConfig),
-    location: req.body.location,
-    date: req.body.date,
-    headerPicture: req.body.headerPicture,
-    picture: req.body.picture,
-    visibility: req.body.visibility,
-    attendance: req.body.attendance
-  };
-  req.event.modify(fields, req.user, function (err, event) {
+  var updates = req.body;
+  req.event.modify(updates, req.user, function (err, event) {
     if (err) return app.err(err, res);
     return res.jsonp(event.toJSON());
   });

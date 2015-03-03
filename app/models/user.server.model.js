@@ -153,8 +153,12 @@ UserSchema.methods = {
     return res;
   },
 
-  update: function (field, value, cb) {
-    this[field] = value;
+  update: function (updates, cb) {
+    if (!updates.name && !updates.desc) return cb(null, this);
+    if (updates.name === this.name && updates.desc === this.desc) return cb(null, this);
+
+    if (updates.name) this.name = updates.name;
+    if (updates.desc) this.desc = updates.desc;
     return this.save(cb);
   },
 

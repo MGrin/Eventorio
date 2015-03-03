@@ -79,15 +79,14 @@ exports.changePassword = function (req, res) {
 }
 
 exports.update = function (req, res) {
-  var field = req.body.name;
-  var value = req.body.value;
+  var updates = req.body;
   var user = req.user;
 
   if (req.user.id !== req.loadedUser.id) return app.err('Not authorized!', res);
 
-  user.update(field, value, function (err) {
+  user.update(updates, function (err, updatedUser) {
     if (err) return app.err(err, res);
-    return res.jsonp(200);
+    return res.jsonp(updatedUser);
   })
 }
 

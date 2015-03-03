@@ -1,7 +1,7 @@
 app.factory('Users', ['$resource', '$http', 'Global', function ($resource, $http, Global) {
   'use strict';
 
-  var user = $resource('/users/:user', {user: '@_id'}, {update: {method: 'POST'}});
+  var user = $resource('/users/:user', {user: '@_id'}, {update: {method: 'PUT'}});
 
   user.getCurrentUser = function (cb) {
     if (Global.me) return cb();

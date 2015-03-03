@@ -28,7 +28,7 @@ html(lang="en", ng-app="EventorioApp")
                     a(href="#", data-toggle="modal", data-target="#picturePicker", ng-click="choosingAvatar=true") Change event logo &nbsp;
                       i.mdi-content-create
               .event-name.col-xs-8.visible-xs
-                a.editable(ng-if="mode === 'Edit'") {{event.name || 'Event name'}}
+                a(ng-if="mode === 'Edit'" href="#" editable-text="event.name" buttons="no" e-required e-placeholder="Event name") {{event.name || 'Event name'}}
                 span(ng-if="mode === 'Normal'") {{event.name}}
             .row
               .col-lg-12.event-organizator.text-left(ng-if="mode === 'Normal'")
@@ -51,34 +51,12 @@ html(lang="en", ng-app="EventorioApp")
                 .row.hidden-xs(style="color: grey")
                   .row-fluid.text-right
                     .event-visibility.col-lg-12.col-lg-offset-0.col-xs-11.col-xs-offset-1
-                      a.editable(ng-if="mode === 'Edit' && (event.permissions.visibility === 'public' || !event.permissions.visibility)")
-                        | Event is visible to everyone
-                      a.editable(ng-if="mode === 'Edit' && event.permissions.visibility === 'followers'")
-                        | Event is visible only to your followers
-                      a.editable(ng-if="mode === 'Edit' && event.permissions.visibility === 'invitations'")
-                        | Event is visible only to invited people
-
-                      span(ng-if="mode === 'Normal' && event.permissions.visibility === 'public'")
-                        | Event is visible to everyone
-                      span(ng-if="mode === 'Normal' && event.permissions.visibility === 'followers'")
-                        | Event is visible only to your followers
-                      span(ng-if="mode === 'Normal' && event.permissions.visibility === 'invitations'")
-                        | Event is visible only to invited people
+                      a(ng-if="mode === 'Edit'" href="#" editable-select="event.permissions.visibility" buttons="no" e-ng-options="v.value as v.text for v in visibilities" onaftersave="updateVisibility($data)") {{ showVisibility() }}
+                      span(ng-if="mode === 'Normal'") {{ showVisibility() }}
                   .row-fluid.text-right
                     .event-attendance.col-lg-12.col-lg-offset-0.col-xs-11.col-xs-offset-1
-                      a.editable(ng-if="mode === 'Edit' && (event.permissions.attendance === 'public' || !event.permissions.attendance)")
-                        | Everyone can attend this event
-                      a.editable(ng-if="mode === 'Edit' && event.permissions.attendance === 'followers'")
-                        | Only your followers can attend this event
-                      a.editable(ng-if="mode === 'Edit' && event.permissions.attendance === 'invitations'")
-                        | Only invited people can attend this event
-
-                      span(ng-if="mode === 'Normal' && event.permissions.attendance === 'public'")
-                        | Everyone can attend this event
-                      span(ng-if="mode === 'Normal' && event.permissions.attendance === 'followers'")
-                        | Only your followers can attend this event
-                      span(ng-if="mode === 'Normal' && event.permissions.attendance === 'invitations'")
-                        | Only invited people can attend this event
+                      a(ng-if="mode === 'Edit'" href="#" editable-select="event.permissions.attendance" buttons="no" e-ng-options="a.value as a.text for a in attendencies" onaftersave="updateAttendance($data)") {{ showAttendance() }}
+                      span(ng-if="mode === 'Normal'") {{ showAttendance() }}
 
                 .row(ng-if="mode === 'Normal' && event.canAttend")
                   h3.event-user-attendance.col-lg-12.col-xs-12
@@ -156,7 +134,7 @@ html(lang="en", ng-app="EventorioApp")
         .col-lg-7#rightSidebar
           .row.hidden-xs
             .event-name.col-lg-12.well
-              a.editable(ng-if="mode === 'Edit'") {{event.name || 'Event name'}}
+              a(ng-if="mode === 'Edit'" href="#" editable-text="event.name" buttons="no" e-required e-placeholder="Event name") {{event.name || 'Event name'}}
               span(ng-if="mode === 'Normal'") {{event.name}}
           .row.hidden-xs
             .margin-lg-10
