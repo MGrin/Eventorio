@@ -45,6 +45,7 @@
     "morgan": "latest",
     "passport": "latest",
     "passport-facebook": "^1.0.3",
+    "passport-google": "^0.3.0",
     "passport-local": "latest",
     "randomstring": "latest",
     "rimraf": "^2.2.8",
