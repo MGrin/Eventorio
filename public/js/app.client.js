@@ -1,4 +1,4 @@
-var app = window.exports = angular.module('EventorioApp', ['ngResource', 'ngSanitize', 'siyfion.sfTypeahead', 'cropme', 'xeditable']);
+var app = window.exports = angular.module('EventorioApp', ['ngResource', 'ngSanitize', 'cropme', 'xeditable']);
 app.run(function(editableOptions, editableThemes) {
   editableThemes.bs3.buttonsClass = 'btn-sm';
   editableThemes.bs3.inputClass = 'input-lg';
