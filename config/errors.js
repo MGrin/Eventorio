@@ -17,11 +17,11 @@ module.exports = function (app) {
     app.logger.error(err.stack);
 
     // error page
-    res.status(500).render('404.server.jade', {error: err.stack});
+    res.status(500).render('error.server.jade', {status: 500, url: req.originalUrl, error: err});
   });
 
   // assume 404 since no middleware responded
   app.use(function (req, res) {
-    res.status(404).render('404.server.jade', {url: req.originalUrl, error: 'Not found'});
+    res.status(404).render('error.server.jade', {status: 404, url: req.originalUrl, error: 'Not found'});
   });
 };

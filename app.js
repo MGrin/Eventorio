@@ -46,7 +46,7 @@ app.err = function (err, next) {
     // send error to the client
     return next.format({
       html: function () {
-        next.render('500', {err: err});
+        next.status(500).render('error.server.jade', {status: 500, url: next.originalUrl, error: err});
       },
       json: function () {
         next.status(500).jsonp(err);
