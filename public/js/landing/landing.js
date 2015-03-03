@@ -147,19 +147,17 @@ var signup = function () {
       200: function () {
         window.location.reload();
       },
-      500: function () {
+      500: function (res) {
         var error = res.responseJSON;
         var field = error.substring(0, error.indexOf(':'));
         error = error.substring(field.length + 1, error.length);
-        console.log(field);
+        console.log(error);
         if (field === 'username') {
-          console.log(error);
           usernameIn.tooltip({title: error, placement: 'left'});
           usernameIn.parent().addClass('has-error');
           usernameIn.focus();
           return;
         } else if (field === 'email') {
-          console.log(error);
           emailIn.tooltip({title: error, placement: 'left'});
           emailIn.parent().addClass('has-error');
           emailIn.focus();

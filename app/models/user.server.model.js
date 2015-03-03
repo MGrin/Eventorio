@@ -22,6 +22,8 @@ exports.initModel = function (myApp) {
   app = myApp;
 };
 
+var supportedProviders = ['facebook'];
+
 /**
  * User Schema
  */
@@ -30,9 +32,12 @@ var UserSchema = exports.Schema = new Schema({
   desc: String,
   email: String,
   username: String,
-  provider: String,
+  providers: [String],
   gender: String, // male or female
+  locale: String,
 
+  facebook: Object,
+  providerPicture: String,
   headerPicture: String,
   hashPassword: {type: String, select: false},
   salt: {type: String, select: false},
@@ -149,6 +154,20 @@ UserSchema.methods = {
   update: function (field, value, cb) {
     this[field] = value;
     return this.save(cb);
+  },
+
+  addProvider: function (profile) {
+    if (!this.providers) this.providers = [];
+    if (this.providers.indexOf(profile.provider) < 0) this.providers.push(profile.provider);
+
+    if (!supportedProviders.indexOf(profile.provider) > -1) {
+      if (!this.desc) this.desc = profile._json.bio;
+      if (!this.locale) this.locale = profile._json.locale;
+      delete profile._json.verified;
+      delete profile._json.updated_time;
+      delete profile._raw;
+      this[profile.provider] = profile;
+    }
   },
 
   follow: function (user, cb) {
@@ -299,17 +318,22 @@ UserSchema.methods = {
 
     this.tempEvents.splice(index, 1);
     this.save(cb);
+  },
+
+  getProviderUpdates: function (provider, cb) {
+    if (supportedProviders.indexOf(provider) < 0) return cb(new Error('Provider is not supported: ' + provider));
+    // TODO get updates from provider
+    return cb();
   }
 };
 
 UserSchema.statics = {
   loadUser: function (username, cb) {
-    var query;
+    var username = decodeURI(username);
+    var usernameRE = new RegExp('^' + username +'$', 'i');
 
-    if (mongoose.Types.ObjectId.isValid(username)) query = {_id: username};
-    else query = {username: new RegExp('^' + decodeURI(username) +'$', 'i')};
-
-    app.User.find(query)
+    if (mongoose.Types.ObjectId.isValid(username)) {
+      app.User.find({_id: username})
       .populate('following followers')
       .exec(function (err, users) {
         if (err) return cb(err);
@@ -318,9 +342,39 @@ UserSchema.statics = {
 
         return cb(null, users[0]);
       });
+    } else {
+      app.User.find({username: usernameRE})
+      .populate('following followers')
+      .exec(function (err, users) {
+        if (err) return cb(err);
+        if (!users || users.length === 0) return cb();
+        if (users.length > 1) return cb(new Error('More than one user for following username: ' + username));
+
+        return cb(null, users[0]);
+      });
+    }
+
   },
 
-  create: function (fields, cb) {
+  create: function (fields, customize, cb) {
+    var user = new app.User(fields);
+    customize(user);
+    user.save(function (err, savedUser) {
+      if (err) return cb(err);
+      savedUser.follow(app.Eventorio, function (err){
+        if (err) return app.err(err);
+      });
+      app.Eventorio.follow(savedUser, function (err) {
+        if (err) return app.err(err);
+      });
+      app.Action.newSignupAction(savedUser);
+      app.Event.replaceInvitations(savedUser, function (err) {
+        return cb(err, savedUser);
+      });
+    });
+  },
+
+  createFromSignup: function (fields, cb) {
     var email = fields.email;
     var username = fields.username;
     var password = fields.password;
@@ -341,31 +395,20 @@ UserSchema.statics = {
           return next();
         });
       }, function (next) {
-        var user = new app.User({
+        app.User.create({
           username: username,
           email: email,
-          name: fields.name,
-          desc: fields.desc,
-          gender: fields.gender
+          name: fields.name
+        }, function (user) {
+          user.password = password;
+          user.activationCode = randomstring.generate(10);
+          user.providers = ['local'];
+        }, function (err, user) {
+          if (err) return next(err);
+          savedUser = user;
+          app.email.sendWelcomeMessage(savedUser);
+          return next();
         });
-
-        user.password = password;
-        user.activationCode = randomstring.generate(10);
-
-        user.save(function (err, _savedUser) {
-          savedUser = _savedUser;
-          savedUser.follow(app.Eventorio, function (err){
-            if (err) return app.err(err);
-          });
-          app.Eventorio.follow(savedUser, function (err) {
-            if (err) return app.err(err);
-          });
-          return next(err);
-        });
-      }, function (next) {
-        app.email.sendWelcomeMessage(savedUser);
-        app.Action.newSignupAction(savedUser);
-        app.Event.replaceInvitations(savedUser, next);
       }
     ], function (err) {
       return cb(err, savedUser);
@@ -382,6 +425,41 @@ UserSchema.statics = {
       var newPassword = user.createNewPassword();
       app.email.sendNewPassword(user, newPassword);
       return cb();
+    });
+  },
+
+  createOrUpdate: function (profile, cb) {
+    app.User.findOne({email: {$in: _.pluck(profile.emails, 'value')}}, function (err, user) {
+      if (err) return cb(err);
+      if (user) {
+        user.addProvider(profile);
+        return user.save(cb);
+      }
+
+      var username = profile.displayName;
+      var usernameRE = new RegExp('^' + username + '$', 'i');
+      app.User.findOne({username: usernameRE}, function (err, user) {
+        if (err) return cb(err);
+        if (user) username = username + '_' + randomstring(2);
+
+        var fields = {
+          username: username,
+          email: profile.emails[0].value,
+          name: profile.name.givenName + ' ' + profile.name.familyName,
+          gender: profile.gender
+        };
+        if (profile.photos && profile.photos.length > 0) fields.profilePicture = profile.photos[0].value;
+
+        app.User.create(fields, function (user) {
+          user.addProvider(profile);
+        }, function (err, savedUser) {
+          if (err) return cb(err);
+
+          savedUser.getProviderUpdates(profile.provider, function (err) {
+            if (err) return app.err(err);
+          })
+        });
+      });
     });
   }
 }

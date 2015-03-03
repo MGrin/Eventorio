@@ -9,7 +9,7 @@ var config = {
     db: 'mongodb://localhost/Eventorio-dev',
     root: rootPath,
     port: 7000,
-    serverUrl: 'http://eventorio.me/',
+    serverUrl: 'http://localhost:7000/',
     name: 'Eventorio',
     pictures: {
       user: {
@@ -31,6 +31,10 @@ var config = {
         clientId: '777903649350-2qekprt60e60u24sk2q43pl98bkb4duj.apps.googleusercontent.com',
         clientSecret: '777903649350-2qekprt60e60u24sk2q43pl98bkb4duj@developer.gserviceaccount.com'
       }
+    },
+    facebook: {
+      clientID: '1553150044916218',
+      clientSecret: '82f2d464661fdb77be507cfc729cb046'
     },
     constants: {
       users: {
@@ -72,6 +76,10 @@ var config = {
         clientId: '777903649350-2qekprt60e60u24sk2q43pl98bkb4duj.apps.googleusercontent.com',
         clientSecret: '777903649350-2qekprt60e60u24sk2q43pl98bkb4duj@developer.gserviceaccount.com'
       }
+    },
+    facebook: {
+      clientID: '1553150044916218',
+      clientSecret: '82f2d464661fdb77be507cfc729cb046'
     },
     constants: {
       users: {

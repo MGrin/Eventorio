@@ -15,6 +15,7 @@
     "angular-typeahead": "~0.2.1",
     "typeahead.js": "~0.10.5",
     "bootstrap-material-design": "~0.2.2",
-    "angular-cropme": "~0.2.9"
+    "angular-cropme": "~0.2.9",
+    "components-font-awesome": "~4.3.0"
   }
 }
