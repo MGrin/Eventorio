@@ -9,6 +9,7 @@
  */
 var app;
 var LocalStrategy = require('passport-local').Strategy;
+var FacebookStrategy = require('passport-facebook').Strategy;
 
 var createUser;
 var createOrUpdateUser;
@@ -45,4 +46,15 @@ module.exports = function (myApp, passport) {
       });
     }
   ));
+
+  // Use facebook strategy
+  passport.use(new FacebookStrategy({
+    clientID: app.config.facebook.clientID,
+    clientSecret: app.config.facebook.clientSecret,
+    callbackURL: app.config.serverUrl + 'auth/facebook/callback'
+  }, function (accessToken, refreshToken, profile, done) {
+    app.User.createOrUpdate(profile, function (err, user) {
+      return done(err, user);
+    });
+  }));
 };

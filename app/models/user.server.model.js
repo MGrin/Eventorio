@@ -30,9 +30,12 @@ var UserSchema = exports.Schema = new Schema({
   desc: String,
   email: String,
   username: String,
-  provider: String,
+  providers: [String],
   gender: String, // male or female
+  locale: String,
 
+  facebook: Object,
+  providerPicture: String,
   headerPicture: String,
   hashPassword: {type: String, select: false},
   salt: {type: String, select: false},
@@ -149,6 +152,18 @@ UserSchema.methods = {
   update: function (field, value, cb) {
     this[field] = value;
     return this.save(cb);
+  },
+
+  addProvider: function (profile, cb) {
+    if (this.providers && this.providers.indexOf[profile.provider] > -1) {
+      this[profile.provider] = profile;
+      return this.save(cb);
+    }
+    if (!this.providers) this.providers = [];
+    if (!this.providersData) this.providersData = [];
+    this.providers.push(profile.provider);
+    this[profile.provider] = profile;
+    this.save(cb);
   },
 
   follow: function (user, cb) {
@@ -304,12 +319,11 @@ UserSchema.methods = {
 
 UserSchema.statics = {
   loadUser: function (username, cb) {
-    var query;
+    var username = decodeURI(username);
+    var usernameRE = new RegExp('^' + username +'$', 'i');
 
-    if (mongoose.Types.ObjectId.isValid(username)) query = {_id: username};
-    else query = {username: new RegExp('^' + decodeURI(username) +'$', 'i')};
-
-    app.User.find(query)
+    if (mongoose.Types.ObjectId.isValid(username)) {
+      app.User.find({_id: username})
       .populate('following followers')
       .exec(function (err, users) {
         if (err) return cb(err);
@@ -318,9 +332,39 @@ UserSchema.statics = {
 
         return cb(null, users[0]);
       });
+    } else {
+      app.User.find({username: usernameRE})
+      .populate('following followers')
+      .exec(function (err, users) {
+        if (err) return cb(err);
+        if (!users || users.length === 0) return cb();
+        if (users.length > 1) return cb(new Error('More than one user for following username: ' + username));
+
+        return cb(null, users[0]);
+      });
+    }
+
   },
 
   create: function (fields, cb) {
+    var user = new app.User(fields);
+    user.save(function (err, savedUser) {
+      if (err) return cb(err);
+      savedUser.follow(app.Eventorio, function (err){
+        if (err) return app.err(err);
+      });
+      app.Eventorio.follow(savedUser, function (err) {
+        if (err) return app.err(err);
+      });
+      app.email.sendWelcomeMessage(savedUser);
+      app.Action.newSignupAction(savedUser);
+      app.Event.replaceInvitations(savedUser, function (err) {
+        return cb(err, savedUser);
+      });
+    });
+  },
+
+  createFromSignup: function (fields, cb) {
     var email = fields.email;
     var username = fields.username;
     var password = fields.password;
@@ -341,31 +385,21 @@ UserSchema.statics = {
           return next();
         });
       }, function (next) {
-        var user = new app.User({
+        app.User.create({
           username: username,
           email: email,
-          name: fields.name,
-          desc: fields.desc,
-          gender: fields.gender
-        });
-
-        user.password = password;
-        user.activationCode = randomstring.generate(10);
-
-        user.save(function (err, _savedUser) {
-          savedUser = _savedUser;
-          savedUser.follow(app.Eventorio, function (err){
-            if (err) return app.err(err);
+          name: fields.name
+        }, function (err, user) {
+          if (err) return next(err);
+          user.password = password;
+          user.activationCode = randomstring.generate(10);
+          user.providers = ['local'];
+          user.save(function (err, _savedUser) {
+            if (err) return next(err);
+            savedUser = _savedUser;
+            return next();
           });
-          app.Eventorio.follow(savedUser, function (err) {
-            if (err) return app.err(err);
-          });
-          return next(err);
         });
-      }, function (next) {
-        app.email.sendWelcomeMessage(savedUser);
-        app.Action.newSignupAction(savedUser);
-        app.Event.replaceInvitations(savedUser, next);
       }
     ], function (err) {
       return cb(err, savedUser);
@@ -382,6 +416,39 @@ UserSchema.statics = {
       var newPassword = user.createNewPassword();
       app.email.sendNewPassword(user, newPassword);
       return cb();
+    });
+  },
+
+  createOrUpdate: function (profile, cb) {
+    app.User.findOne({email: {$in: _.pluck(profile.emails, 'value')}}, function (err, user) {
+      if (err) return cb(err);
+      if (user) return user.addProvider(profile, cb);
+
+      var username = profile.displayName;
+      var usernameRE = new RegExp('^' + username + '$', 'i');
+      app.User.findOne({username: usernameRE}, function (err, user) {
+        if (err) return cb(err);
+        if (user) username = username + '_' + randomstring(2);
+
+        var fields = {
+          username: username,
+          email: profile.emails[0].value,
+          name: profile.name.givenName + ' ' + profile.name.familyName,
+          gender: profile.gender
+        };
+        if (profile.photos && profile.photos.length > 0) fields.profilePicture = profile.photos[0].value;
+
+        app.logger.info(profile);
+        app.User.create(fields, function (err, savedUser) {
+          if (err) return cb(err);
+          savedUser.desc = profile._json.bio;
+          savedUser.locale = profile._json.locale;
+          delete profile._json.verified;
+          delete profile._json.updated_time;
+          delete profile._raw;
+          savedUser.addProvider(profile, cb);
+        });
+      });
     });
   }
 }

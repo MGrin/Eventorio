@@ -147,7 +147,7 @@ var signup = function () {
       200: function () {
         window.location.reload();
       },
-      500: function () {
+      500: function (res) {
         var error = res.responseJSON;
         var field = error.substring(0, error.indexOf(':'));
         error = error.substring(field.length + 1, error.length);

@@ -115,8 +115,11 @@ async.series([
   },
   function (cb) {
     // Creation of default eventorio account
-    app.User.count({username: 'Eventorio'}, function (err, count) {
-      if (err || count > 0) return cb(err);
+    app.User.findOne({username: 'Eventorio'}, function (err, user) {
+      if (err || user) {
+        app.Eventorio = user;
+        return cb(err);
+      }
 
       var Eventorio = new app.User({
         username: 'Eventorio',

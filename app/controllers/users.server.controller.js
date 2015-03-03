@@ -39,7 +39,7 @@ exports.signup = function (req, res) {
     password: req.body.hashedPassword
   };
 
-  app.User.create(fields, function (err, user) {
+  app.User.createFromSignup(fields, function (err, user) {
     if (err) return app.err(err, res);
 
     req.logIn(user, function (err) {
@@ -182,6 +182,7 @@ var loadUser = function (req, res, next, username) {
       });
     }
   }
+
   app.User.loadUser(username, function (err, user) {
     if (err) return app.err(err, res);
     if (!user) return app.err(new Error('No user found: ' + username), res);

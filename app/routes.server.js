@@ -31,6 +31,11 @@ module.exports = function (app, passport) {
   app.route(app.path.logout)
     .get(users.logout);
 
+  app.route('/auth/facebook')
+    .get(passport.authenticate('facebook'));
+  app.route('/auth/facebook/callback')
+    .get(passport.authenticate('facebook', {successRedirect: app.path.dashboard,
+                                            failureRedirect: app.path.landing}));
   app.route('/users')
     .post(users.signup);
   app.route('/users/:user')

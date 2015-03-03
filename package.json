@@ -44,6 +44,7 @@
     "mongoose-troop": "latest",
     "morgan": "latest",
     "passport": "latest",
+    "passport-facebook": "^1.0.3",
     "passport-local": "latest",
     "randomstring": "latest",
     "rimraf": "^2.2.8",
