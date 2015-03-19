@@ -1,18 +1,18 @@
 doctype html
-html(lang="en", ng-app="EventorioApp")
+html(lang="en", ng-app="EventorioError")
   head
     title #{status}@Eventorio
     script(src="/lib/jquery/dist/jquery.min.js")
     script(src="/lib/bootstrap/dist/js/bootstrap.min.js")
-    script(src="/lib/bootstrap-material-design/dist/js/material.min.js")
+    link(rel="stylesheet", href="/lib/bootstrap-material-design/dist/css/material.min.css")
+    link(rel="stylesheet", href="/lib/bootstrap-material-design/dist/css/material-fullpalette.min.css")
+    link(rel="stylesheet", href="/lib/bootstrap-material-design/dist/css/ripples.min.css")
+    link(rel="stylesheet", href="/lib/bootstrap-material-design/dist/css/roboto.min.css")
     script(src="/lib/angular/angular.min.js")
     link(rel="stylesheet", href="/lib/bootstrap/dist/css/bootstrap.min.css")
-    link(rel="stylesheet", href="/lib/bootstrap-material-design/dist/css/material-wfont.min.css")
-    link(rel="stylesheet", href="/lib/angular-xeditable/dist/css/xeditable.css")
-    link(rel="stylesheet", href="/css/styles.css")
   body
     include layouts/header.server.jade
-    #application-content
+    #application-content(style="margin-top: 80px")
       .jumbotron.col-lg-8.col-lg-offset-2
         img.pull-right(src="/img/error.jpg")
         h1.text-center Ooops!
@@ -31,17 +31,10 @@ html(lang="en", ng-app="EventorioApp")
                 | Error trace: #{status}
                 if status === 500 && error
                 | , #{error}
-  script(src="/lib/angular-resource/angular-resource.min.js")
-  script(src="/lib/angular-sanitize/angular-sanitize.min.js")
-  script(src="/lib/angular-superswipe/superswipe.js")
-  script(src="/lib/angular-touch/angular-touch.min.js")
-  script(src="/lib/angular-cropme/cropme.js")
-  script(src="/lib/angular-xeditable/dist/js/xeditable.min.js")
 
-  script(src="/cdn/js/app.client.js")
+  script(src="/cdn/js/error.client.js")
   script(src="/cdn/js/shared/routes.shared.js")
   script(src="/cdn/js/services/global.client.service.js")
   script(src="/cdn/js/controllers/header.client.controller.js")
   script(src="/cdn/js/services/user.client.service.js")
-  script(src="/cdn/js/services/notifications.client.service.js")
   script(src="/local_lib/uservoice.js")

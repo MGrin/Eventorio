@@ -105,7 +105,7 @@ ActionSchema.statics = {
 
   newInviteAction: function (actorUser, user, event, cb) {
     if (!cb) cb = function (){};
-    var objectActor = new actor({_type: 'User', userId: user});
+    var objectActor = new actor({_type: 'User', userId: user.id});
     var subjectActor = new actor({_type: 'User', eventId: event, userId: actorUser});
     var action = new app.Action({
       _type: actionTypes.invite,

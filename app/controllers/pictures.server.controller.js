@@ -46,7 +46,7 @@ exports.upload = function (req, type, root, item, cb) {
       app.lib.fileSHA1(uploadedFilePath, function (err, fileHash) {
         if (err) return next(err);
         filehash = fileHash;
-        filepath = root + type + '_' + fileHash + '.png';
+        filepath = root + type + '_' + fileHash;
         fs.rename(uploadedFilePath, filepath, next);
       });
     }
@@ -56,7 +56,7 @@ exports.upload = function (req, type, root, item, cb) {
 };
 
 exports.uploadForUser = function (req, res) {
-  var user = req.loadedUser;
+  var user = req.user;
   var type = req.query.type;
   var pictureRoot = app.config.pictures.user.pwd + user.id + '/';
 
@@ -65,7 +65,7 @@ exports.uploadForUser = function (req, res) {
     switch (type) {
       case 'header': {
         if (user.headerPicture && hash !== user.headerPicture) {
-          fs.unlink(root + type + '_' + user.headerPicture + '.png', function (err) {
+          fs.unlink(pictureRoot + type + '_' + user.headerPicture, function (err) {
             return app.err(err);
           });
         }
@@ -88,10 +88,11 @@ exports.uploadForEvent = function (req, res) {
   var event = req.event;
   var type = req.query.type;
 
-  var pictureRoot = app.config.pictures.event.pwd + event.id + '/temp/';
+  var pictureRoot = app.config.pictures.event.pwd + event.id + '/';
 
   Pictures.upload(req, type, pictureRoot, event, function (err, hash) {
     if (err) return app.err(err, res);
+
     return res.send(hash);
   });
 }

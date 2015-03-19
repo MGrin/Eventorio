@@ -1,7 +1,11 @@
 app.factory('Events', ['$rootScope', '$resource', '$http', 'Global', function ($rootScope, $resource, $http, Global) {
   'use strict';
 
-  var event = $resource('/events/:eventId', {eventId: '@_id'}, {update: {method: 'PUT'}});
+  var event = $resource('/events/:eventId',
+                        {eventId: '@_id'},
+                        {
+                          update: {method: 'PUT'}
+                        });
 
   event.updateMonthlyList = function (date, cb) {
     var startDate = moment(date).subtract(1, 'month');
@@ -11,10 +15,9 @@ app.factory('Events', ['$rootScope', '$resource', '$http', 'Global', function ($
 
     $http.get('/events?startDate=' + startDate + '&stopDate=' + stopDate)
       .success(function (res) {
-        $rootScope.$broadcast('monthlyEvents', res);
         return cb(null, res);
       }).error(function (res) {
-        return cb(err);
+        return cb(res);
       });
   };
 
@@ -24,51 +27,6 @@ app.factory('Events', ['$rootScope', '$resource', '$http', 'Global', function ($
         return cb(null, res);
       }).error(function (res) {
         return cb(res);
-      });
-  };
-
-  event.inviteByEmail = function (emails, event, cb) {
-    $http.post('/events/' + event.id + '/invite', emails)
-      .success(function (response) {
-        return cb();
-      }).error(function (response) {
-        return cb(response);
-      });
-  };
-
-  event.inviteFollower = function (userId, event, cb) {
-    $http.post('/events/' + event.id + '/invite/' + userId)
-      .success(function (response) {
-        return cb();
-      }).error(function (response) {
-        return cb(response);
-      });
-  };
-
-  event.inviteAllFollowers = function (event, cb) {
-    $http.post('/events/' + event.id + '/invite/')
-      .success(function (response) {
-        return cb();
-      }).error(function (response) {
-        return cb(response);
-      });
-  };
-
-  event.attend = function (event, cb) {
-    $http.post('/events/' + event.id + '/attend')
-      .success(function (response) {
-        return cb();
-      }).error(function (response) {
-        return cb(response);
-      });
-  };
-
-  event.quit = function (event, cb) {
-    $http.post('/events/' + event.id + '/quit')
-      .success(function (response) {
-        return cb();
-      }).error(function (response) {
-        return cb(response);
       });
   };
 
@@ -92,7 +50,24 @@ app.factory('Events', ['$rootScope', '$resource', '$http', 'Global', function ($
       });
   };
 
-  event.people = $resource('/events/:eventId/users', {eventId: '@_id'}, {update: {method: 'POST'}});
+  event.invite = function (emails, followers, event, cb) {
+    $http.post('/events/' + event.id + '/invitations', {emails: emails, followers: followers})
+      .success(function () {
+        return cb();
+      }).error(function (response) {
+        return cb(response);
+      });
+  }
 
+  event.participants = $resource('/events/:eventId/participants', {eventId: '@id', userId: "@userId"});
+
+  event.participants.remove = function (event, cb) {
+    $http.delete('/events/' + event.id + '/participants')
+      .success(function () {
+        return cb();
+      }).error(function (response) {
+        return cb(response);
+      });
+  }
   return event;
 }]);

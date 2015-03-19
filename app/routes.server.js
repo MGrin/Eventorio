@@ -13,11 +13,7 @@ module.exports = function (app, passport) {
   app.route(app.path.landing)
      .get(index.index);
   app.route(app.path.dashboard)
-    .get(users.requiresLogin, index.app);
-  app.route(app.path.calendar)
-    .get(users.requiresLogin, index.calendar);
-  app.route(app.path.news)
-    .get(users.requiresLogin, index.news);
+    .get(users.requiresLogin, index.dashboard);
   app.route(app.path.policy)
     .get(index.policy);
 
@@ -51,8 +47,10 @@ module.exports = function (app, passport) {
   app.route('/users/:user')
     .get(users.show)
     .put(users.requiresLogin, users.update);
-  app.route('/users/:user/followers')
-    .get(users.requiresLogin, users.followers);
+  app.route('/users/:user/connections')
+    .get(users.requiresLogin, users.connections)
+    .post(users.requiresLogin, users.addFollower)
+    .delete(users.requiresLogin, users.removeFollower);
   app.route('/users/:user/pictures')
     .post(users.requiresLogin, pictures.uploadForUser);
 
@@ -72,18 +70,12 @@ module.exports = function (app, passport) {
     .delete(users.requiresLogin, events.remove);
   app.route('/events/:eventId/pictures')
     .post(users.requiresLogin, pictures.uploadForEvent);
-  app.route('/events/:eventId/users')
-    .get(events.getParticipants);
-  app.route('/events/:eventId/invite/:user')
-    .post(users.requiresLogin, events.invite);
-  app.route('/events/:eventId/invite')
-    .post(users.requiresLogin, events.invite);
-  app.route('/events/:eventId/attend')
-    .post(users.requiresLogin, events.isAttandable, users.attend);
-  app.route('/events/:eventId/quit')
-    .post(users.requiresLogin, users.quit);
-
-
+  app.route('/events/:eventId/participants')
+    .get(events.isAccessible, events.getParticipants)
+    .post(users.requiresLogin, events.isAttandable, users.attend)
+    .delete(users.requiresLogin, users.quit);
+  app.route('/events/:eventId/invitations')
+    .post(users.requiresLogin, events.invite)
 
   app.route('/comments')
     .post(users.requiresLogin, comments.create);
@@ -93,10 +85,6 @@ module.exports = function (app, passport) {
   app.route('/pictures/:pictureId')
     .post(users.requiresLogin, pictures.uploadForEvent);
 
-  app.route('/api/follow')
-    .post(users.requiresLogin, users.follow);
-  app.route('/api/unfollow')
-    .post(users.requiresLogin, users.unfollow);
   app.route('/api/news')
     .get(users.requiresLogin, users.news);
   app.route('/api/participants/:eventId')

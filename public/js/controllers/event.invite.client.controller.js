@@ -1,5 +1,5 @@
-app.controller('EventInviteController', ['$scope', 'Global', 'Notifications', 'Events',
-  function ($scope, Global, Notifications, Events) {
+app.controller('EventInviteController', ['$scope', 'Global', 'growl', 'Events',
+  function ($scope, Global, growl, Events) {
   $scope.global = Global;
   $scope.followerQuery = '';
 
@@ -45,7 +45,7 @@ app.controller('EventInviteController', ['$scope', 'Global', 'Notifications', 'E
 
   $scope.inviteAllFollowers = function () {
     Events.inviteAllFollowers($scope.event, function (err) {
-      if (err) return Notifications.error($('.invite-followers'), err);
+      if (err) return growl.error(err);
 
       $scope.event.people.invited.concat(Global.me.followers);
       _.each($scope.followers, function (follower) {
@@ -57,14 +57,14 @@ app.controller('EventInviteController', ['$scope', 'Global', 'Notifications', 'E
   };
 
   $scope.inviteFollower = function (userId) {
-    if (!userId) return Notifications.error($('.invite-followers'), 'Empty user id');
+    if (!userId) return growl.error('Empty user id');
     var user = _.find($scope.followers, function (us) {
       return us.id === userId;
     });
-    if (!user) return Notifications.error($('.invite-followers'), 'Wrong user id');
+    if (!user) return growl.error('Wrong user id');
 
     Events.inviteFollower(userId, $scope.event, function (err) {
-      if (err) return Notifications.error($('.invite-followers'), err);
+      if (err) return growl.error(err);
 
       $scope.event.people.invited.push(user);
       user.active = false;
@@ -79,7 +79,7 @@ app.controller('EventInviteController', ['$scope', 'Global', 'Notifications', 'E
 
     if (!$scope.emails || $scope.emails === '') {
       $('#emailsToInvite').addClass('has-error');
-      Notifications.error($('#emailsToInvite'), 'Please enter at least one email');
+      growl.error('Please enter at least one email');
       return;
     }
 
@@ -88,7 +88,7 @@ app.controller('EventInviteController', ['$scope', 'Global', 'Notifications', 'E
     var emailsArray = text.split(',');
 
     Events.inviteByEmail(emailsArray, $scope.event, function (err) {
-      if (err) return Notifications.error($('#emailsToInvite'), err);
+      if (err) return growl.error(err);
       $scope.emails = '';
     });
   };

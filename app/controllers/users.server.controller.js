@@ -79,10 +79,10 @@ exports.changePassword = function (req, res) {
 }
 
 exports.update = function (req, res) {
-  var updates = req.body;
+  var updates = req.body.user;
   var user = req.user;
 
-  if (req.user.id !== req.loadedUser.id) return app.err('Not authorized!', res);
+  if (req.user.id !== req.profile.id) return app.err('Not authorized!', res);
 
   user.update(updates, function (err, updatedUser) {
     if (err) return app.err(err, res);
@@ -90,35 +90,25 @@ exports.update = function (req, res) {
   })
 }
 
-exports.follow = function (req, res) {
-  var currentUser = req.user;
-  var userId = req.body.userId;
-  if (!userId) return app.err('No user to follow was given!', res);
+exports.addFollower = function (req, res) {
+  var me = req.user;
+  var userToFollow = req.profile;
+  if (!userToFollow) return app.err('No user to follow was given!', res);
 
-  app.User.findById(userId, function (err, user) {
+  me.follow(userToFollow, function (err) {
     if (err) return app.err(err, res);
-    if (!user) return app.err(new Error('No user found for given id!'), res);
-
-    currentUser.follow(user, function (err) {
-      if (err) return app.err(err, res);
-      return res.jsonp(200);
-    });
-  })
+    return res.sendStatus(200);
+  });
 }
 
-exports.unfollow = function (req, res) {
-  var currentUser = req.user;
-  var userId = req.body.userId;
-  if (!userId) return app.err('No user to unfollow was given!', res);
+exports.removeFollower = function (req, res) {
+  var me = req.user;
+  var userToUnfollow = req.profile;
+  if (!userToUnfollow) return app.err('No user to unfollow was given!', res);
 
-  app.User.findById(userId, function (err, user) {
+  me.unfollow(userToUnfollow, function (err) {
     if (err) return app.err(err, res);
-    if (!user) return app.err(new Error('No user found for given id!'), res);
-
-    currentUser.unfollow(user, function (err) {
-      if (err) return app.err(err, res);
-      return res.jsonp(200);
-    });
+    return res.sendStatus(200);
   });
 }
 
@@ -160,16 +150,20 @@ exports.news = function (req, res) {
   });
 }
 
-exports.followers = function (req, res) {
-  var user = req.user;
-
-  return res.send(user.followers);
+exports.connections = function (req, res) {
+  var profile = req.profile;
+  var connections = {
+    followers: profile.followers,
+    following: profile.following
+  }
+  return res.send(connections);
 }
 
-var loadUser = function (req, res, next, username) {
+exports.loadUser = function (req, res, next, username) {
   if (username === 'me') {
     if (req.user) {
-      return loadUser(req, res, next, req.user.username);
+      req.profile = req.user;
+      return next();
     } else {
       return res.format({
         html: function () {
@@ -186,11 +180,10 @@ var loadUser = function (req, res, next, username) {
     if (err) return app.err(err, res);
     if (!user) return app.err(new Error('No user found: ' + username), res);
 
-    req.loadedUser = user;
+    req.profile = user;
     return next();
   })
 };
-exports.loadUser = loadUser;
 
 exports.loadByActivationCode = function (req, res, next, activationCode) {
   app.User.findOne({activationCode: activationCode}, function (err, user) {
@@ -205,10 +198,10 @@ exports.loadByActivationCode = function (req, res, next, activationCode) {
 exports.show = function (req, res) {
   return res.format({
     html: function () {
-      res.render('app/user.server.jade');
+      res.render('app/user.server.jade', {profile: req.profile});
     },
     json: function () {
-      return res.jsonp(req.loadedUser.toJSON());
+      return res.jsonp(req.profile.toJSON());
     }
   });
 }

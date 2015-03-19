@@ -8,6 +8,7 @@
  * Module dependencies.
  */
 var app;
+var _ = require('underscore');
 var LocalStrategy = require('passport-local').Strategy;
 var FacebookStrategy = require('passport-facebook').Strategy;
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
@@ -26,9 +27,18 @@ module.exports = function (myApp, passport) {
   });
 
   passport.deserializeUser(function (id, cb) {
-    app.User.findOne({_id: id}, '+hashPassword +salt', function (err, user) {
-      cb(err, user);
-    });
+    app.User
+      .findOne({_id: id}, '+hashPassword +salt')
+      .populate('followers following').exec(function (err, user) {
+        if (err) return cb(err);
+        _.map(user.followers, function (follower) {
+          return follower.toJSON();
+        });
+        _.map(user.following, function (follower) {
+          return follower.toJSON();
+        });
+        cb(err, user);
+      });
   });
 
   // Use loca strategy
