@@ -112,6 +112,57 @@ app.directive('eventPage', ['Global', 'Pictures', function (Global, Pictures) {
           $('#event-avatar-modal').modal('hide');
         });
       });
+
+      // XS uplaod process
+      var cleanFileAvatarXS = function () {
+        element.find('#event-avatar-modal input[type="text"]').each(function () {
+          $(this).val();
+          $(this).addClass('.empty');
+        });
+      }
+
+      var handleAvatarUpload = function (evt) {
+        var file = evt.currentTarget.files[0];
+        if (file.type.split('/')[0] !== 'image') {
+          $scope.newAvatarPicture = null;
+          cleanFileAvatarXS();
+          return $scope.headerAvatarError = 'File is not an image!';
+        }
+        element.find('#event-avatar-modal > input[type="text"]').each(function () {
+          $(this).removeClass('empty');
+          $(this).val(file.name);
+        });
+        $scope.newAvatarPicture = file;
+        $scope.avatarIsUploading = true;
+
+        Pictures.uploadAvatarForEvent(file, $scope.event, function (err, img) {
+          if (err) return growl.error(err);
+          $scope.event.picture = img;
+          $scope.avatarIsUploading = false;
+          $scope.$apply();
+          cleanFileAvatarXS();
+          $('#event-avatar-modal').modal('hide');
+        });
+      }
+      element.on('change', '#avatar-img-upload', handleAvatarUpload);
+
+      var progress = 0;
+      var direction = -1;
+      var delta = 10;
+
+      var updateAvatarUpdateProgress = function () {
+        if (!$scope.avatarIsUploading) return;
+        element.find('#event-avatar-modal .progress-bar').each(function () {
+          $(this).css('width', progress + '%');
+          if (progress === 100 || progress === 0) direction *= -1;
+          progress += direction * delta;
+        });
+        if ($scope.avatarIsUploading) setTimeout(updateAvatarUpdateProgress, 50);
+      };
+
+      $scope.$watch('avatarIsUploading', function (newV, oldV) {
+        if (newV) updateAvatarUpdateProgress();
+      });
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -112,7 +112,7 @@ EventSchema.methods = {
         }
       }, function (next) {
         if (updates.picture && event.picture && updates.picture !== event.picture) {
-          fs.unlink(app.config.pictures.event.pwd + event.id + '/avatar_' + event.picture + '.png', function (err) {
+          fs.unlink(app.config.pictures.event.pwd + event.id + '/avatar_' + event.picture, function (err) {
             if (err) return cb(err);
             return next();
           });
