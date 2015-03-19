@@ -39,7 +39,7 @@ var UserSchema = exports.Schema = new Schema({
   facebook: Object,
   google: Object,
 
-  providerPicture: String,
+  pictureProvider: String,
   headerPicture: String,
   hashPassword: {type: String, select: false},
   salt: {type: String, select: false},
@@ -88,7 +88,7 @@ UserSchema
   });
 
 UserSchema
-  .virtual('picture')
+  .virtual('gravatarPicture')
   .get(function () {
     return gravatar.url(this.email, app.config.gravatar);
   });
@@ -154,11 +154,9 @@ UserSchema.methods = {
   },
 
   update: function (updates, cb) {
-    if (!updates.name && !updates.desc) return cb(null, this);
-    if (updates.name === this.name && updates.desc === this.desc) return cb(null, this);
-
-    if (updates.name) this.name = updates.name;
-    if (updates.desc) this.desc = updates.desc;
+    this.name = updates.name;
+    this.desc = updates.desc;
+    this.pictureProvider = updates.pictureProvider;
     return this.save(cb);
   },
 
@@ -191,61 +189,53 @@ UserSchema.methods = {
   },
 
   follow: function (user, cb) {
-    if (this.following.indexOf(user._id) === -1) {
-      this.following.push(user._id);
-      this.save(cb);
-      user.acceptFollower(this);
-      if (user.username !== 'Eventorio' && this.username !== 'Eventorio') app.Action.newFollowAction(this, user);
-    } else {
-      return cb(new Error('Already following'));
+    if (this.isFollowing(user)) {
+      return cb(new Error('Already following!'));
     }
+    this.following.push(user);
+    this.save(cb);
+    user.acceptFollower(this);
+    if (user.username !== 'Eventorio' && this.username !== 'Eventorio') app.Action.newFollowAction(this, user);
   },
 
   unfollow: function (user, cb) {
-    var index = this.following.indexOf(user._id);
-    if (index !== -1) {
-      this.following.splice(index, 1);
-      this.save(cb);
-
-      index = user.followers.indexOf(this._id);
-      if (index !== -1) {
-        user.followers.splice(index, 1);
-        user.save(function (err) {
-          if (err) app.err(err);
-        });
-      }
-    } else {
-      return cb(null, this);
+    if (!this.isFollowing(user)) {
+      return cb(new Error('Not following yet!'));
     }
-  },
+    this.following = _.without(this.following, _.find(this.following, function (u) {
+      return u.id === user.id;
+    }));
+    this.save(cb);
 
-  hasFollower: function (user) {
-    return this.followers.indexOf(user._id) !== -1;
-  },
-
-  isFollowing: function (user) {
-    return this.following.indexOf(user._id) !== -1;
-  },
-
-  acceptFollower: function (user, cb) {
-    if (this.followers.indexOf(user._id) === -1) {
-      this.followers.push(user._id);
-      this.save(function (err, savedUser) {
+    if (user.hasFollower(this)) {
+      var _this = this;
+      user.followers = _.without(user.followers, _.find(user.followers, function (u) {
+        return u.id === _this.id;
+      }));
+      user.save(function (err) {
         if (err) return app.err(err);
       });
     }
   },
 
-  canAttendEvent: function (event) {
-    return event.organizator.id !== this.id && (event.permissions.attendance === 'public'
-            || (event.permissions.attendance === 'followers' && this.isFollowing(event.organizator))
-            || (event.permissions.attendance === 'invitations' && this.isInvitedTo(event)));
+  hasFollower: function (user) {
+    return _.find(this.followers, function (u) {
+      return u.id === user.id;
+    });
   },
 
-  canViewEvent: function (event) {
-    return this.id === event.organizator.id || (event.permissions.visibility === 'public'
-        || (event.permissions.visibility === 'followers' && this.isFollowing(event.organizator))
-        || (event.permissions.visibility === 'invitations' && this.isInvitedTo(event)));
+  isFollowing: function (user) {
+    return _.find(this.following, function (u) {
+      return u.id === user.id;
+    });
+  },
+
+  acceptFollower: function (user) {
+    if (this.hasFollower(user)) return;
+    this.followers.push(user._id);
+    this.save(function (err, savedUser) {
+      if (err) return app.err(err);
+    });
   },
 
   attendEvent: function (event, cb) {
@@ -289,9 +279,10 @@ UserSchema.methods = {
   },
 
   inviteToEvent: function (event, user, cb) {
-    app.email.sendInvitationMail(this, user, event);
+    var me = this;
+    app.email.sendInvitationMail(me, user, event);
     if (event.invitedUsers.indexOf(user._id) === -1 && event.attendees.indexOf(user._id) === -1) {
-      app.Action.newInviteAction(this, user, event);
+      app.Action.newInviteAction(me, user, event);
       event.invitedUsers.push(user._id);
       event.save();
     }
@@ -418,7 +409,8 @@ UserSchema.statics = {
         app.User.create({
           username: username,
           email: email,
-          name: fields.name
+          name: fields.name,
+          pictureProvider: 'gravatar'
         }, function (user) {
           user.password = password;
           user.activationCode = randomstring.generate(10);
@@ -460,13 +452,14 @@ UserSchema.statics = {
       var usernameRE = new RegExp('^' + username + '$', 'i');
       app.User.findOne({username: usernameRE}, function (err, user) {
         if (err) return cb(err);
-        if (user) username = username + '_' + randomstring(2);
+        if (user) username = username + '_' + randomstring.generate(2);
 
         var fields = {
           username: username,
           email: profile.emails[0].value,
           name: profile.name.givenName + ' ' + profile.name.familyName,
-          gender: profile.gender
+          gender: profile.gender,
+          pictureProvider: profile.provider
         };
 
         app.User.create(fields, function (user) {

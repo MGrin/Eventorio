@@ -70,6 +70,7 @@ var config = {
       API_KEY: 'wtWcKsV31HCK-z05mhKgMQ'
     },
     google: {
+      appID: 'AIzaSyDRGaAGkFpE4HVh8F8qfUp-rq4ra5QmhzI',
       clientID: '777903649350-2qekprt60e60u24sk2q43pl98bkb4duj.apps.googleusercontent.com',
       clientSecret: 'a5nCr6hMOKz6Jz-R6LutghWb'
     },

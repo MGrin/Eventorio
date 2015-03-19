@@ -29,7 +29,29 @@ exports.initModel = function (myApp) {
 var EventSchema = exports.Schema = new Schema({
   name: String,
   desc: String,
-  location: Object,
+  venue: {
+    geometry: {
+      location: {
+        D: Number,
+        k: Number
+      },
+      viewport: {
+        southwest: {
+          lat: Number,
+          lng: Number
+        },
+        northeast: {
+          lat: Number,
+          lng: Number
+        }
+      }
+    },
+    icon: String,
+    website: String,
+    id: String,
+    place_id: String,
+    types: [String]
+  },
   organizator: {
     type: ObjectId,
     ref: 'User'
@@ -75,17 +97,15 @@ EventSchema.methods = {
   modify: function (updates, organizator, cb) {
     if (this.organizator.id !== organizator.id) return cb(new Error('Not authorized'));
 
-    updates = _.pick(updates, 'name', 'desc', 'date', 'permissions', 'picture', 'headerPicture');
+    updates = _.pick(updates, 'name', 'desc', 'date', 'permissions', 'picture', 'headerPicture', 'venue');
+
     var event = this;
     async.series([
       function (next) {
         if (updates.headerPicture && updates.headerPicture !== event.headerPicture) {
-          fs.unlink(app.config.pictures.event.pwd + event.id + '/header_' + event.headerPicture + '.png', function (err) {
+          fs.unlink(app.config.pictures.event.pwd + event.id + '/header_' + event.headerPicture, function (err) {
             if (err) app.err(err);
-
-            var oldPath = app.config.pictures.event.pwd + event.id + '/temp/header_' + updates.headerPicture + '.png';
-            var newPath = app.config.pictures.event.pwd + event.id + '/header_' + updates.headerPicture + '.png';
-            fs.rename(oldPath, newPath, next);
+            return next();
           });
         } else {
           next();
@@ -94,10 +114,7 @@ EventSchema.methods = {
         if (updates.picture && event.picture && updates.picture !== event.picture) {
           fs.unlink(app.config.pictures.event.pwd + event.id + '/avatar_' + event.picture + '.png', function (err) {
             if (err) return cb(err);
-
-            var oldPath = app.config.pictures.event.pwd + event.id + '/temp/avatar_' + updates.picture + '.png';
-            var newPath = app.config.pictures.event.pwd + event.id + '/avatar_' + updates.picture + '.png'
-            fs.rename(oldPath, newPath, next);
+            return next();
           });
         } else {
           next();
@@ -163,6 +180,22 @@ EventSchema.methods = {
       });
   },
 
+  canBeViewedBy: function (user) {
+    if (!user) return this.permissions.visibility === 'public';
+    return this.organizator.id === user.id
+            || this.permissions.visibility === 'public'
+            || (this.permissions.visibility === 'followers' && user.isFollowing(this.organizator))
+            || (this.permissions.visibility === 'invitations' && user.isInvitedTo(event));
+  },
+
+  canBeAttendedBy: function (user) {
+    if (!user) return false;
+    return this.organizator.id !== user.id
+            && ((this.permissions.attendance === 'public')
+            || (this.permissions.attendance === 'followers' && user.isFollowing(this.organizator))
+            || (this.permissions.attendance === 'invitations' && user.isInvitedTo(this)));
+  },
+
   toJSON: function () {
     var resEvent = this.toObject({virtuals: true});
     delete resEvent._id;
@@ -190,16 +223,16 @@ EventSchema.statics = {
       .exec(cb);
   },
 
-  loadEmptyEvent: function (date, creator, cb) {
+  loadEmptyEvent: function (creator, cb) {
     var tempId = randomstring.generate(20);
     var event = {
       tempId: tempId,
-      date: date,
       permissions: {
         visibility: visLevels[0],
         attendance: visLevels[0]
       },
-      organizator: creator.toJSON()
+      organizator: creator.toJSON(),
+      venue: {}
     };
     return cb(null, event);
   },
@@ -371,7 +404,7 @@ EventSchema.statics = {
     var tempId = updates.tempId;
 
     updates.date = moment(updates.date).utc();
-    updates = _.pick(updates, 'name', 'desc', 'date', 'permissions', 'picture', 'headerPicture');
+    updates = _.pick(updates, 'name', 'desc', 'date', 'permissions', 'picture', 'headerPicture', 'venue');
     var event = new app.Event(updates);
     event.organizator = creator;
 

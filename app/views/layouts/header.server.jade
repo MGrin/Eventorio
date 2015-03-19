@@ -1,119 +1,52 @@
-div(ng-controller="HeaderController")
-  nav#header.navbar.navbar-fixed.navbar-fixed-top.navbar-material-indigo-300(role="navigation")
-    .container-fluid
-      .navbar-header
-        button.navbar-toggle.collapsed(type="button", data-toggle="collapse", data-target="#navbar")
-          span.icon-bar
-          span.icon-bar
-          span.icon-bar
+nav#header.navbar.navbar-fixed.navbar-fixed-top.navbar-material-indigo-300(ng-controller="HeaderController", role="navigation")
+  .container-fluid
+    .navbar-header
+      button.navbar-toggle.collapsed(ng-if="global.me" type="button", data-toggle="collapse", data-target="#navbar")
+        span.icon-bar
+        span.icon-bar
+        span.icon-bar
 
-        a.navbar-brand.hidden-xs(style="padding-top: 12px", ng-href="{{global.app.path.dashboard}}")
-          img.img-circle.pull-left(alt="{{global.config.appName}}", style="height: 30px; margin-right: 10px", src="/img/logo_white.png")
-          span {{global.config.appName}}
-        a.navbar-brand.visible-xs(style="padding-top: 12px", ng-href="{{global.app.path.calendar}}")
-          img.img-circle.pull-left(alt="{{global.config.appName}}", style="height: 30px; margin-right: 10px", src="/img/logo_black.png")
-          span {{global.config.appName}}
+      a.navbar-brand.hidden-xs(style="padding-top: 12px", ng-href="{{global.app.path.dashboard}}")
+        img.img-circle.pull-left(alt="Eventorio", style="height: 30px; margin-right: 10px", src="/img/logo_white.png")
+        span Eventorio
+      a.navbar-brand.visible-xs(style="padding-top: 12px", ng-href="{{global.app.path.calendar}}")
+        img.img-circle.pull-left(alt="Eventorio", style="height: 30px; margin-right: 10px", src="/img/logo_white.png")
+        span Eventorio
 
-      #navbar.collapse.navbar-collapse.text-center
-        .visible-lg.visible-md.visible-sm
-          ul.nav.navbar-nav.navbar-right(ng-show="show")
-            li(ng-if="!global.me")
-              a(href="#", data-toggle="modal", data-target="#loginModal")
-                span.glyphicon.glyphicon-off(style="margin-right: 10px")
-                span Login
-            li.dropdown(ng-if="global.me")
-              a.dropdown-toggle(href="#", data-toggle="dropdown")
-                img.img.img-rounded(style="height: 18px; margin-right: 10px", ng-src="{{global.me.picture}}")
-                span {{global.me.username}}
-                span.caret
-              ul.dropdown-menu(role="menu")
-                li
-                  a(href="/users/{{global.me.username}}")
-                    | Profile
-                li
-                  a(ng-href="{{global.app.path.logout}}")
-                    | Logout
+    #navbar.collapse.navbar-collapse(ng-if="global.me")
+      .hidden-xs
+        ul.nav.navbar-nav.navbar-right
+          li.dropdown(ng-if="global.me")
+            a.dropdown-toggle(href="#", data-toggle="dropdown")
+              #me-thumbnail.pull-left.img.img-circle(picture, item-type="user", type="avatar", item="global.me")
+              span {{global.me.username}}
+              span.caret
+            ul.dropdown-menu(role="menu")
+              li
+                a(href="/users/{{global.me.username}}")
+                  | Profile
+              li
+                a(ng-href="{{global.app.path.logout}}")
+                  | Logout
 
-        .visible-xs
-          ul.nav.navbar-nav.navbar-right(ng-show="show && !global.me")
-            li
-              a(href="#", data-toggle="modal", data-target="#loginModal")
-                span.glyphicon.glyphicon-off(style="margin-right: 10px")
-                span Login
-          ul.nav.navbar-nav.navbar-right(ng-show="show && global.me")
-            li#profile-menu
-              a(href="/users/{{global.me.username}}")
-                img.img.img-rounded(style="height: 30px; margin-right: 10px", ng-src="{{global.me.picture}}")
-                span {{global.me.username}}
-            li#calendar-menu
-              a(ng-href="{{global.app.path.calendar}}")
-                span.glyphicon.glyphicon-calendar(style="margin-right: 10px")
-                span Calendar
-            li#news-menu
-              a(ng-href="{{global.app.path.news}}")
-                span.glyphicon.glyphicon-bullhorn(style="margin-right: 10px")
-                span News
-            //- li#create-event-menu
-            //-   a(href="/events/new")
-            //-     span.glyphicon.glyphicon-plus-sign(style="margin-right: 10px")
-            //-     span Create event
-            .clearfix
-            br
-            br
-            li
-              a(ng-href="{{global.app.path.logout}}")
-                span.glyphicon.glyphicon-off(style="margin-right: 10px")
-                span Logout
-
-  #loginModal.modal.fade(tabindex="-1", role="dialog", aria-hidden="true")
-    .modal-dialog
-      .modal-content
-        .modal-header
-          button.close(type='button', data-dismiss='modal')
-            span(aria-hidden='true') ×
-            span.sr-only Close
-          h4.modal-title(ng-if="view === 'login'") Login to {{global.config.appName}}
-          h4.modal-title(ng-if="view === 'restore'") Restore password
-          h4.modal-title(ng-if="view === 'signup'") Sign up to {{global.config.appName}}!
-        #login-box.modal-body
-          form.form(role="form")
-            .form-group
-              input.form-control(type="text"
-                                  placeholder="Username"
-                                  name="username"
-                                  ng-model="credentials.username"
-                                  ng-pattern="/^[a-zA-Z0-9]{4,20}$/"
-                                  required)
-            .form-group(ng-if="view !== 'login'")
-              input.form-control(type="email"
-                                  placeholder="Email"
-                                  name="email"
-                                  ng-model='credentials.email'
-                                  required)
-            .form-group(ng-if="view !== 'restore'")
-              input.form-control(type="password"
-                                  placeholder="Password"
-                                  name="password"
-                                  ng-model='credentials.password'
-                                  ng-pattern="/^.{8,}$/"
-                                  required)
-            .form-group(ng-if="view === 'signup'")
-              input.form-control(type="password"
-                                  placeholder="Repeat password"
-                                  name="repeatPassword"
-                                  ng-model='credentials.repeatPassword'
-                                  required)
-
-          a.pull-left(href="#", ng-if="view !== 'signup'", ng-click="switchView('signup')")
-            big
-              label.label.label-info Sign up
-
-          .text-right
-            a(href="#", ng-show="view === 'login'", ng-click="switchView('restore')") Restore password
-            a(href="#", ng-show="view === 'restore'", ng-click="switchView('login')") Login
-
-        .modal-footer
-          button.btn.btn-default(type='button', data-dismiss='modal') Cancel
-          button#loginButton.btn.btn-success(ng-if="view==='login'", type='button', ng-click="login()") Login
-          button#restoreButton.btn.btn-success(ng-if="view==='restore'", type='button', ng-click="restorePassword()") Restore
-          button.btn.btn-success.pull-right(ng-if="view==='signup'",ng-click="signup()") Create account
+      .visible-xs
+        ul.nav.navbar-nav.navbar-right
+          li#profile-menu
+            a(ng-href="/users/{{global.me.username}}")
+              span.glyphicon.glyphicon-user(style="margin-right: 10px")
+              span {{global.me.username}}
+              #me-thumbnail.pull-right.img.img-circle(picture, item-type="user", type="avatar", item="global.me")
+          li#calendar-menu
+            a(href="#", ng-click="switchView('calendarView')")
+              span.glyphicon.glyphicon-calendar(style="margin-right: 10px")
+              span Calendar
+          li#news-menu
+            a(href="#", ng-click="switchView('newsView')")
+              span.glyphicon.glyphicon-bullhorn(style="margin-right: 10px")
+              span News
+          .clearfix
+          br
+          li
+            a(ng-href="{{global.app.path.logout}}")
+              span.glyphicon.glyphicon-off(style="margin-right: 10px")
+              span Logout

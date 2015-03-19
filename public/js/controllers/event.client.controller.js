@@ -1,245 +1,270 @@
-app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'Events', 'Notifications', 'Comments',
-  function ($scope, $rootScope, Global, Users, Events, Notifications, Comments) {
+app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'Events', 'growl', 'Comments',
+  function ($scope, $rootScope, Global, Users, Events, growl, Comments) {
   $scope.global = Global;
   $scope.now = moment();
   $scope.isNew = window.location.href.indexOf('new') >= 0;
+  $scope.editmode = $scope.isNew;
 
-  $scope.view = 'description';
-  $scope.peopleView = 'accepted';
-
-  $scope.stickyParams = {
-    topLimit: 75,
-    topOffset: 5
+  $scope.states = {
+    me: false,
+    participants: false
   };
+
+  $scope.calendar = {
+    events: []
+  };
+
+  $scope.invitations = {
+    emails: null,
+    followers: []
+  };
+
+  $scope.$on('day', function (info, day, events) {
+    if (!$scope.event.date) $scope.event.date = moment();
+
+    $scope.event.date.year(day.year());
+    $scope.event.date.month(day.month());
+    $scope.event.date.date(day.date());
+
+    $scope.calendar.events = events;
+
+    $scope.$apply();
+  });
+
+  $scope.$on('clockpicker:time', function (info, hours, minutes) {
+    if (!$scope.event.date) $scope.event.date = moment();
+
+    $scope.event.date.hour(hours);
+    $scope.event.date.minute(minutes);
+
+    $scope.$apply();
+  });
 
   Events.updateMonthlyList($scope.now, function (err, events) {
-    $rootScope.$broadcast('day', $scope.now, _.filter(events, function (event) {
+    if (err) return growl.error(err);
+    $rootScope.$broadcast('monthlyEvents', events);
+    $scope.calendar.events = _.filter(events, function (event) {
       return moment(event.date).format('YYYYMMDD') === $scope.now.format('YYYYMMDD');
-    }));
+    });
   });
 
-  $scope.$on('event:update:header', function (info, img) {
-    $scope.event.headerPicture = img;
-    $scope.$apply();
-  });
+  var filterFollowersToInvite = function () {
+    var invitedFollowers = _.filter($scope.event.organizator.followers, function (follower) {
+      var followerInAccepted = _.find($scope.event.participants.accepted, function (fol) {
+        return fol.id === follower.id;
+      }) ? true : false;
+      var followerInInvited = _.find($scope.event.participants.invited, function (fol) {
+        return fol.id === follower.id;
+      }) ? true : false;
 
-  $scope.$on('event:update:avatar', function (info, img) {
-    $scope.event.picture = img;
-    $scope.$apply();
-  });
+      return followerInAccepted || followerInInvited;
+    });
 
-  $scope.$on('me', function () {
-    if (!$scope.event) {
-      $scope.event = Events.get({eventId: window.location.pathname.split('/')[2]}, function () {
-        $scope.setEditable(false);
-        $scope.event.date = moment($scope.event.date);
-        $scope.event.comments = Comments.get({eventId: window.location.pathname.split('/')[2]});
-        $scope.event.people = Events.people.get({eventId: $scope.event.id}, function () {
-          $scope.event.people.accepted.push($scope.event.organizator);
-          $scope.attending = (_.findWhere($scope.event.people.accepted, {id: Global.me.id})) ? true : false;
-          $scope.$broadcast('currentEvent');
+    $scope.followersToInvite = _.difference($scope.event.organizator.followers, invitedFollowers);
+    $scope.followersToInvite = _.map($scope.followersToInvite, function (follower) {
+      follower.isVisible = true;
+      return follower;
+    });
+  };
+
+  $scope.initEvent = function (event) {
+    if ($scope.isNew && !event.tempId) return growl.error('Error!');
+
+    async.series([
+      function (next) {
+        $scope.event = $scope.fixEvent(event);
+        return next();
+      },
+      function (next) {
+        var setupOrganizator = function () {
+          $scope.isEditable = (Global.me.id === $scope.event.organizator.id);
+          if ($scope.isEditable) {
+            var eventorioFollower = _.find(Global.me.followers, function (follower) {
+              return follower.username === 'Eventorio';
+            });
+
+            $scope.event.organizator.followers = _.without(Global.me.followers, eventorioFollower);
+          }
+          $scope.states.me = true;
+        };
+
+        if (Global.me) {
+          setupOrganizator();
+          return next();
+        }
+        $scope.$on('me', function () {
+          setupOrganizator();
+          return next();
         });
-        $scope.show = true;
+      }, function (next) {
+        $scope.event.participants = Events.participants.get({eventId: $scope.event.id}, function () {
+          $scope.event.isAttending = (_.find($scope.event.participants.accepted, function (us) {
+            return us.id === Global.me.id;
+          })) ? true : false;
+          $scope.states.participants = true;
+
+          return next();
+        });
+      }, function (next) {
+        filterFollowersToInvite();
+        $scope.$watch('invitations.search', function (newQuery, oldQuery) {
+          if (newQuery === oldQuery) return;
+          if (!newQuery) {
+            $scope.followersToInvite = _.map($scope.followersToInvite, function (follower) {
+              follower.isVisible = true;
+              return follower;
+            });
+          }
+          var queryRE = new RegExp(newQuery);
+          $scope.followersToInvite = _.map($scope.followersToInvite, function (follower) {
+            if (follower.username.match(queryRE) || (follower.name && follower.name.match(queryRE))) {
+              follower.isVisible = true;
+            } else {
+              follower.isVisible = false;
+            }
+            return follower;
+          });
+        });
+        return next();
+      }
+    ], function () {
+      console.log(event);
+    });
+  };
+
+  $scope.fixEvent = function (event) {
+    if (event.date) event.date = moment(event.date);
+
+    return event;
+  };
+
+  $scope.toggleInvitation = function (user) {
+    if (!$scope.isChoosedToBeInvited(user)) {
+      $scope.invitations.followers.push(user);
+      user.isChoosed = true;
+    } else {
+      $scope.invitations.followers = _.without($scope.invitations.followers, user);
+      user.isChoosed = false;
+    }
+  };
+
+  $scope.isChoosedToBeInvited = function (user) {
+    return _.find($scope.invitations.followers, function (follower) {
+      return follower.id === user.id;
+    }) ? true : false;
+  };
+
+  $scope.invite = function () {
+    if (!$scope.invitations.emails && $scope.invitations.followers.length === 0) return;
+
+    var emails = [];
+    if ($scope.invitations.emails) {
+      emails = _.filter($scope.invitations.emails.split(','), function (email) {
+        return email.trim();
+      });
+    }
+
+    Events.invite(emails, $scope.invitations.followers, $scope.event, function (err) {
+      if (err) return growl.error(err);
+
+      _.each($scope.invitations.followers, function (follower) {
+        $scope.event.participants.invited.push(follower);
+      });
+      filterFollowersToInvite();
+      $scope.invitations.emails = null;
+      $scope.invitations.followers = [];
+      $scope.invitations.search = '';
+    });
+  };
+
+  $scope.attend = function () {
+    var newAttendee = new Events.participants($scope.event);
+    newAttendee.$save();
+    $scope.event.isAttending = true;
+    var meInInvited = _.find($scope.event.participants.invited, function (us) {
+      return us.id === Global.me.id
+    }) || Global.me;
+    $scope.event.participants.accepted.push(meInInvited);
+    $scope.event.participants.invited = _.without($scope.event.participants.invited, meInInvited);
+  };
+
+  $scope.quit = function () {
+    Events.participants.remove($scope.event, function (err) {
+      if (err) return growl.error(err);
+      $scope.event.isAttending = false;
+      var meInAccepted = _.find($scope.event.participants.accepted, function (us) {
+        return us.id === Global.me.id
+      }) || Global.me;
+      $scope.event.participants.accepted = _.without($scope.event.participants.accepted, meInAccepted);
+      $scope.event.participants.invited.push(meInAccepted);
+    });
+  };
+
+  $scope.save = function () {
+    var errors = $scope.validate($scope.event);
+
+    if (errors) return $scope.$broadcast('event:save:error', errors);
+
+    if ($scope.isNew) {
+      var event = new Events($scope.event);
+      event.$save(function (event) {
+        window.location.href='/events/' + event.id;
       });
     } else {
-      // Loading the event creation page
-      $scope.setEditable(true);
-      $scope.show = true;
+      Events.update({_id: $scope.event.id, event: $scope.event}, function (event) {
+        var venue = $scope.event.venue;
+        $scope.event = $scope.fixEvent(event);
+        $scope.event.venue = venue;
+        $scope.editmode = false;
+      });
     }
-  });
-
-  $scope.showDescription = function () {
-    if ($scope.view === 'description') return;
-    $scope.view = 'description';
-  };
-  $scope.showComments = function () {
-    if ($scope.view === 'comments') return;
-    $scope.view = 'comments';
-  };
-  $scope.showPeople = function () {
-    if ($scope.view === 'people') return;
-    $scope.view = 'people';
-  };
-
-  $scope.showPeopleAccepted = function () {
-    if ($scope.peopleView === 'accepted') return;
-    $scope.peopleView = 'accepted';
-  };
-
-  $scope.showPeopleInvited = function () {
-    if ($scope.peopleView === 'invited') return;
-    $scope.peopleView = 'invited';
   };
 
   $scope.cancel = function () {
-    Events.removeTemporaryEvent($scope.event, function (err) {
-      if (err) return Notifications.error($('.event-thumbnail'), err);
-      if (!$scope.isNew) {
-        window.location.reload();
-      } else {
-        window.location.href = app.path.dashboard;
-      }
-    });
-
-  }
-
-  $scope.attendTheEvent = function () {
-    if ($scope.attending) return;
-    Events.attend($scope.event, function (err) {
-      $scope.event.people.accepted.push(Global.me);
-      $scope.event.people.invited = _.without($scope.event.people.invited,
-                                              _.findWhere(
-                                                $scope.event.people.invited,
-                                                {id: Global.me.id}
-                                              )
-                                            );
-      $scope.attending = (_.findWhere($scope.event.people.accepted, {id: Global.me.id}))?true:false;
-    });
-  }
-
-  $scope.quitTheEvent = function () {
-    Events.quit($scope.event, function (err) {
-      $scope.event.people.invited.push(Global.me);
-      $scope.event.people.accepted = _.without($scope.event.people.accepted,
-                                                _.findWhere(
-                                                  $scope.event.people.accepted,
-                                                  {id: Global.me.id}
-                                                )
-                                              );
-      $scope.attending = (_.findWhere($scope.event.people.accepted, {id: Global.me.id}))?true:false;
-    });
-  }
-
-  $scope.deleteEvent = function() {
-    var input = $('#eventNameToDelete textarea').val();
-    if(input === $scope.event.name){
-      Events.remove($scope.event, function(err) {
-        if(!err){
-          $('#deleteModal').toggle();
-          window.location.pathname = app.path.dashboard;
-        }
-      });
-    }
+    if ($scope.isNew) return window.location.href = app.path.dashboard;
+    $scope.editmode = false;
   };
 
-  $scope.comment = function (newComment) {
-    if (!newComment || newComment === '') return;
-
-    var comment = new Comments({content: newComment, event: $scope.event});
-    comment.$save(function (res) {
-      $scope.event.comments.comments.push(res);
-    }, function (res) {
-      if (Global.screenSize === 'lg') {
-        Notifications.error($('.event-comments .form .error-field'), res.data);
-      } else if (Global.screenSize === 'xs') {
-        Notifications.error($('.event-comments .form-inline .error-field'), res.data);
-      }
-    })
-  }
-
-  $scope.getDescription = function () {
-    var desc;
-
-    if (Global.screenSize === 'lg') desc = $('.hidden-xs .event-description textarea.eventDescriptionField').val();
-    else desc = $('.visible-xs .event-description textarea.eventDescriptionField').val();
-
-    desc = '<div>' + desc + '</div>';
-    descHtml = $(desc);
-    $(descHtml).each(function () {
-      $(this).find('img').each(function () {
-        $(this).addClass('img');
-        $(this).addClass('img-responsive');
-      });
-    });
-
-    return descHtml.prop('outerHTML');
+  $scope.cancelLogo = function () {
+    $scope.$broadcast('cropme:cancel');
   };
 
-  $scope.modifyEvent = function () {
-    $scope.event.desc = $scope.getDescription();
+  $scope.validate = function (event) {
+    var errors = [];
+    var nameError = app.validator.validateEventName(event.name);
+    var dateError = app.validator.validateEventDate(event.date);
+    var venueError = app.validator.validateEventVenue(event.venue);
 
-    if (!$scope.event.name || $scope.event.name.length < 1 || $scope.event.name > 20) {
-      Notifications.error($('.event-thumbnail'), 'Name should not be empty and should not be longer than 20 characters');
-      return;
-    }
+    if (nameError) errors.push({field: 'name', message: nameError});
+    if (dateError) errors.push({field: 'date', message: dateError});
+    if (venueError) errors.push({field: 'venue', message: venueError});
 
-    if ($scope.event.id) {
-      Events.update({eventId: $scope.event.id}, $scope.event, function (data) {
-        data.comments = $scope.event.comments;
-        data.people = $scope.event.people;
-        data.date = moment(data.date);
+    return errors.length === 0 ? null : errors;
+  };
 
-        $scope.event = data;
-        $scope.setEditable(false);
-      });
-    } else {
-      var event = new Events($scope.event);
-      event.$save(function (data) {
-        window.location.href = '/events/' + data.id;
-      });
-    }
-
-  }
+  $scope.enterEditMode = function () {
+    $scope.editmode = true;
+  };
 
   $scope.visibilities = [
-    {value: 'public', text: 'Event is visible to everyone'},
-    {value: 'followers', text: 'Event is visible only to your followers'},
-    {value: 'invitations', text: 'Event is visible only to invited people'}
+    {value: 'public', text: 'Visible to everyone'},
+    {value: 'followers', text: 'Visible to your followers'},
+    {value: 'invitations', text: 'Visible only to invited people'},
   ];
-
   $scope.showVisibility = function () {
-    if (!$scope.event.permissions.visibility) return $scope.visibilities[0].text;
-    return _.find($scope.visibilities, function (el) {
-      return el.value === $scope.event.permissions.visibility;
+    return _.find($scope.visibilities, function (v) {
+      return v.value === $scope.event.permissions.visibility;
     }).text;
   };
 
-  $scope.updateVisibility = function (data) {
-    $scope.event.permissions.visibility = data;
-  }
-
-  $scope.attendencies = [
-    {value: 'public', text: 'Everyone can attend this event'},
-    {value: 'followers', text: 'Only your followers can attend this event'},
-    {value: 'invitations', text: 'Only invited people can attend this event'}
+  $scope.attendancies = [
+    {value: 'public', text: 'Everyone can attend'},
+    {value: 'followers', text: 'Only followers can attend'},
+    {value: 'invitations', text: 'Only invited users can attend'},
   ];
-
   $scope.showAttendance = function () {
-    if (!$scope.event.permissions.attendance) return $scope.attendencies[0].text;
-    return _.find($scope.attendencies, function (el) {
-      return el.value === $scope.event.permissions.attendance;
+    return _.find($scope.attendancies, function (a) {
+      return a.value === $scope.event.permissions.attendance;
     }).text;
   };
-
-  $scope.updateAttendance = function (data) {
-    $scope.event.permissions.attendance = data;
-  }
-
-  $scope.setEditable = function (status) {
-    if (status) {
-      $scope.mode = 'Edit';
-      $scope.view='description';
-
-      $('.clockpicker').clockpicker({
-        default: 'now'
-      }).find('input').change(function () {
-        var temp = this.value.split(':');
-        if (!$scope.event.date) $scope.event.date = moment();
-        $scope.event.date.hours(parseInt(temp[0]));
-        $scope.event.date.minutes(parseInt(temp[1]));
-        $scope.$apply();
-      });
-
-      $scope.$on('day', function (info, date, events) {
-        date = moment(date);
-        if (!$scope.event.date) $scope.event.date = date;
-        else $scope.event.date = moment($scope.event.date).year(date.year()).month(date.month()).date(date.date());
-      });
-
-      $('textarea.eventDescriptionField').html($scope.event.desc);
-      $('textarea.eventDescriptionField.wysihtml5').wysihtml5();
-    } else {
-      $scope.mode = 'Normal';
-    }
-  }
 }]);

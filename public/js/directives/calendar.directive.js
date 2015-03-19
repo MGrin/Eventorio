@@ -1,9 +1,7 @@
-app.directive('calendar', ['$rootScope', function ($rootScope) {
+app.directive('calendar', ['$rootScope', 'Events', function ($rootScope, Events) {
   return {
-    templateUrl: '/view/calendar.html',
     link: function ($scope, element, attrs) {
-      $(element).find('.prevMonth').click($scope.prevMonth);
-      $(element).find('.nextMonth').click($scope.nextMonth);
+      $scope.month = moment();
       $(element).find('.responsive-calendar').responsiveCalendar({
         monthChangeAnimation: false,
         onDayClick: function (events) {
@@ -15,21 +13,42 @@ app.directive('calendar', ['$rootScope', function ($rootScope) {
           var date = moment(dateStr, 'YYYY-MM-DD');
           var events = events[dateStr] ? events[dateStr].dayEvents : [];
 
-          $('.day').find('a').each(function () {
-            $(this).css('background-color', 'transparent');
-            $(this).hover(function () {
-              $(this).css('background-color', '#eee');
-            }, function () {
-              $(this).css('background-color', 'transparent');
-            });
-          });
-          $(this).css('background-color', '#6BB0BA');
-          $(this).hover(function () {
-            $(this).css('background-color', '#6BB0BA');
-          });
           return $rootScope.$broadcast('day', date, events);
         }
       });
+
+      $scope.prevMonth = function () {
+        $scope.month.subtract(1, 'month');
+        Events.updateMonthlyList($scope.month, function () {
+          $('.responsive-calendar').responsiveCalendar('prev');
+        });
+      };
+
+      $scope.nextMonth = function () {
+        $scope.month.add(1, 'month');
+        Events.updateMonthlyList($scope.month, function () {
+          $('.responsive-calendar').responsiveCalendar('next');
+        });
+      };
+
+      $scope.updateCalendar = function (info, events) {
+        var calendarEvents = {};
+
+        _.each(events, function (event) {
+          var calendarDate = moment(event.date).format('YYYY-MM-DD');
+          if (!calendarEvents[calendarDate]) {
+            calendarEvents[calendarDate] = {
+              number: 0,
+              dayEvents: []
+            };
+          }
+          calendarEvents[calendarDate].number++;
+          calendarEvents[calendarDate].dayEvents.push(event);
+        });
+        $('.responsive-calendar').responsiveCalendar('edit', calendarEvents);
+      };
+
+      $scope.$on('monthlyEvents', $scope.updateCalendar);
     }
   }
 }]);

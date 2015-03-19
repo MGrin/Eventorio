@@ -1,116 +1,337 @@
 doctype html
-html(lang="en", ng-app="EventorioApp")
-  include ../layouts/head.server.jade
-  include ../layouts/scripts.server.jade
+html(lang="en", ng-app="EventorioUser")
+  head
+    title
+      | #{profile.username}@Eventorio
+    meta(name="viewport", content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no")
+
+    link(rel="stylesheet", href="/lib/bootstrap/dist/css/bootstrap.min.css")
+    link(rel="stylesheet", href="/lib/bootstrap-material-design/dist/css/material.min.css")
+    link(rel="stylesheet", href="/lib/bootstrap-material-design/dist/css/material-fullpalette.min.css")
+    link(rel="stylesheet", href="/lib/bootstrap-material-design/dist/css/ripples.min.css")
+    link(rel="stylesheet", href="/lib/bootstrap-material-design/dist/css/roboto.min.css")
+    link(rel="stylesheet", href="/lib/angular-growl-v2/build/angular-growl.min.css")
+    link(rel="stylesheet", href="/lib/angular-xeditable/dist/css/xeditable.css")
+    //- link(rel="stylesheet", href="/lib/components-font-awesome/css/font-awesome.min.css")
+
+    link(rel="stylesheet", href="/css/header.css")
+    link(rel="stylesheet", href="/css/user.css")
+
+    script(src="/lib/jquery/dist/jquery.min.js")
+    script(src="/lib/underscore/underscore-min.js")
+    script(src="/lib/async/lib/async.js")
+    script(src="/lib/moment/min/moment.min.js")
+    script(src="/lib/bootstrap/dist/js/bootstrap.min.js")
+    script(src="/lib/bootstrap-material-design/dist/js/material.min.js")
+    script(src="/lib/angular/angular.min.js")
+
+    script(src="/lib/angular-resource/angular-resource.min.js")
+    script(src="/lib/angular-growl-v2/build/angular-growl.min.js")
+    script(src="/lib/angular-xeditable/dist/js/xeditable.min.js")
+
+    script(src="/cdn/js/user.client.js")
+    script(src="/cdn/js/shared/routes.shared.js")
+
+    script(src="/cdn/js/services/global.client.service.js")
+    script(src="/cdn/js/services/user.client.service.js")
+    script(src="/cdn/js/services/event.client.service.js")
+    script(src="/cdn/js/services/pictures.client.service.js")
+
+    script(src="/cdn/js/controllers/header.client.controller.js")
+    script(src="/cdn/js/controllers/user.client.controller.js")
+
+    script(src="/cdn/js/directives/picture.directive.js")
+    script(src="/cdn/js/directives/user.profile.directive.js")
+    script(src="/cdn/js/directives/user.small.directive.js")
+
   body
     include ../layouts/header.server.jade
+    div(growl)
+    user-profile#user-profile(ng-controller="UserController")
+      .row-fluid#user-header-picture
+        .row-fluid
+          picture.col-lg-12.col-md-12.col-sm-12.col-xs-12(item="user"
+                  item-type="user"
+                  type="header"
+                  ng-mouseenter="showEditHeaderButton = true"
+                  ng-mouseleave="showEditHeaderButton = false")
+            #edit-header-btn.pull-right.well.clickable(ng-if="editable"
+                                        ng-show="showEditHeaderButton"
+                                        ng-click="toggleCoverChoser()")
+              span.mdi-image-edit
+        .row-fluid
+          .col-lg-6.col-lg-offset-5.col-md-6.col-md-offset-5.col-sm-6.col-sm-offset-5.col-xs-12(ng-if="editable" ng-show="choosingCover")
+            .well.row#header-upload-well
+              form.form-inline
+                .form-group.col-lg-12.col-md-12.col-sm-12.col-xs-12
+                  .row
+                    label.col-lg-2.col-md-2.col-sm-2.col-xs-12.control-label Select image:
+                    .col-lg-5.col-md-5.col-sm-5.col-xs-12
+                      .form-control-wrapper.fileinput
+                        input.form-control.empty(type="text" readonly)
+                        input#header-img-upload(type="file")
+                        .floating-label Browse
+                        span.material-input
 
-    .content-fluid(ng-controller="UserController", ng-show="show")
-      .row(style="margin: 0;")
-        .col-lg-12(ng-show="choosingCover", img-upload-cover, is-visible="choosingCover", item-type="user", item="user")
-        .user-header.col-lg-12(ng-show="!choosingCover", picture, item-type="user", item="user", type="header")
-          ul.pager.col-lg-12.hide.hidden-xs(ng-show="editable")
-            li
-              a(href="#", ng-click="choosingCover=true") Upload new cover image &nbsp;
-                i.mdi-content-create
-      #user-content.row-fluid
-        .col-lg-4.col-lg-offset-1.col-xs-12.col-xs-offset-0
-          .row
-            .user-thumbnail.col-lg-8.col-xs-4(picture, item-type="user", type="avatar", item="user")
+                    .col-lg-5.col-md-6.col-sm-8.col-xs-12
+                        button.btn.btn-material-light-green(ng-click="saveNewCover()" ng-disabled="!newHeaderPicture") Save
+                        button.btn.btn-default(ng-click="toggleCoverChoser()") Cancel
+                  .row(ng-if="headerUploadError")
+                    .alert.alert-warning {{headerUploadError}}
+                  .row(ng-show="headerIsUploading")
+                    .progress
+                      .progress-bar.progress-bar-material-light-green
 
-            .user-username.col-xs-8.visible-xs {{user.username}}
-            .user-name.visible-xs.col-xs-8.pull-right
-              div(ng-if="editable")
-                a(href="#" editable-text="user.name" buttons="no" e-required e-placeholder="Enter name" onaftersave="updateUser('name', $data)") {{user.name || 'No name'}}
-              div(ng-if="!editable")
-                p {{user.name || 'No name'}}
-
-          .row.hidden-xs
-            .user-name.col-lg-12.big-text
-              div(ng-if="editable")
-                a(href="#" editable-text="user.name" buttons="no" e-required e-placeholder="Enter name" onaftersave="updateUser('name', $data)") {{user.name || 'empty'}}
-              div(ng-if="!editable")
-                p {{user.name || 'No name'}}
-          .row.visible-xs
-            .user-description.col-xs-12
-              div(ng-if="editable")
-                a(href="#" editable-textarea="user.desc" buttons="no" e-required e-placeholder="Tell us something about you" onaftersave="updateUser('desc', $data)") {{user.desc || 'No description'}}
-              div(ng-if="!editable")
-                p {{user.desc || 'No description'}}
-          .row
-            .col-lg-4.col-xs-6.text-center
-              a(href="#", data-toggle="modal", data-target="#peopleModal", ng-click="people='followers'")
-                | {{user.followers.length || 0}}
-                br
+      .row-fluid
+        #user-details.col-lg-3.col-lg-offset-1.col-md-3.col-sm-4.col-xs-6
+          .row-fluid
+            .well.col-lg-12.col-md-12.col-sm-12.col-xs-12
+              .row-fluid
+                picture.user-avatar-picture.col-lg-12.col-md-12.col-sm-12.col-xs-12(item="user"
+                  item-type="user"
+                  type="avatar"
+                  ng-mouseenter="showEditAvatarButton = true"
+                  ng-mouseleave="showEditAvatarButton = false")
+                  #edit-avatar-btn.pull-right.well.clickable(ng-if="editable"
+                    ng-show="showEditAvatarButton"
+                    data-toggle="modal"
+                    data-target="#user-picture-modal")
+                    span.mdi-image-edit
+              .row-fluid.hidden-xs
+                .text-center.user-name.col-lg-12.col-md-12.col-sm-12
+                  h2(ng-if="!editable") #{profile.name || "No name"}
+                  h2(ng-if="editable"
+                    blur="submit"
+                    buttons="no"
+                    editable-text="user.name"
+                    e-required
+                    e-placeholder="Enter name"
+                    onaftersave="updateUser()") {{user.name || 'No name'}}
+              .row.visible-xs
+                .text-center.user-name.col-xs-12
+                  p(ng-if="!editable") #{profile.name || "No name"}
+                  p(ng-if="editable"
+                    blur="submit"
+                    buttons="no"
+                    editable-text="user.name"
+                    e-required
+                    e-placeholder="Enter name"
+                    onaftersave="updateUser()") {{user.name || 'No name'}}
+              .row-fluid.hidden-xs(ng-if="!editable")
+                .text-center.col-lg-12.col-md-12.col-sm-12(ng-show="states.isFollower")
+                  button.btn.btn-raised.btn-material-lime(ng-if="!user.isFollower" ng-click="follow()") Follow
+                  button.btn.btn-raised.btn-default(ng-if="user.isFollower" ng-click="unfollow()") Unfollow
+          .row-fluid.hidden-xs
+            .btn-group.btn-group-justified(ng-show="states.connections")
+              .btn.btn-flat(data-toggle="modal" data-target="#users-modal" ng-click="peopleView='followers'")
+                | {{user.followers.length}}
+                br.hidden-lg
                 | Followers
-            .col-lg-4.col-xs-6.text-center
-              a(href="#", data-toggle="modal", data-target="#peopleModal", ng-click="people='following'")
-                | {{user.following.length || 0}}
-                br
+              .btn.btn-flat(data-toggle="modal" data-target="#users-modal" ng-click="peopleView='following'")
+                | {{user.following.length}}
+                br.hidden-lg
                 | Following
+          .row-fluid.text-center.hidden-xs(ng-if="editable")
+            .btn.btn-flat.btn-default(data-toggle="modal" data-target="#user-settings-modal")
+              i.mdi-action-settings
+              span  Settings
+        #user-content.col-lg-8.col-md-9.col-sm-8.col-xs-6
+          .row-fluid
+            .user-username.well.col-lg-12.col-md-12.col-sm-12.col-xs-12
+              h1.hidden-xs #{profile.username}
+              h4.text-center.visible-xs #{profile.username}
+          .row.visible-xs(ng-if="!editable")
+            .text-center.col-xs-12(ng-show="states.isFollower")
+              button.btn.btn-raised.btn-material-lime(ng-if="!user.isFollower" ng-click="follow()") Follow
+              button.btn.btn-raised.btn-default(ng-if="user.isFollower" ng-click="unfollow()") Unfollow
+          .row-fluid.hidden-xs
+            .user-description.col-lg-8.col-md-8.col-sm-8
+              h4(ng-if="!editable") #{profile.desc || "No description"}
+              h4(ng-if="editable"
+                blur="submit"
+                buttons="no"
+                editable-textarea="user.desc"
+                e-rows="5"
+                e-cols="60"
+                e-required
+                e-placeholder="Tell us something about you"
+                onaftersave="updateUser()") {{user.desc || "Tell us something about you"}}
+      .row-fluid.visible-xs
+        #user-profile-xs.col-xs-12
+          .row
+            .user-description.col-lg-8.col-md-8.col-sm-8
+              p(ng-if="!editable") #{profile.desc || "No description"}
+              p(ng-if="editable"
+                blur="submit"
+                buttons="no"
+                editable-textarea="user.desc"
+                e-rows="5"
+                e-cols="60"
+                e-required
+                e-placeholder="Tell us something about you"
+                onaftersave="updateUser()") {{user.desc || "Tell us something about you"}}
+          .row-fluid
+            .btn-group.btn-group-justified(ng-show="states.connections")
+              .btn.btn-flat.btn-xs(data-toggle="modal" data-target="#users-modal" ng-click="peopleView='followers'")
+                | {{user.followers.length}}
+                br.hidden-lg
+                | Followers
+              .btn.btn-flat.btn-xs(data-toggle="modal" data-target="#users-modal" ng-click="peopleView='following'")
+                | {{user.following.length}}
+                br.hidden-lg
+                | Following
+          .row-fluid.text-center(ng-if="editable")
+            .btn.btn-flat.btn-default.btn-xs(data-toggle="modal" data-target="#user-settings-modal")
+              i.mdi-action-settings
+              span  Settings
 
-          .row(ng-if="global.me && !editable")
-            .col-lg-8.col-xs-12.text-center
-              button.btn.btn-success.col-lg-12.col-xs-12(
-                ng-if="!isFollowing"
-                ng-click="follow()") Follow
-              button.btn.btn-default.btn-sm(
-                ng-if="isFollowing"
-                ng-click="unfollow()") Unfollow
-
-          .row.visible-xs
-            .user-events.col-xs-12(ng-if="user.events")
-              p.text-center(ng-if="user.events.length === 0", style="color: grey; opacity: 0.7") No upcoming events
-              p.text-center(ng-if="user.events.length !== 0 && !editable") {{user.username}}'s upcoming events:
-              p.text-center(ng-if="user.events.length !== 0 && editable") Your upcoming events:
-              .col-xs-12(ng-repeat="event in user.events" event-line event="event")
-
-          .margin-xs-10
-          .row(ng-if="global.me && editable")
-            .col-lg-8.text-center
-              .row(ng-show="!changePasswordView")
-                button.btn.btn-info.col-lg-12(ng-click="changePasswordView=true") Change password
-              .row(ng-show="changePasswordView")
-                form.form.col-lg-10.col-lg-offset-1.col-xs-12
-                  .form-group
-                    input.col-lg-12.form-control(ng-model="credentials.oldPassword", type="password", placeholder="Old password")
-                  .form-group
-                    input.col-lg-10.form-control(ng-model="credentials.newPassword", type="password", placeholder="New password")
-                  .form-group
-                    input.col-lg-10.form-control(ng-model="credentials.newPasswordRepeat", type="password", placeholder="New password")
-                  .changePasswordForm
-                .btn-group.btn-group.justified
-                  a.btn.btn-warning(type="submit", ng-click="changePassword()") Change
-                  a.btn.btn-default(type="submit", ng-click="changePasswordView = false") Cancel
-        .col-lg-7
-          .row.hidden-xs
-            .user-username.well {{user.username}}
-          .row.hidden-xs
-            .user-description.col-lg-12
-              div(ng-if="editable")
-                a(href="#" editable-textarea="user.desc" buttons="no" e-required e-rows=5 e-cols=80 e-placeholder="Tell us something about you" onaftersave="updateUser('desc', $data)") {{user.desc || 'No description'}}
-              div(ng-if="!editable")
-                p {{user.desc || 'No description'}}
-          .row.hidden-xs
-            .user-events.col-lg-12(ng-if="user.events")
-              h3(ng-if="user.events.length === 0", style="color: grey; opacity: 0.7") No upcoming events
-              h3(ng-if="user.events.length !== 0 && !editable") {{user.username}}'s upcoming events:
-              h3(ng-if="user.events.length !== 0 && editable") Your upcoming events:
-              .col-lg-6(ng-repeat="event in user.events" event-line event="event")
-
-      #peopleModal.modal.fade(tabindex="-1", role="dialog", aria-hidden="true")
+      #users-modal.modal.fade
         .modal-dialog
           .modal-content
             .modal-header
-              button.close(type='button', data-dismiss='modal')
+              button.btn.close(type="button" data-dismiss="modal" aria-label="Close")
                 span(aria-hidden='true') ×
-                span.sr-only Close
-              h4.modal-title(ng-if="people==='followers'") Followers
-              h4.modal-title(ng-if="people==='following'") Following
+              div(ng-show="peopleView === 'followers'")
+                h2.hidden-xs(ng-show="editable") Your followers
+                h2.hidden-xs(ng-show="!editable") #{profile.username}'s followers
+                h4.visible-xs(ng-show="editable") Your followers
+                h4.visible-xs(ng-show="!editable") #{profile.username}'s followers
+              div(ng-show="peopleView === 'following'")
+                h2.hidden-xs(ng-show="editable") People you follow
+                h2.hidden-xs(ng-show="!editable") People #{profile.username} follow
+                h4.visible-xs(ng-show="editable") People you follow
+                h4.visible-xs(ng-show="!editable") People #{profile.username} follow
             .modal-body
-              .row(ng-if="people === 'followers'")
-                .col-lg-3.col-xs-4(ng-repeat="u in user.followers", user-small, user="u")
-              .row(ng-if="people === 'following'")
-                .col-lg-3.col-xs-4(ng-repeat="u in user.following", user-small, user="u")
+              #users-list.row
+                .col-lg-12.col-md-12.col-sm-12.col-xs-12(ng-show="peopleView === 'followers'")
+                  .col-lg-2.col-md-2.col-sm-2.col-xs-2(ng-repeat="user in user.followers", user-small, user="user")
+                .col-lg-12.col-md-12.col-sm-12.col-xs-12(ng-show="peopleView === 'following'")
+                  .col-lg-2.col-md-2.col-sm-2.col-xs-2(ng-repeat="user in user.following", user-small, user="user")
+      #user-picture-modal.modal.fade
+        .modal-dialog
+          .modal-content
+            .modal-header
+              button.btn.close(type="button" data-dismiss="modal" aria-label="Close")
+                span(aria-hidden='true') ×
+              h2.hidden-xs Edit your profile picture
+              h4.visible-xs Edit your profile picture
+            .modal-body
+              .row
+                .col-lg-4
+                  picture.user-avatar-thumbnail.img.img-thumbnail(item="user"
+                          item-type="user"
+                          type="avatar")
+                .col-lg-6
+                  form.form-horizontal
+                    .form-group
+                      .togglebutton.col-lg-12
+                        label
+                          input(type="checkbox"
+                                name="gravatar-picture"
+                                value="gravatar"
+                                ng-checked="user.pictureProvider === 'gravatar'"
+                                ng-disabled="user.pictureProvider === 'gravatar'"
+                                ng-click="user.pictureProvider = 'gravatar'")
+                          span.toggle
+                          | Gravatar
+                        a.pull-right(ng-href="http://gravatar.com/{{user.gravatarHash}}" target="_blank") Edit your gravatar picture
+                      .togglebutton.col-lg-12(ng-if="user.providers.indexOf('facebook') !== -1")
+                        label
+                          input(type="checkbox"
+                                name="facebook-picture"
+                                value="facebook"
+                                ng-checked="user.pictureProvider === 'facebook'"
+                                ng-disabled="user.pictureProvider === 'facebook'"
+                                ng-click="user.pictureProvider = 'facebook'")
+                          span.toggle
+                          span Facebook
+                      .togglebutton.col-lg-12(ng-if="user.providers.indexOf('google') !== -1 && user.google._json.image")
+                        label
+                          input(type="checkbox"
+                                name="facebook-picture"
+                                value="google"
+                                ng-checked="user.pictureProvider === 'google'"
+                                ng-disabled="user.pictureProvider === 'google'"
+                                ng-click="user.pictureProvider = 'google'")
+                          span.toggle
+                          span Google
             .modal-footer
-              button.btn.btn-default(type='button', data-dismiss='modal') Ok
+              button.btn.btn-material-light-green(type="button" data-dismiss="modal" ng-click="updateUser()") Save
+              button.btn.btn-default(type="button" data-dismiss="modal") Close
+
+      #user-settings-modal.modal.fade
+        .modal-dialog
+          .modal-content
+            .modal-header
+              button.btn.close(type="button" data-dismiss="modal" aria-label="Close")
+                span(aria-hidden='true') ×
+              h2.hidden-xs
+                i.mdi-action-settings
+                span  Settings
+              h4.visible-xs
+                i.mdi-action-settings
+                span  Settings
+            .modal-body
+              .row-fluid
+                legend Change password
+                form.form-horizontal
+                  fieldset
+                    .form-group
+                      label.control-label.col-lg-4(for="old-password-input") Old password
+                      .col-lg-8
+                        input#old-password-input.form-control(type="password"
+                          placeholder="Type your old password"
+                          ng-model="credentials.oldPassword")
+                    .form-group
+                      label.control-label.col-lg-4(for="new-password-input") New password
+                      .col-lg-8
+                        input#new-password-input.form-control(type="password"
+                          placeholder="Type your new password"
+                          ng-model="credentials.newPassword")
+                    .form-group
+                      label.control-label.col-lg-4(for="new-password-repeat-input") Repeat new password
+                      .col-lg-8
+                        input#new-password-repeat-input.form-control(type="password"
+                          placeholder="Type your new password again"
+                          ng-model="credentials.newPasswordRepeat")
+                    .form-group
+                      .col-lg-10.visible-lg
+                        .alert.alert-warning(ng-show="credentials.error")
+                          p {{credentials.error}}
+                        .alert.alert-success(ng-show="credentials.passwordChanged")
+                          p Password changed successfully
+                      .col-lg-2.col-md-2.col-sm-2.col-xs-2
+                        button.btn.btn-raised.btn-material-light-green(ng-click="changePassword()"
+                          ng-disabled="credentials.oldPassword.length === 0 || \
+                                      credentials.newPassword.length === 0 || \
+                                      credentials.newPasswordRepeat.length === 0 || \
+                                      credentials.newPassword !== credentials.newPasswordRepeat")
+                          i.mdi-action-done
+                      .col-md-10.col-sm-10.col-xs-10.hidden-lg
+                        .alert.alert-warning(ng-show="credentials.error")
+                          p {{credentials.error}}
+                        .alert.alert-success(ng-show="credentials.passwordChanged")
+                          p Password changed successfully
+                .clearfix
+                .hide
+                  legend Connected accounts
+                  form.form-horizontal
+                    fieldset
+                      .form-group
+                        .col-lg-6.col-lg-offset-1
+                          .togglebutton
+                            label
+                              input(type="checkbox" ng-checked="user.providers.indexOf['facebook'] > -1" disabled)
+                              span.toggle
+                              | Facebook
+                      .form-group
+                        .col-lg-6.col-lg-offset-1
+                          .togglebutton
+                            label
+                              input(type="checkbox" ng-checked="user.providers.indexOf['google'] > -1" disabled)
+                              span.toggle
+                              | Google
+            .modal-footer
+              button.btn.btn-default(type="button" data-dismiss="modal") Close
+
+

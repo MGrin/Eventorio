@@ -16,9 +16,9 @@ app.factory('Users', ['$resource', '$http', 'Global', function ($resource, $http
       });
   }
 
-  user.getFollowers = function (user, cb) {
+  user.getConnections = function (user, cb) {
     if (!cb) cb = function () {};
-    $http.get('/users/' + user.id + '/followers')
+    $http.get('/users/' + user.id + '/connections')
       .success(function (response) {
         return cb(null, response);
       }).error(function (response) {
@@ -35,17 +35,8 @@ app.factory('Users', ['$resource', '$http', 'Global', function ($resource, $http
       })
   }
 
-  user.login = function (username, password, cb) {
-    $http.post(app.path.login, {username: username, password: password})
-      .success(function (data, status, header, config) {
-        return cb();
-      }).error(function (data, status, header, config) {
-        return cb(data);
-      })
-  }
-
   user.follow = function (userId, cb) {
-    $http.post('/api/follow', {userId: userId})
+    $http.post('/users/' + userId + '/connections/')
       .success(function (response) {
         return cb();
       }).error(function (response) {
@@ -54,7 +45,7 @@ app.factory('Users', ['$resource', '$http', 'Global', function ($resource, $http
   }
 
   user.unfollow = function (userId, cb) {
-    $http.post('/api/unfollow', {userId: userId})
+    $http.delete('/users/' + userId + '/connections/')
       .success(function (response) {
         return cb();
       }).error(function (response) {
