@@ -185,7 +185,7 @@ EventSchema.methods = {
     return this.organizator.id === user.id
             || this.permissions.visibility === 'public'
             || (this.permissions.visibility === 'followers' && user.isFollowing(this.organizator))
-            || (this.permissions.visibility === 'invitations' && user.isInvitedTo(event));
+            || (this.permissions.visibility === 'invitations' && user.isInvitedTo(this));
   },
 
   canBeAttendedBy: function (user) {
