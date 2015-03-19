@@ -272,6 +272,21 @@ html(lang="en", ng-app="EventorioEvent")
                           height="450"
                           destination-width="450"
                           destination-height="450")
+                  form.form-inline(ng-if="global.screenSize === 'xs'")
+                    .form-group.col-lg-12.col-md-12.col-sm-12.col-xs-12
+                      .row
+                        label.col-lg-4.col-md-4.col-sm-4.col-xs-12.control-label Select image:
+                        .col-lg-5.col-md-5.col-sm-5.col-xs-12
+                          .form-control-wrapper.fileinput
+                            input.form-control.empty(type="text" readonly)
+                            input#avatar-img-upload(type="file")
+                            .floating-label Browse
+                            span.material-input
+                      .row(ng-if="avatarUploadError")
+                        .alert.alert-warning {{headerUploadError}}
+                      .row(ng-show="avatarIsUploading")
+                        .progress
+                          .progress-bar.progress-bar-material-light-green
             .modal-footer
               button.btn(type="button" data-dismiss="modal" ng-click="cancelLogo()") Cancel
       #event-invite-modal.modal.fade
