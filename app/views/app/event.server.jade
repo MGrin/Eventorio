@@ -152,10 +152,20 @@ html(lang="en", ng-app="EventorioEvent")
                               buttons="no"
                               blur="submit") {{showAttendance()}}
                   p(ng-if="!editmode") {{showAttendance()}}
+
+          #event-content-xs.row-fluid.visible-xs
+            .row
+              .event-description.col-lg-12.col-md-12.col-sm-12
+                p(ng-if="!editmode" ng-bind-html="event.desc")
+                .well(ng-if="editmode")
+                  text-angular(ng-model="event.desc" ta-toolbar="[['h1','h2','h3'], \
+                                                                  ['bold','italics', 'underline', 'ol'], \
+                                                                  ['justifyLeft', 'justifyCenter', 'justifyRight']]")
           .row-fluid(ng-if="editmode")
             .col-lg-12.text-center
               .btn.btn-material-light-green.btn-raised.col-lg-5(ng-click="save()") Save
               .btn.btn-default.btn-raised.col-lg-5(ng-click="cancel()") Cancel
+
           .row-fluid(ng-if="!editmode && isEditable")
             .row
               .col-lg-12.text-center
