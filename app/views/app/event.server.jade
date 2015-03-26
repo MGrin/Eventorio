@@ -152,7 +152,9 @@ html(lang="en", ng-app="EventorioEvent")
                               buttons="no"
                               blur="submit") {{showAttendance()}}
                   p(ng-if="!editmode") {{showAttendance()}}
-
+          .row
+            .col-lg-12.col-md-12.col-sm-12.col-xs-12.text-center
+              .btn.btn-flat.btn-info(data-toggle="modal" data-target="#event-participants-modal") Show "{{event.name}}" participants
           #event-content-xs.row-fluid.visible-xs
             .row
               .event-description.col-lg-12.col-md-12.col-sm-12
@@ -314,7 +316,7 @@ html(lang="en", ng-app="EventorioEvent")
                     label.col-lg-4.col-md-4.col-sm-5.col-xs-5 Among your followers:
                     .form-group.col-lg-8.col-md-8.col-sm-7.col-xs-7
                       input.form-control(type="text", placeholder="Search for followers", ng-model="invitations.search")
-                  #followers-table.row
+                  .users-table.row
                     user-line.col-lg-4.col-md-4.col-sm-4.col-xs-6(ng-repeat="follower in followersToInvite"
                                                                   user="follower"
                                                                   ng-click="toggleInvitation(follower)")
@@ -327,5 +329,28 @@ html(lang="en", ng-app="EventorioEvent")
                       .btn.btn-xs.btn-material-deep-orange(ng-click="invite()" ng-disabled="!invitations.emails && invitations.followers.length === 0")
                         span.mdi-content-send
                         span  Invite
+            .modal-footer
+              button.btn.btn-material-light-green(type="button" data-dismiss="modal") Done
+      #event-participants-modal.modal.fade
+        .modal-dialog
+          .modal-content
+            .modal-header
+              button.btn.close(type="button" data-dismiss="modal" aria-label="Close")
+                span(aria-hidden='true') ×
+              h2.hidden-xs "{{event.name}}"'s Participants
+              h4.visible-xs "{{event.name}}"'s Participants
+            .modal-body
+              .row.text-center
+                #accepted-btn.col-lg-5.col-md-5.col-sm-5.col-xs-5.btn.btn-raised.btn-info.pull-left(ng-click="participantsView = 'accepted'") Accepted
+                .col-lg-1
+                #invited-btn.col-lg-5.col-md-5.col-sm-5.col-xs-5.btn.btn-flat.btn-info.pull-right(ng-click="participantsView = 'invited'") Invited
+              .row
+                .users-table
+                  .col-lg-12.col-md-12.col-sm-12.col-xs-12(ng-show="participantsView === 'accepted'")
+                    .col-lg-4.col-md-4.col-sm-4.col-xs-12
+                      a(ng-href="/users/{{user.username}}" ng-repeat="user in event.participants.accepted", user-line, user="user", always-visible="true")
+                  .col-lg-12.col-md-12.col-sm-12.col-xs-12(ng-show="participantsView === 'invited'")
+                    .col-lg-4.col-md-4.col-sm-4.col-xs-12
+                      a(ng-href="/users/{{user.username}}" ng-repeat="user in event.participants.invited", user-line, user="user", always-visible="true")
             .modal-footer
               button.btn.btn-material-light-green(type="button" data-dismiss="modal") Done

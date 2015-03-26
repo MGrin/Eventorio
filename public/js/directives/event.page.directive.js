@@ -167,6 +167,36 @@ app.directive('eventPage', ['Global', 'Pictures', function (Global, Pictures) {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
       /**
+       * View flags
+       */
+      $scope.participantsView = 'accepted';
+      $scope.$watch('participantsView', function (newVal, oldVal) {
+        if (newVal === oldVal) return;
+        switch (newVal) {
+          case 'accepted' : {
+            $('#event-participants-modal #accepted-btn').addClass('btn-raised');
+            $('#event-participants-modal #accepted-btn').removeClass('btn-flat');
+            $('#event-participants-modal #invited-btn').addClass('btn-flat');
+            $('#event-participants-modal #invited-btn').removeClass('btn-raised');
+            break;
+          }
+          case 'invited' : {
+            $('#event-participants-modal #accepted-btn').removeClass('btn-raised');
+            $('#event-participants-modal #accepted-btn').addClass('btn-flat');
+            $('#event-participants-modal #invited-btn').removeClass('btn-flat');
+            $('#event-participants-modal #invited-btn').addClass('btn-raised');
+            break;
+          }
+        }
+      });
+      $('#event-participants-modal').on('hidden.bs.modal', function () {
+        $scope.participantsView = 'accepted';
+      });
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+      /**
        * Errors showing
        */
       $scope.$on('event:save:error', function (info, errors) {

@@ -134,7 +134,7 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
 
   $scope.fixEvent = function (event) {
     if (event.date) event.date = moment(event.date);
-
+    event.canBeAttended = event.canBeAttended && !event.date.isBefore(moment());
     return event;
   };
 
