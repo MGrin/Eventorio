@@ -68,6 +68,13 @@ app.factory('Events', ['$rootScope', '$resource', '$http', 'Global', function ($
       }).error(function (response) {
         return cb(response);
       });
-  }
+  };
+
+  event.comments = $resource('/comments/:eventId',
+                              {eventId: '@id'},
+                              {
+                                update: {method: 'POST'},
+                                query: {method: 'GET', isArray: true}
+                              });
   return event;
 }]);

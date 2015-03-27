@@ -22,7 +22,7 @@ app.controller('ApplicationController', ['$rootScope', '$scope', 'Global', 'Even
 
   var possibleUrlHashes = ['calendarView', 'newsView'];
   var hash = window.location.hash.substring(1);
-  if (hash) window.location.hash = "";
+  // if (hash) window.location.hash = "";
 
   if (Global.screenSize === 'xs') {
     if (!hash || possibleUrlHashes.indexOf(hash) === -1 || hash === 'calendarView') {

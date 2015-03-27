@@ -6,12 +6,14 @@ app.directive('picture', [function () {
     link: function ($scope, element, attrs) {
       var type = attrs.type;
       var itemType = attrs.itemType;
+      var ajustPadding = attrs.ajustPadding;
 
       var setupHeight = function () {
-        if ($(element).width() === 0) {
-          return setTimeout(setupHeight, 500);
+        var padding = 0;
+        if (ajustPadding) {
+          padding = parseInt($(element).css('padding-left')) + parseInt($(element).css('padding-right'));
         }
-        $(element).css('height', $(element).width());
+        $(element).css('height', $(element).width() + padding);
       };
       switch (type) {
         case 'header': {
@@ -73,7 +75,18 @@ app.directive('picture', [function () {
                 });
               }
 
-              setupHeight();
+              var oldWidth = 0;
+              var widthChanges = 0;
+              var ajustHeight = function () {
+                if ($(element).width() !== oldWidth) {
+                  setupHeight();
+                  oldWidth = $(element).width();
+                }
+                widthChanges++;
+
+                if (widthChanges < 5) setTimeout(ajustHeight, 500);
+              }
+              ajustHeight();
             });
           }
           break;

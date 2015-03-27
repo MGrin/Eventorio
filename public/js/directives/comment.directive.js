@@ -3,16 +3,8 @@ app.directive('comment', ['Global', '$compile', function (Global, $compile) {
     scope: {
       comment: '=item'
     },
-    templateUrl: '/view/comment.html',
     link: function ($scope, element, attrs) {
       if (!$scope.comment.content) return $(element).addClass('hide');
-
-      $(element).find('#userThumbnail').each(function () {
-        $(this).html($compile('<div picture item-type="user" type="avatar" item="comment.creator" class="img img-circle"></div>')($scope));
-      });
-      $(element).find('#userLink').attr('href', '/users/' + $scope.comment.creator.username);
-      // $(element).find('#userImg').attr('src', $scope.comment.creator.picture);
-      $(element).find('#username').text($scope.comment.creator.username);
 
       var contentSplit = $scope.comment.content.split(' ');
       var resContent = [];
@@ -26,8 +18,7 @@ app.directive('comment', ['Global', '$compile', function (Global, $compile) {
         }
         resContent.push(word);
       });
-      $(element).find('#content').html(resContent.join(' '));
-      $(element).find('#commentTimestamp').text(moment($scope.comment.created).format('MMMM Do YYYY, HH:mm:ss'));
+      $(element).find('.comment-content').html(resContent.join(' '));
     },
   }
 }]);

@@ -1,5 +1,5 @@
-app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'Events', 'growl', 'Comments',
-  function ($scope, $rootScope, Global, Users, Events, growl, Comments) {
+app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'Events', 'growl',
+  function ($scope, $rootScope, Global, Users, Events, growl) {
   $scope.global = Global;
   $scope.now = moment();
   $scope.isNew = window.location.href.indexOf('new') >= 0;
@@ -7,7 +7,8 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
 
   $scope.states = {
     me: false,
-    participants: false
+    participants: false,
+    comments: false
   };
 
   $scope.calendar = {
@@ -67,6 +68,12 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
     });
   };
 
+  var sortComments = function () {
+    $scope.event.comments = _.sortBy($scope.event.comments, function (comment) {
+      return - (new Date(comment.created).getTime());
+    });
+  };
+
   $scope.initEvent = function (event) {
     if ($scope.isNew && !event.tempId) return growl.error('Error!');
 
@@ -94,6 +101,12 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
         }
         $scope.$on('me', function () {
           setupOrganizator();
+          return next();
+        });
+      }, function (next) {
+        $scope.event.comments = Events.comments.query({eventId: $scope.event.id}, function () {
+          sortComments();
+          $scope.states.comments = true;
           return next();
         });
       }, function (next) {
@@ -200,6 +213,20 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
     });
   };
 
+  $scope.newComment = {
+    content: ''
+  };
+  $scope.comment = function () {
+    if (!$scope.newComment.content || $scope.newComment.content === '') return;
+
+    $scope.newComment.id = $scope.event.id;
+    var comment = new Events.comments($scope.newComment);
+    comment.$save(function (comment) {
+      $scope.event.comments.unshift(comment);
+      $scope.newComment.content = '';
+    });
+  };
+
   $scope.save = function () {
     var errors = $scope.validate($scope.event);
 
@@ -244,27 +271,5 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
 
   $scope.enterEditMode = function () {
     $scope.editmode = true;
-  };
-
-  $scope.visibilities = [
-    {value: 'public', text: 'Visible to everyone'},
-    {value: 'followers', text: 'Visible to your followers'},
-    {value: 'invitations', text: 'Visible only to invited people'},
-  ];
-  $scope.showVisibility = function () {
-    return _.find($scope.visibilities, function (v) {
-      return v.value === $scope.event.permissions.visibility;
-    }).text;
-  };
-
-  $scope.attendancies = [
-    {value: 'public', text: 'Everyone can attend'},
-    {value: 'followers', text: 'Only followers can attend'},
-    {value: 'invitations', text: 'Only invited users can attend'},
-  ];
-  $scope.showAttendance = function () {
-    return _.find($scope.attendancies, function (a) {
-      return a.value === $scope.event.permissions.attendance;
-    }).text;
   };
 }]);
