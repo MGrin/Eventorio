@@ -1,2 +1,2 @@
-web: npm start
+web: nodemon -w lock app.js
 

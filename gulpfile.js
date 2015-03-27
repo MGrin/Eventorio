@@ -1,14 +1,11 @@
 var gulp = require('gulp');
-var nodemon = require('gulp-nodemon');
 var jsmin = require('gulp-jsmin');
 var stylus = require('gulp-stylus');
-var watch = require('gulp-watch');
 var jade = require('gulp-jade');
+var nodemon = require('gulp-nodemon');
 
 var fs = require('fs-extra');
-var findit = require('findit');
 var path = require('path');
-var async = require('async');
 
 var scriptsFile = './app/views/layouts/scripts.server.jade';
 
@@ -38,7 +35,6 @@ gulp.task('compress', function() {
     gulp.src(['./public/js/*.js', './public/js/*/*.js'])
     .pipe(gulp.dest('./public/cdn/js/'));
   }
-
 });
 
 gulp.task('clean', function () {
@@ -47,9 +43,10 @@ gulp.task('clean', function () {
   fs.removeSync('./public/view/');
 });
 
-gulp.task('default', ['clean', 'compile', 'compress'], function() {
+gulp.task('default', ['clean', 'compile', 'compress'], function () {
+  if (ENV === 'production') return;
   nodemon({
-    ignore: ['public/pictures/'],
-    script: 'app.js'
-  }).on('change', ['clean', 'compile', 'compress']);
+    script: 'app.js',
+    tasks: ['clean', 'compile', 'compress']
+  });
 });
