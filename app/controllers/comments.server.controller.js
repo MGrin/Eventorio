@@ -15,13 +15,13 @@ exports.query = function (req, res) {
 
   app.Comment.query(user, event, function (err, comments) {
     if (err) return app.err(err, res);
-    return res.jsonp({comments: comments});
+    return res.jsonp(comments);
   });
 };
 
 exports.create = function (req, res) {
   var user = req.user;
-  var eventId = req.body.event.id;
+  var eventId = req.event.id;
   var content = req.body.content;
 
   app.Comment.create(user, eventId, content, function (err, comment) {

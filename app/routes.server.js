@@ -77,10 +77,9 @@ module.exports = function (app, passport) {
   app.route('/events/:eventId/invitations')
     .post(users.requiresLogin, events.invite)
 
-  app.route('/comments')
-    .post(users.requiresLogin, comments.create);
   app.route('/comments/:eventId')
-    .get(comments.query);
+    .get(comments.query)
+    .post(users.requiresLogin, comments.create)
 
   app.route('/pictures/:pictureId')
     .post(users.requiresLogin, pictures.uploadForEvent);

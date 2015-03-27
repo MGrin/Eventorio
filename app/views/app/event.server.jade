@@ -51,7 +51,6 @@ html(lang="en", ng-app="EventorioEvent")
     script(src="/cdn/js/services/user.client.service.js")
     script(src="/cdn/js/services/event.client.service.js")
     script(src="/cdn/js/services/pictures.client.service.js")
-    script(src="/cdn/js/services/comments.client.service.js")
 
     script(src="/cdn/js/controllers/header.client.controller.js")
     script(src="/cdn/js/controllers/event.client.controller.js")
@@ -60,6 +59,7 @@ html(lang="en", ng-app="EventorioEvent")
     script(src="/cdn/js/directives/event.page.directive.js")
     script(src="/cdn/js/directives/clockpicker.directive.js")
     script(src="/cdn/js/directives/calendar.directive.js")
+    script(src="/cdn/js/directives/comment.directive.js")
     script(src="/cdn/js/directives/event.line.directive.js")
     script(src="/cdn/js/directives/google.location.search.directive.js")
     script(src="/cdn/js/directives/user.line.directive.js")
@@ -197,6 +197,28 @@ html(lang="en", ng-app="EventorioEvent")
                                                                 ['bold','italics', 'underline', 'strikeThrough', 'ul', 'ol'], \
                                                                 ['justifyLeft', 'justifyCenter', 'justifyRight', 'indent', 'outdent'], \
                                                                 ['wordcount', 'charcount']]")
+      #event-comments.row-fluid(ng-if="!editmode && states.comments")
+        .event-comments.col-lg-6.col-lg-offset-4.col-md-7.col-md-offset-3.col-sm-10.col-sm-offset-1.col-xs-12
+          .row(ng-if="global.me")
+            picture.col-lg-1.col-md-1.col-sm-2.col-xs-2.img.img-circle(item="global.me" item-type="user" type="avatar" ajust-padding="true")
+            .col-lg-1.col-md-1
+            .form-group.col-lg-10.col-md-10.col-sm-10.col-xs-10
+              .row
+                textarea.form-control(ng-model="newComment.content" rows=5 placeholder="Comment on {{event.name}}")
+              .row
+                .btn.btn-material-lime.pull-right(ng-click="comment()" ng-disabled="!newComment.content || newComment.content === ''") Comment
+          .row.comment.panel(comment item="comment" ng-repeat="comment in event.comments")
+            .col-lg-12.col-md-12.col-sm-12.col-xs-12
+              .row.panel-body
+                a.col-lg-1.col-md-1.col-sm-2.col-xs-2.text-center(ng-href="/users/{{comment.creator.username}}")
+                  .row
+                    picture.col-lg-12.col-md-12.col-sm-12.col-xs-12.img.img-circle(item="comment.creator" item-type="user" type="avatar" ajust-padding="true")
+                  .row
+                    h5 {{comment.creator.username}}
+                .col-lg-1.col-md-1
+                .col-lg-10.col-md-10.col-sm-10.col-xs-10
+                  p.comment-content
+                    .pull-right.hidden-xs {{showDate(comment.created)}}
       #event-date-modal.modal.fade
         .modal-dialog
           .modal-content

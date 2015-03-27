@@ -1,4 +1,4 @@
-app.directive('eventPage', ['Global', 'Pictures', function (Global, Pictures) {
+app.directive('eventPage', ['$window', 'Global', 'Pictures', function ($window, Global, Pictures) {
   return {
     link: function ($scope, element, attrs) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@ app.directive('eventPage', ['Global', 'Pictures', function (Global, Pictures) {
         if (avatarHeight < 10) return setTimeout(setupDetailsMargin, 250);
         var margin;
         if (Global.screenSize !== 'xs') {
-          margin = -avatarHeight;
+          margin = -avatarHeight/2;
         } else {
           margin = -avatarHeight/2;
         }
@@ -167,7 +167,7 @@ app.directive('eventPage', ['Global', 'Pictures', function (Global, Pictures) {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
       /**
-       * View flags
+       * View stuff
        */
       $scope.participantsView = 'accepted';
       $scope.$watch('participantsView', function (newVal, oldVal) {
@@ -192,6 +192,33 @@ app.directive('eventPage', ['Global', 'Pictures', function (Global, Pictures) {
       $('#event-participants-modal').on('hidden.bs.modal', function () {
         $scope.participantsView = 'accepted';
       });
+
+      $scope.visibilities = [
+        {value: 'public', text: 'Visible to everyone'},
+        {value: 'followers', text: 'Visible to your followers'},
+        {value: 'invitations', text: 'Visible only to invited people'},
+      ];
+      $scope.showVisibility = function () {
+        return _.find($scope.visibilities, function (v) {
+          return v.value === $scope.event.permissions.visibility;
+        }).text;
+      };
+
+      $scope.attendancies = [
+        {value: 'public', text: 'Everyone can attend'},
+        {value: 'followers', text: 'Only followers can attend'},
+        {value: 'invitations', text: 'Only invited users can attend'},
+      ];
+      $scope.showAttendance = function () {
+        return _.find($scope.attendancies, function (a) {
+          return a.value === $scope.event.permissions.attendance;
+        }).text;
+      };
+
+      $scope.showDate = function (date) {
+        date = moment(date);
+        return date.format('DD MMMM YYYY, HH:mm');
+      };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
