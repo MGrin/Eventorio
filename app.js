@@ -19,19 +19,19 @@ var color = {
 var app = express();
 app.config = require('./config/config.server');
 if (!app.config.mandrill.API_KEY) {
-  console.err("MANDRILL__KEY is not provided");
+  console.log("MANDRILL__KEY is not provided");
 }
 if (!app.config.google.clientID) {
-  console.err("GOOGLE_CLIENT_ID is not provided");
+  console.log("GOOGLE_CLIENT_ID is not provided");
 }
 if (!app.config.google.clientSecret) {
-  console.err("GOOGLE_CLIENT_SECRET is not provided");
+  console.log("GOOGLE_CLIENT_SECRET is not provided");
 }
 if (!app.config.facebook.clientID) {
-  console.err("FACEBOOK_CLIENT_ID is not provided");
+  console.log("FACEBOOK_CLIENT_ID is not provided");
 }
 if (!app.config.facebook.clientSecret) {
-  console.err("FACEBOOK_CLIENT_SECRET is not provided");
+  console.log("FACEBOOK_CLIENT_SECRET is not provided");
 }
 
 require('./config/logger.server')(app);
