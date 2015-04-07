@@ -18,13 +18,29 @@ var color = {
 
 var app = express();
 app.config = require('./config/config.server');
+if (!app.config.mandrill.API_KEY) {
+  console.err("MANDRILL__KEY is not provided");
+}
+if (!app.config.google.clientID) {
+  console.err("GOOGLE_CLIENT_ID is not provided");
+}
+if (!app.config.google.clientSecret) {
+  console.err("GOOGLE_CLIENT_SECRET is not provided");
+}
+if (!app.config.facebook.clientID) {
+  console.err("FACEBOOK_CLIENT_ID is not provided");
+}
+if (!app.config.facebook.clientSecret) {
+  console.err("FACEBOOK_CLIENT_SECRET is not provided");
+}
+
 require('./config/logger.server')(app);
 require('./lib/email')(app);
 require('./lib/pictures')(app);
 
-app.gm = require('googlemaps');
-app.gm.config('google-client-id', app.config.google.clientID);
-app.gm.config('google-client-secret', app.config.google.clientSecret);
+// app.gm = require('googlemaps');
+// app.gm.config('google-client-id', app.config.google.clientID);
+// app.gm.config('google-client-secret', app.config.google.clientSecret);
 
 app.err = function (err, next) {
   // error object passed and not a string

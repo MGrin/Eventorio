@@ -4,6 +4,12 @@ var ENV = process.env.NODE_ENV || 'development';
 var path = require('path');
 var rootPath = path.normalize(__dirname + '/..');
 
+var MANDRILL_KEY = process.env.MANDRILL_KEY;
+var googleClientId = process.env.GOOGLE_CLIENT_ID;
+var googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
+var facebookClientId = process.env.FACEBOOK_CLIENT_ID;
+var facebookClientSecret = process.env.FACEBOOK_CLIENT_SECRET;
+
 var config = {
   development: {
     db: 'mongodb://localhost/Eventorio-dev',
@@ -24,22 +30,22 @@ var config = {
       d: 'retro'
     },
     mandrill: {
-      API_KEY: 'wtWcKsV31HCK-z05mhKgMQ'
+      API_KEY: MANDRILL_KEY
     },
     google: {
-      clientID: '777903649350-2qekprt60e60u24sk2q43pl98bkb4duj.apps.googleusercontent.com',
-      clientSecret: 'a5nCr6hMOKz6Jz-R6LutghWb'
+      clientID: googleClientId,
+      clientSecret: googleClientSecret
     },
     facebook: {
-      clientID: '1553150044916218',
-      clientSecret: '82f2d464661fdb77be507cfc729cb046'
+      clientID: facebookClientId,
+      clientSecret: facebookClientSecret
     },
     constants: {
       users: {
         maxFollowerAutoFollow: 50
       },
       pictures: {
-        timeout: 100 // 3 hours
+        timeout: 100
       }
     },
     EventorioUser: {
@@ -67,16 +73,15 @@ var config = {
       d: 'retro'
     },
     mandrill: {
-      API_KEY: 'wtWcKsV31HCK-z05mhKgMQ'
+      API_KEY: MANDRILL_KEY
     },
     google: {
-      appID: 'AIzaSyDRGaAGkFpE4HVh8F8qfUp-rq4ra5QmhzI',
-      clientID: '777903649350-2qekprt60e60u24sk2q43pl98bkb4duj.apps.googleusercontent.com',
-      clientSecret: 'a5nCr6hMOKz6Jz-R6LutghWb'
+      clientID: googleClientId,
+      clientSecret: googleClientSecret
     },
     facebook: {
-      clientID: '1553150044916218',
-      clientSecret: '82f2d464661fdb77be507cfc729cb046'
+      clientID: facebookClientId,
+      clientSecret: facebookClientSecret
     },
     constants: {
       users: {

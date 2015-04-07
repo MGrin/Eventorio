@@ -58,24 +58,27 @@ module.exports = function (myApp, passport) {
     }
   ));
 
-  // Use facebook strategy
-  passport.use(new FacebookStrategy({
-    clientID: app.config.facebook.clientID,
-    clientSecret: app.config.facebook.clientSecret,
-    callbackURL: app.config.serverUrl + 'auth/facebook/callback'
-  }, function (accessToken, refreshToken, profile, done) {
-    app.User.createOrUpdate(profile, function (err, user) {
-      return done(err, user);
-    });
-  }));
+  if (app.config.facebook.clientID && app.config.facebook.clientSecret) {
+    passport.use(new FacebookStrategy({
+      clientID: app.config.facebook.clientID,
+      clientSecret: app.config.facebook.clientSecret,
+      callbackURL: app.config.serverUrl + 'auth/facebook/callback'
+    }, function (accessToken, refreshToken, profile, done) {
+      app.User.createOrUpdate(profile, function (err, user) {
+        return done(err, user);
+      });
+    }));
+  }
 
-  passport.use(new GoogleStrategy({
-    clientID: app.config.google.clientID,
-    clientSecret: app.config.google.clientSecret,
-    callbackURL: app.config.serverUrl + 'auth/google/callback'
-  }, function (accessToken, refreshToken, profile, done) {
-    app.User.createOrUpdate(profile, function (err, user) {
-      return done(err, user);
-    });
-  }));
+  if (app.config.google.clientID && app.config.google.clientSecret) {
+    passport.use(new GoogleStrategy({
+      clientID: app.config.google.clientID,
+      clientSecret: app.config.google.clientSecret,
+      callbackURL: app.config.serverUrl + 'auth/google/callback'
+    }, function (accessToken, refreshToken, profile, done) {
+      app.User.createOrUpdate(profile, function (err, user) {
+        return done(err, user);
+      });
+    }));
+  }
 };
