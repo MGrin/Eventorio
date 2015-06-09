@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "async": "latest",
+    "bcrypt": "latest",
     "body-parser": "latest",
     "bower": "latest",
     "compression": "latest",
