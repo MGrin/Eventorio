@@ -1,0 +1,39 @@
+{
+  apps : [
+
+    {
+      name      : "Eventorio",
+      script    : "app.js",
+      env: {
+
+      },
+      env_production : {
+	PORT: 7000,
+        NODE_ENV: "production"
+      }
+    },
+  ],
+
+
+  deploy : {
+    production : {
+      user : "admin",
+      host : "localhost",
+      ref  : "origin/master",
+      repo : "mgrin@https://github.com/MGrin/Eventorio.git",
+      path : "/home/eventorio",
+      "post-deploy" : "pm2 startOrRestart ecosystem.json --env production"
+    },
+    dev : {
+      user : "admin",
+      host : "localhost",
+      ref  : "origin/master",
+      repo : "mgrin@https://github.com/MGrin/Eventorio.git",
+      path : "/home/eventorio",
+      "post-deploy" : "pm2 startOrRestart ecosystem.json --env dev",
+      env  : {
+        NODE_ENV: "dev"
+      }
+    }
+  }
+}
