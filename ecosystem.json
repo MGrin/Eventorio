@@ -26,7 +26,7 @@
       ref  : "origin/master",
       repo : "https://github.com/MGrin/Eventorio.git",
       path : "/home/eventorio",
-      "post-deploy" : "npm install && bower install && gulp clean && gulp compile && gulp compress && pm2 startOrRestart ecosystem.json --env production"
+      "post-deploy" : "npm install && pm2 startOrRestart ecosystem.json --env production"
     },
     dev : {
       user : "admin",
@@ -34,7 +34,7 @@
       ref  : "origin/master",
       repo : "https://github.com/MGrin/Eventorio.git",
       path : "/home/eventorio",
-      "post-deploy" : "npm install && bower install && gulp clean && gulp compile && gulp compress && pm2 startOrRestart ecosystem.json --env dev",
+      "post-deploy" : "npm install && gulp clean && gulp compile && gulp compress && pm2 startOrRestart ecosystem.json --env dev",
       env  : {
         NODE_ENV: "dev"
       }

@@ -5,7 +5,7 @@
   "main": "app.js",
   "author": "MGrin",
   "scripts": {
-    "start": "gulp"
+    "postinstall": "bower install && gulp"
   },
   "dependencies": {
     "async": "latest",
@@ -30,7 +30,6 @@
     "gulp-jade": "latest",
     "gulp-jsmin": "latest",
     "gulp-stylus": "latest",
-    "gulp-nodemon": "latest",
     "inflection": "latest",
     "jade": "latest",
     "mandrill-api": "latest",

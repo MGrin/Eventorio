@@ -1,13 +1,11 @@
+'use strict';
+
 var gulp = require('gulp');
 var jsmin = require('gulp-jsmin');
 var stylus = require('gulp-stylus');
 var jade = require('gulp-jade');
-var nodemon = require('gulp-nodemon');
 
 var fs = require('fs-extra');
-var path = require('path');
-
-var scriptsFile = './app/views/layouts/scripts.server.jade';
 
 var ENV = process.env.NODE_ENV || 'development';
 
@@ -45,8 +43,4 @@ gulp.task('clean', function () {
 
 gulp.task('default', ['clean', 'compile', 'compress'], function () {
   if (ENV === 'production') return;
-  nodemon({
-    script: 'app.js',
-    tasks: ['clean', 'compile', 'compress']
-  });
 });
