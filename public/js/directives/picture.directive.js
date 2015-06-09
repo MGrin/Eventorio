@@ -1,7 +1,9 @@
-app.directive('picture', [function () {
+'use strict';
+
+app.directive('picture', [function () { // jshint ignore:line
   return {
     scope: {
-      item: "="
+      item: '='
     },
     link: function ($scope, element, attrs) {
       var type = attrs.type;
@@ -17,7 +19,7 @@ app.directive('picture', [function () {
       };
       switch (type) {
         case 'header': {
-          $scope.$watch('item.headerPicture', function (newVal, oldVal) {
+          $scope.$watch('item.headerPicture', function (newVal) {
             var imageURL;
             if (!newVal) {
               imageURL = '/img/user_background.png';
@@ -38,7 +40,7 @@ app.directive('picture', [function () {
 
         case 'avatar': {
           if (itemType === 'event') {
-            $scope.$watch('item.picture', function (newVal, oldVal) {
+            $scope.$watch('item.picture', function (newVal) {
               var imageURL;
               if (!newVal) {
                 imageURL = '/img/event_logo.jpg';
@@ -52,7 +54,7 @@ app.directive('picture', [function () {
               setupHeight();
             });
           } else if (itemType === 'user') {
-            $scope.$watch('item.pictureProvider', function (newVal, oldVal) {
+            $scope.$watch('item.pictureProvider', function (newVal) {
               var imageURL;
               switch (newVal) {
                 case 'gravatar' : {
@@ -85,7 +87,7 @@ app.directive('picture', [function () {
                 widthChanges++;
 
                 if (widthChanges < 5) setTimeout(ajustHeight, 500);
-              }
+              };
               ajustHeight();
             });
           }
@@ -93,5 +95,5 @@ app.directive('picture', [function () {
         }
       }
     }
-  }
+  };
 }]);
