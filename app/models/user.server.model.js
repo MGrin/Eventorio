@@ -233,7 +233,7 @@ UserSchema.methods = {
   acceptFollower: function (user) {
     if (this.hasFollower(user)) return;
     this.followers.push(user._id);
-    this.save(function (err, savedUser) {
+    this.save(function (err) {
       if (err) return app.err(err);
     });
   },
@@ -298,7 +298,7 @@ UserSchema.methods = {
         return cb(new Error('Missing credentials'));
     }
     if (credentials.newPassword !== credentials.newPasswordRepeat || credentials.newPassword.length < 8 || !this.authenticate(credentials.oldPassword)) {
-        return cb(new Error('Wrong credentials'))
+        return cb(new Error('Wrong credentials'));
     }
 
     this.password = credentials.newPassword;
@@ -372,12 +372,12 @@ UserSchema.statics = {
     customize(user);
     user.save(function (err, savedUser) {
       if (err) return cb(err);
-      savedUser.follow(app.Eventorio, function (err){
-        if (err) return app.err(err);
-      });
-      app.Eventorio.follow(savedUser, function (err) {
-        if (err) return app.err(err);
-      });
+      // savedUser.follow(app.Eventorio, function (err){
+      //   if (err) return app.err(err);
+      // });
+      // app.Eventorio.follow(savedUser, function (err) {
+      //   if (err) return app.err(err);
+      // });
       app.Action.newSignupAction(savedUser);
       app.Event.replaceInvitations(savedUser, function (err) {
         return cb(err, savedUser);
@@ -462,19 +462,19 @@ UserSchema.statics = {
           pictureProvider: profile.provider
         };
 
-        app.User.create(fields, function (user) {
-          user.addProvider(profile);
+        app.User.create(fields, function (newUser) {
+          newUser.addProvider(profile);
         }, function (err, savedUser) {
           if (err) return cb(err);
 
           savedUser.getProviderUpdates(profile.provider, function (err) {
             if (err) return app.err(err);
-          })
+          });
         });
       });
     });
   }
-}
+};
 // Add joined and modified fields to the Schema
 UserSchema.plugin(troop.timestamp, {
   useVirtual: false,

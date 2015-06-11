@@ -245,11 +245,11 @@ EventSchema.statics = {
       var organizatorsToFollow = [];
       async.series([
         function (next) {
-          async.eachSeries(events, function (event, next) {
+          async.eachSeries(events, function (event, nextEvent) {
             event.invitedEmails.splice(event.invitedEmails.indexOf(user.email), 1);
             event.invitedUsers.push(user._id);
-            organizatorsToFollow.push(event.organizator)
-            event.save(next);
+            organizatorsToFollow.push(event.organizator);
+            event.save(nextEvent);
           }, function (err) {
             return next(err);
           });
