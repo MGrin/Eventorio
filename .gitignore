@@ -6,6 +6,4 @@ public/view/
 public/cdn/
 public/pictures/
 
-log/
-log.txt
-lock
+.DS_Store
