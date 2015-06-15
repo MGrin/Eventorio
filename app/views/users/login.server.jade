@@ -1,0 +1,18 @@
+.row-fluid
+  .col-lg-12
+    form#user-login-form
+      .form-group
+        label(for="userNameEmail") Username or Email
+        input#userNameEmail.form-control(type="text" placeholder="Username or Email" name="username")
+      .form-group
+        label(for="userPasswordLogin") Password
+        input#userPassword.form-control(type="password" placeholder="Password" name="password")
+      button.btn.btn-success.pull-right(type="submit") Login
+.row-fluid
+    .col-lg-12.text-center Or use one of the following social networks:
+.row-fluid
+  .col-lg-12.text-center
+    a.redirect.btn.btn-material-indigo.btn-fab.btn-raised(href="/auth/facebook", style="margin-right: 5px")
+      i.fa.fa-facebook
+    a.redirect.btn.btn-material-red.btn-fab.btn-raised(href="/auth/google", style="margin-left: 5px")
+      i.fa.fa-google

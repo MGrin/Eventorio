@@ -1,4 +1,13 @@
+'use strict';
+
 var app = window.exports = angular.module('EventorioUser', ['ngResource', 'angular-growl', 'xeditable']);
+
+$(document).ready(function () {
+  $('.redirect').each(function () {
+    var href = $(this).attr('href') + '?redirect=' + window.location.href;
+    $(this).attr('href', href);
+  });
+});
 
 app.run(function(editableOptions, editableThemes) {
   editableThemes.bs3.buttonsClass = 'btn-sm';
@@ -9,16 +18,3 @@ app.config(['growlProvider', function(growlProvider) {
   growlProvider.globalTimeToLive(5000);
   growlProvider.globalDisableCountDown(true);
 }]);
-
-app.config = {
-  img: {
-    cover: {
-      width: 1200,
-      height: 350
-    },
-    avatar: {
-      width: 450,
-      height: 450
-    }
-  }
-}

@@ -1,11 +1,12 @@
 #event-header-picture
   margin-top 50px
-  picture
+  header-picture
     @media (max-width 768px)
       height 250px
     @media (min-width 768px)
       height 350px
 #event-details
+  margin-top: -300px
   .well
     @media (max-width 768px)
       padding 0
@@ -16,15 +17,6 @@
   margin-top 20px
   span
     font-size 1.5em
-
-.event-comments
-  picture
-    margin-left auto
-    margin-right auto
-  .comment-content
-    padding 0
-  .comment
-    margin-bottom 10px
 
 #event-location-modal
   #map-canvas
@@ -49,3 +41,6 @@
 
 .margin-10
   margin 10px
+
+.no-padding
+  padding: 0

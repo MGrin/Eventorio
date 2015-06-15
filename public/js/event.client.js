@@ -1,4 +1,13 @@
+'use strict';
+
 var app = window.exports = angular.module('EventorioEvent', ['ngResource', 'angular-growl', 'xeditable', 'textAngular', 'cropme']);
+
+$(document).ready(function () {
+  $('.redirect').each(function () {
+    var href = $(this).attr('href') + '?redirect=' + window.location.href;
+    $(this).attr('href', href);
+  });
+});
 
 app.run(function(editableOptions, editableThemes) {
   editableThemes.bs3.buttonsClass = 'btn-sm';
@@ -23,4 +32,4 @@ app.config = {
   google: {
     currentLocationMarker: 'http://i.stack.imgur.com/orZ4x.png'
   }
-}
+};

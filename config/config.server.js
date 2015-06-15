@@ -17,14 +17,7 @@ var config = {
     port: 7000,
     serverUrl: 'http://localhost:7000/',
     name: 'Eventorio',
-    pictures: {
-      user: {
-        pwd: rootPath + '/public/pictures/users/'
-      },
-      event: {
-        pwd: rootPath + '/public/pictures/events/'
-      }
-    },
+
     gravatar: {
       s: '400',
       d: 'retro'
@@ -39,18 +32,6 @@ var config = {
     facebook: {
       clientID: facebookClientId,
       clientSecret: facebookClientSecret
-    },
-    constants: {
-      users: {
-        maxFollowerAutoFollow: 50
-      },
-      pictures: {
-        timeout: 100
-      }
-    },
-    EventorioUser: {
-      email: 'support@eventorio.me',
-      password: '1gjhfe7vyieASFJV7VHGKbfsda'
     }
   },
 
@@ -60,14 +41,7 @@ var config = {
     port: process.env.PORT || 80,
     serverUrl: 'http://eventorio.me/',
     name: 'Eventorio',
-    pictures: {
-      user: {
-        pwd: rootPath + '/public/pictures/users/'
-      },
-      event: {
-        pwd: rootPath + '/public/pictures/events/'
-      }
-    },
+
     gravatar: {
       s: '400',
       d: 'retro'
@@ -82,18 +56,6 @@ var config = {
     facebook: {
       clientID: facebookClientId,
       clientSecret: facebookClientSecret
-    },
-    constants: {
-      users: {
-        maxFollowerAutoFollow: 50
-      },
-      pictures: {
-        timeout: 3 * 60 * 60 * 1000 // 3 hours
-      }
-    },
-    EventorioUser: {
-      email: 'support@eventorio.me',
-      password: '1gjhfe7vyieASFJV7VHGKbfsda'
     }
   }
 };

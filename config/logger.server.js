@@ -8,6 +8,7 @@
 
 var winston = require('winston');
 var moment = require('moment');
+var _ = require('underscore');
 
 module.exports = function (app) {
   var timestamp = function () {
@@ -153,8 +154,38 @@ module.exports = function (app) {
   app.expressLogStream = {
     write: function (message) {
       // remove \n at the end of line
-      var output = message.slice(0, -1);
+      var output = timestamp() + ': ' + message.slice(0, -1);
       expressLogger.info(output);
+    }
+  };
+
+
+  app.err = function (err, next) {
+    // error object passed and not a string
+    if (_.isObject(err)) {
+      err = err.message;
+    }
+    if (err) {
+      // add the error into log file
+      app.logger.error(err);
+    }
+
+    // callback given, pass the error to it
+    if (_.isFunction(next)) {
+      return next(err);
+    }
+
+    // response object given, pass the error to it
+    if (_.isObject(next)) {
+      // send error to the client
+      return next.format({
+        html: function () {
+          next.status(500).render('error.server.jade', {status: 500, url: next.originalUrl, error: err});
+        },
+        json: function () {
+          next.status(500).jsonp(err);
+        }
+      });
     }
   };
 };

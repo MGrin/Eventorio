@@ -1,0 +1,24 @@
+.row-fluid
+  .col-lg-12
+    form#user-signup-form
+      .form-group
+        label(for="userEmail") Email address
+        input#userEmail.form-control(type="email" placeholder="Email" name="email")
+      .form-group
+        label(for="userName") Username
+        input#userName.form-control(type="text" placeholder="Username" name="username")
+      .form-group
+        label(for="userPassword") Password
+        input#userPassword.form-control(type="password" placeholder="Password" name="password")
+      .form-group
+        label(for="userRepeatPassword") Repeat Password
+        input#userRepeatPassword.form-control(type="password" placeholder="Repeat password" name="repeatPassword")
+      button.btn.btn-material-orange.pull-right(type="submit") Sign up
+.row-fluid
+    .col-lg-12.text-center Or use one of the following social networks:
+.row-fluid
+  .col-lg-12.text-center
+    a.btn.btn-material-indigo.btn-fab.btn-raised(href="/auth/facebook", style="margin-right: 5px")
+      i.fa.fa-facebook
+    a.btn.btn-material-red.btn-fab.btn-raised(href="/auth/google", style="margin-left: 5px")
+      i.fa.fa-google

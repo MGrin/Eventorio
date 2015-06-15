@@ -1,5 +1,6 @@
-app.factory('Global', function () {
-  'use strict';
+'use strict';
+
+app.factory('Global', function () { // jshint ignore:line
 
   var screenSize;
   if ($(window).width() > 1200) screenSize = 'lg';
@@ -8,24 +9,25 @@ app.factory('Global', function () {
   else screenSize = 'xs';
 
   var Global = {
-    app: app,
-    config: {
-      appName: 'Eventorio'
-    },
-    monthNames: [ "January", "February", "March", "April", "May", "June",
-      "July", "August", "September", "October", "November", "December" ],
+    app: app, // jshint ignore:line
+    me: app.user, // jshint ignore:line
+
     screenSize: screenSize,
-    actionTypes: {
-      signup: 'signup',
-      createEvent: 'create event',
-      invite: 'invite',
-      attendEvent: 'attend event',
-      quitEvent: 'quit event',
-      follow: 'follow',
-      referenced: 'referenced'
+
+    config: {
+      img: {
+        cover: {
+          width: 1200,
+          height: 350
+        },
+        avatar: {
+          width: 450,
+          height: 450
+        }
+      }
     }
   };
 
-  app.Global = Global;
+  app.Global = Global; // jshint ignore:line
   return Global;
 });

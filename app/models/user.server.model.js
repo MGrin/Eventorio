@@ -10,11 +10,11 @@ var troop = require('mongoose-troop');
 var Schema = mongoose.Schema;
 var _ = require('underscore');
 var async = require('async');
-var ObjectId = Schema.ObjectId;
 var gravatar = require('gravatar');
 var randomstring = require('randomstring');
 var textSearch = require('mongoose-text-search');
 var moment = require('moment');
+
 /**
  * Models
  */
@@ -22,7 +22,7 @@ exports.initModel = function (myApp) {
   app = myApp;
 };
 
-var supportedProviders = ['facebook', 'google'];
+var supportedProviders = ['facebook', 'google', 'local'];
 
 /**
  * User Schema
@@ -32,7 +32,15 @@ var UserSchema = exports.Schema = new Schema({
   desc: String,
   email: String,
   username: String,
-  providers: [String],
+  providers: [{
+    type: String,
+    enum: supportedProviders
+  }],
+
+  // Complete profile fields:
+  address: String,
+  birthday: Date,
+
   gender: String, // male or female
   locale: String,
 
@@ -40,26 +48,10 @@ var UserSchema = exports.Schema = new Schema({
   google: Object,
 
   pictureProvider: String,
-  headerPicture: String,
   hashPassword: {type: String, select: false},
   salt: {type: String, select: false},
 
-  following: [{
-    type: ObjectId,
-    ref: 'User'
-  }],
-
-  followers: [{
-    type: ObjectId,
-    ref: 'User'
-  }],
-
   activationCode: {type: String, select: false},
-
-  tempEvents: [{
-    created: Date,
-    id: String
-  }]
 });
 
 /**
@@ -93,14 +85,20 @@ UserSchema
     return gravatar.url(this.email, app.config.gravatar);
   });
 
-UserSchema.index({name: 'text', username: 'text'}); // for fulltext search
+UserSchema
+  .virtual('age')
+  .get(function () {
+    if (!this.birthday) return null;
+    return moment().subtract(this.birthday).year();
+  });
 
-/**
- * Validations
- */
-var validatePresenceOf = function (value) {
-  return value && value.length;
-};
+UserSchema
+  .virtual('isComplete')
+  .get(function () {
+    return this.address && this.age;
+  });
+
+UserSchema.index({name: 'text', username: 'text'}); // for fulltext search
 
 /**
  * Methods
@@ -169,7 +167,7 @@ UserSchema.methods = {
         if (!this.desc) this.desc = profile._json.bio;
         if (!this.locale) this.locale = profile._json.locale;
         delete profile._json.verified;
-        delete profile._json.updated_time;
+        delete profile._json.updated_time; //jshint ignore:line
         delete profile._raw;
         this[profile.provider] = profile;
         break;
@@ -178,7 +176,7 @@ UserSchema.methods = {
         if (!this.locale) this.locale = profile._json.locale;
         if (!this.providerPicture) this.providerPicture = profile._json.picture;
         if (!this.gender && profile._json.gender !== 'other') this.gender = profile._json.gender;
-        delete profile._json.verified_email;
+        delete profile._json.verified_email; //jshint ignore:line
         this[profile.provider] = profile;
         break;
       }
@@ -186,111 +184,6 @@ UserSchema.methods = {
         app.err('Provider ' + profile.provider + ' is not supported.');
       }
     }
-  },
-
-  follow: function (user, cb) {
-    if (this.isFollowing(user)) {
-      return cb(new Error('Already following!'));
-    }
-    this.following.push(user);
-    this.save(cb);
-    user.acceptFollower(this);
-    if (user.username !== 'Eventorio' && this.username !== 'Eventorio') app.Action.newFollowAction(this, user);
-  },
-
-  unfollow: function (user, cb) {
-    if (!this.isFollowing(user)) {
-      return cb(new Error('Not following yet!'));
-    }
-    this.following = _.without(this.following, _.find(this.following, function (u) {
-      return u.id === user.id;
-    }));
-    this.save(cb);
-
-    if (user.hasFollower(this)) {
-      var _this = this;
-      user.followers = _.without(user.followers, _.find(user.followers, function (u) {
-        return u.id === _this.id;
-      }));
-      user.save(function (err) {
-        if (err) return app.err(err);
-      });
-    }
-  },
-
-  hasFollower: function (user) {
-    return _.find(this.followers, function (u) {
-      return u.id === user.id;
-    });
-  },
-
-  isFollowing: function (user) {
-    return _.find(this.following, function (u) {
-      return u.id === user.id;
-    });
-  },
-
-  acceptFollower: function (user) {
-    if (this.hasFollower(user)) return;
-    this.followers.push(user._id);
-    this.save(function (err) {
-      if (err) return app.err(err);
-    });
-  },
-
-  attendEvent: function (event, cb) {
-    if (event.attendees.indexOf(this._id) === -1) event.attendees.push(this._id);
-
-    var index = event.invitedUsers.indexOf(this._id);
-    app.logger.info(index);
-    if (index !== -1) event.invitedUsers.splice(index, 1);
-
-    app.Action.newAttendEventAction(this, event);
-    event.save(cb);
-  },
-
-  quitEvent: function (event, cb) {
-    if (event.invitedUsers.indexOf(this._id) === -1) event.invitedUsers.push(this._id);
-
-    var index = event.attendees.indexOf(this._id);
-    app.logger.info(JSON.stringify(event.toObject()));
-    if (index !== -1) event.attendees.splice(index, 1);
-
-    app.Action.newQuitEventAction(this, event);
-    event.save(cb);
-  },
-
-  inviteToEventByEmailOrUsername: function (event, email, cb) {
-    var usernameRE = new RegExp('^' + email + '$', 'i');
-    var actor = this;
-    app.User.findOne({$or: [{email: email}, {username: usernameRE}]}, function (err, user) {
-      if (err) return cb(err);
-      if (!user) {
-        app.email.sendInvitationMail(actor, {email: email, username: email}, event);
-        if (event.invitedEmails.indexOf(email) === -1) {
-          event.invitedEmails.push(email);
-          event.save();
-        }
-        return cb();
-      } else {
-        actor.inviteToEvent(event, user, cb);
-      }
-    });
-  },
-
-  inviteToEvent: function (event, user, cb) {
-    var me = this;
-    app.email.sendInvitationMail(me, user, event);
-    if (event.invitedUsers.indexOf(user._id) === -1 && event.attendees.indexOf(user._id) === -1) {
-      app.Action.newInviteAction(me, user, event);
-      event.invitedUsers.push(user._id);
-      event.save();
-    }
-    return cb();
-  },
-
-  isInvitedTo: function (event) {
-    return (event.invitedUsers.indexOf(this._id) !== -1) || (event.attendees.indexOf(this._id) !== -1);
   },
 
   changePassword: function (credentials, cb) {
@@ -305,32 +198,6 @@ UserSchema.methods = {
     return this.save(cb);
   },
 
-  addTemporaryEvent: function (tempId){
-    var tempEvent = _.find(this.tempEvents, function (el) {
-      return el.id === tempId;
-    });
-    if (tempEvent) return;
-
-    this.tempEvents.push({created: moment(), id: tempId});
-    this.save(function (err) {
-      if (err) return app.err(err);
-    });
-  },
-
-  removeTemporaryEvent: function (tempId, cb) {
-    var index = _.findWhere(this.tempEvents, function (el) {
-      return el.id === tempId;
-    });
-
-    if (!index) {
-      app.err(new Error('No tempId ' + tempId + ' found'));
-      return cb();
-    }
-
-    this.tempEvents.splice(index, 1);
-    this.save(cb);
-  },
-
   getProviderUpdates: function (provider, cb) {
     if (supportedProviders.indexOf(provider) < 0) return cb(new Error('Provider is not supported: ' + provider));
     // TODO get updates from provider
@@ -340,7 +207,7 @@ UserSchema.methods = {
 
 UserSchema.statics = {
   loadUser: function (username, cb) {
-    var username = decodeURI(username);
+    username = decodeURI(username);
     var usernameRE = new RegExp('^' + username +'$', 'i');
 
     if (mongoose.Types.ObjectId.isValid(username)) {
@@ -370,19 +237,7 @@ UserSchema.statics = {
   create: function (fields, customize, cb) {
     var user = new app.User(fields);
     customize(user);
-    user.save(function (err, savedUser) {
-      if (err) return cb(err);
-      // savedUser.follow(app.Eventorio, function (err){
-      //   if (err) return app.err(err);
-      // });
-      // app.Eventorio.follow(savedUser, function (err) {
-      //   if (err) return app.err(err);
-      // });
-      app.Action.newSignupAction(savedUser);
-      app.Event.replaceInvitations(savedUser, function (err) {
-        return cb(err, savedUser);
-      });
-    });
+    user.save(cb);
   },
 
   createFromSignup: function (fields, cb) {
@@ -427,19 +282,6 @@ UserSchema.statics = {
     });
   },
 
-  restorePassword: function (username, email, cb) {
-    var usernameRE = new RegExp('^' + username +'$', 'i');
-    app.User.findOne({username: usernameRE}, function (err, user) {
-      if (err) return cb(err);
-      if (!user) return cb(new Error('No user found'));
-      if (user.email !== email) return cb(new Error('Wrong email'));
-
-      var newPassword = user.createNewPassword();
-      app.email.sendNewPassword(user, newPassword);
-      return cb();
-    });
-  },
-
   createOrUpdate: function (profile, cb) {
     app.User.findOne({email: {$in: _.pluck(profile.emails, 'value')}}, function (err, user) {
       if (err) return cb(err);
@@ -472,6 +314,19 @@ UserSchema.statics = {
           });
         });
       });
+    });
+  },
+
+  restorePassword: function (username, email, cb) {
+    var usernameRE = new RegExp('^' + username +'$', 'i');
+    app.User.findOne({username: usernameRE}, function (err, user) {
+      if (err) return cb(err);
+      if (!user) return cb(new Error('No user found'));
+      if (user.email !== email) return cb(new Error('Wrong email'));
+
+      var newPassword = user.createNewPassword();
+      app.email.sendNewPassword(user, newPassword);
+      return cb();
     });
   }
 };

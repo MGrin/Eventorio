@@ -1,0 +1,74 @@
+- if (!user)
+  link(rel="stylesheet", href="/lib/components-font-awesome/css/font-awesome.min.css")
+  script(src="/js/authorize.js")
+  
+nav#header.navbar.navbar-fixed.navbar-fixed-top.navbar-material-indigo-300(ng-controller="HeaderController", role="navigation")
+  .container-fluid
+    .navbar-header
+      button.navbar-toggle.collapsed(ng-if="global.me" type="button", data-toggle="collapse", data-target="#navbar")
+        span.icon-bar
+        span.icon-bar
+        span.icon-bar
+
+      a.navbar-brand.hidden-xs(style="padding-top: 12px", ng-href="/")
+        img.img-circle.pull-left(alt="Eventorio", style="height: 30px; margin-right: 10px", src="/img/logo_white.png")
+        span Eventorio
+      a.navbar-brand.visible-xs(style="padding-top: 12px", ng-href="/")
+        img.img-circle.pull-left(alt="Eventorio", style="height: 30px; margin-right: 10px", src="/img/logo_white.png")
+        span Eventorio
+
+    - if (user)
+      #navbar.collapse.navbar-collapse
+        .hidden-xs
+          ul.nav.navbar-nav.navbar-right
+            li.dropdown(ng-if="global.me")
+              a.dropdown-toggle(href="#", data-toggle="dropdown")
+                user-avatar#me-thumbnail.pull-left.img.img-circle(item="global.me")
+                span {{global.me.username}}
+                span.caret
+              ul.dropdown-menu(role="menu")
+                li
+                  a(href="/users/{{global.me.id}}")
+                    | Profile
+                li
+                  a.redirect(ng-href="/logout")
+                    | Logout
+
+        .visible-xs
+          ul.nav.navbar-nav.navbar-right
+            li#profile-menu
+              a(ng-href="/users/{{global.me.id}}")
+                span.glyphicon.glyphicon-user(style="margin-right: 10px")
+                span {{global.me.username}}
+                user-avatar#me-thumbnail.pull-right.img.img-circle(item="global.me")
+            .clearfix
+            br
+            li
+              a.redirect(ng-href="/logout")
+                span.glyphicon.glyphicon-off(style="margin-right: 10px")
+                span Logout
+                
+    - if (!user)    
+      #navbar.collapse.navbar-collapse
+        ul.nav.navbar-nav.navbar-right
+          button#login-btn.btn.btn-success.hidden-xs(data-toggle="modal" data-target="#login-modal") Login
+          button#login-btn.btn.btn-default.visible-xs(data-toggle="modal" data-target="#login-modal") Login
+- if (!user)
+  div(ng-controller="HeaderController")
+    #login-modal.modal.fade(tabindex="-1" role="dialog")
+      .modal-dialog
+        .modal-content
+          .modal-header
+            button.close(type="button" data-dismiss="modal" aria-label="Close")
+              span &times;
+            h3(ng-show="view === 'login'").modal-title Login to Eventorio!
+            h3(ng-show="view === 'signup'").modal-title Sign up to Eventorio!
+          .modal-body
+            div(ng-show="view === 'login'")
+              include users/login.server.jade
+            div(ng-show="view === 'signup'")
+              include users/signup.server.jade
+            .pull-right
+              a(href="#" ng-show="view === 'login'" ng-click="view = 'signup'") Sign up
+              a(href="#" ng-show="view === 'signup'" ng-click="view = 'login'") Login
+          .modal-footer

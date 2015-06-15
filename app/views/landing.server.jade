@@ -1,0 +1,24 @@
+doctype html
+html
+  head
+    title Eventorio
+  meta(name="viewport", content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no")
+  link(rel="stylesheet", href="/lib/bootstrap/dist/css/bootstrap.min.css")
+  link(rel="stylesheet", href="/lib/bootstrap-material-design/dist/css/material.min.css")
+  link(rel="stylesheet", href="/lib/bootstrap-material-design/dist/css/material-fullpalette.min.css")
+  link(rel="stylesheet", href="/lib/bootstrap-material-design/dist/css/ripples.min.css")
+  link(rel="stylesheet", href="/lib/bootstrap-material-design/dist/css/roboto.min.css")
+  link(rel="stylesheet", href="/lib/components-font-awesome/css/font-awesome.min.css")
+  link(rel="stylesheet", href="/css/landing.css")
+
+  script(src="/lib/jquery/dist/jquery.min.js")
+  script(src="/lib/bootstrap/dist/js/bootstrap.min.js")
+  script(src="/lib/bootstrap-material-design/dist/js/material.min.js")
+  script(src="/js/authorize.js")
+  body
+    .container-fluid
+      .row-fluid
+        .col-lg-6
+          include users/signup.server.jade
+        .col-lg-6
+          include users/login.server.jade

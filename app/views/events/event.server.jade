@@ -1,0 +1,227 @@
+doctype html
+html(lang="en", ng-app="EventorioEvent")
+  head
+    title #{event.name || "New event"}@Eventorio
+    meta(name="viewport", content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no")
+
+    link(rel="stylesheet", href="/lib/bootstrap/dist/css/bootstrap.min.css")
+    link(rel="stylesheet", href="/lib/bootstrap-material-design/dist/css/material.min.css")
+    link(rel="stylesheet", href="/lib/bootstrap-material-design/dist/css/material-fullpalette.min.css")
+    link(rel="stylesheet", href="/lib/bootstrap-material-design/dist/css/ripples.min.css")
+    link(rel="stylesheet", href="/lib/bootstrap-material-design/dist/css/roboto.min.css")
+    link(rel="stylesheet", href="/lib/angular-growl-v2/build/angular-growl.min.css")
+    link(rel="stylesheet", href="/lib/angular-xeditable/dist/css/xeditable.css")
+    link(rel="stylesheet", href="/lib/textAngular/src/textAngular.css")
+    link(rel="stylesheet", href="/lib/components-font-awesome/css/font-awesome.min.css")
+    link(rel="stylesheet", href="/lib/clockpicker/dist/bootstrap-clockpicker.min.css")
+    link(rel="stylesheet", href="/lib/angular-cropme/cropme.css")
+
+    link(rel="stylesheet", href="/css/header.css")
+    link(rel="stylesheet", href="/css/event.css")
+
+    script(src="/lib/jquery/dist/jquery.min.js")
+    script(src="/lib/underscore/underscore-min.js")
+    script(src="/lib/async/lib/async.js")
+    script(src="/lib/moment/min/moment.min.js")
+    script(src="/lib/bootstrap/dist/js/bootstrap.min.js")
+    script(src="/lib/bootstrap-material-design/dist/js/material.min.js")
+    script(src="/lib/clockpicker/dist/bootstrap-clockpicker.min.js")
+
+    script(src="/lib/angular/angular.min.js")
+    script(src="/lib/angular-resource/angular-resource.min.js")
+    script(src="/lib/angular-growl-v2/build/angular-growl.min.js")
+    script(src="/lib/angular-xeditable/dist/js/xeditable.min.js")
+    script(src="/lib/textAngular/dist/textAngular-sanitize.min.js")
+    script(src="/lib/textAngular/dist/textAngular-rangy.min.js")
+    script(src="/lib/textAngular/dist/textAngular.min.js")
+    script(src="/lib/angular-touch/angular-touch.min.js")
+    script(src="/lib/angular-superswipe/superswipe.js")
+    script(src="/lib/angular-cropme/cropme.js")
+    script(src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places")
+
+    script(src="/cdn/js/event.client.js")
+    script(src="/cdn/js/filters.client.js")
+    script.
+      app.user = !{user ? JSON.stringify(user) : 'undefined'};
+      app.event = !{event ? JSON.stringify(event) : 'undefined'};
+      
+    script(src="/cdn/js/shared/validator.shared.js")
+
+    script(src="/cdn/js/services/global.client.service.js")
+    script(src="/cdn/js/services/user.client.service.js")
+    script(src="/cdn/js/services/event.client.service.js")
+    script(src="/cdn/js/services/pictures.client.service.js")
+
+    script(src="/cdn/js/controllers/header.client.controller.js")
+    script(src="/cdn/js/controllers/event.client.controller.js")
+    
+    script(src="/cdn/js/directives/user-avatar.directive.js")
+    script(src="/cdn/js/directives/event-avatar.directive.js")
+    script(src="/cdn/js/directives/header-picture.directive.js")
+    script(src="/cdn/js/directives/event.page.directive.js")
+    script(src="/cdn/js/directives/clockpicker.directive.js")
+    script(src="/cdn/js/directives/google.location.search.directive.js")
+    script(src="/cdn/js/directives/tickets.directive.js")
+    
+  body
+    include ../header.server.jade
+    div(growl)
+    event-page#event-page(ng-controller="EventController")
+      .row-fluid#event-header-picture
+        .row-fluid
+          header-picture.col-lg-12.col-md-12.col-sm-12.col-xs-12(item="event")
+        .row-fluid(ng-if="editmode")
+          .col-lg-4.col-lg-offset-5.col-md-6.col-md-offset-5.col-sm-6.col-sm-offset-5.col-xs-12
+            .well.row#header-upload-well
+              form.form-inline
+                .form-group.col-lg-12.col-md-12.col-sm-12.col-xs-12
+                  .row
+                    label.col-lg-4.col-md-4.col-sm-4.col-xs-12.control-label Select header image:
+                    .col-lg-5.col-md-5.col-sm-5.col-xs-12
+                      .form-control-wrapper.fileinput
+                        input.form-control.empty(type="text" readonly)
+                        input#header-img-upload(type="file")
+                        .floating-label Browse
+                        span.material-input
+                  .row(ng-if="headerUploadError")
+                    .alert.alert-warning {{headerUploadError}}
+                  .row(ng-show="headerIsUploading")
+                    .progress
+                      .progress-bar.progress-bar-material-light-green
+      .row-fluid
+        #event-details.col-lg-3.col-lg-offset-1.col-md-3.col-sm-4.col-xs-12
+          .row-fluid
+            .well.col-lg-12.col-md-12.col-sm-12.col-xs-12
+              .row-fluid
+                event-avatar.event-avatar-picture.col-lg-12.col-md-12.col-sm-12.col-xs-12(item="event")
+                  #edit-avatar-btn.pull-right.well.clickable(ng-if="editmode"
+                    data-toggle="modal"
+                    data-target="#event-avatar-modal")
+                    span.mdi-image-edit
+              .row-fluid.visible-xs
+                .event-name.col-xs-12.text-center
+                  h1(ng-if="!editmode") {{event.name}}
+                  h1(ng-if="editmode"
+                      blur="submit"
+                      buttons="no"
+                      editable-text="event.name"
+                      e-required
+                      e-placeholder="Enter event name") {{event.name || "No name"}}
+              .row-fluid
+                .text-center.event-organizator.col-lg-12.col-md-12.col-sm-12.col-xs-12
+                  span Organized by
+                    a.btn.btn-default(ng-href="/users/{{event.organizator.id}}") {{event.organizator.username}}
+              .row-fluid
+                .col-lg-12.col-md-12.col-sm-12.col-xs-12
+                  .text-center.event-datetime
+                    p(ng-if="!editmode") {{event.date.format('DD MMM YYYY, HH:mm')}}
+                    clockpicker.col-lg-6.col-lg-offset-3(ng-if="editmode" event="event")
+              .row-fluid
+                .text-center.event-location.col-lg-12.col-md-12.col-sm-12.col-xs-12
+                  div(ng-if="editmode")
+                    p {{event.venue.name}}
+                      a.clickable(data-toggle="modal" data-target="#event-location-modal")
+                        span(ng-if="event.venue.name")  Modify venue
+                        span(ng-if="!event.venue.name") Choose venue
+                  div(ng-if="!editmode")
+                    a.clickable(data-toggle="modal" data-target="#event-location-modal") {{event.venue.name}}
+          .well.col-lg-12.col-md-12.col-sm-12.col-xs-12
+            .row
+              h3.text-center Tickets:
+              .text-center.event-tickets.col-lg-12.col-md-12.col-sm-12.col-xs-12.no-padding
+                tickets(mode="!isEditable ? 'purchase' : (editmode ? 'modify' : 'monitor')" event="event")
+          #event-content-xs.row-fluid.visible-xs
+            .row
+              .event-description.col-lg-12.col-md-12.col-sm-12
+                p(ng-if="!editmode" ng-bind-html="event.desc")
+                .well(ng-if="editmode")
+                  text-angular(ng-model="event.desc" ta-toolbar="[['h1','h2','h3'], \
+                                                                  ['bold','italics', 'underline', 'ol'], \
+                                                                  ['justifyLeft', 'justifyCenter', 'justifyRight']]")
+          .row-fluid(ng-if="editmode")
+            .col-lg-12.text-center
+              .btn.btn-material-light-green.btn-raised.col-lg-5(ng-click="save()") Save
+              .btn.btn-default.btn-raised.col-lg-5(ng-click="cancel()") Cancel
+
+          .row-fluid(ng-if="!editmode && isEditable")
+            .row
+              .col-lg-12.text-center
+                .btn.btn-default(ng-click="enterEditMode()")
+                  span.mdi-editor-mode-edit
+                  span  Edit
+        #event-content.col-lg-8.col-md-9.col-sm-8.col-xs-6.hidden-xs
+          .row-fluid
+            .event-name.well.col-lg-12.col-md-12.col-sm-12
+              h1(ng-if="!editmode") {{event.name}}
+              h1(ng-if="editmode"
+                  blur="submit"
+                  buttons="no"
+                  editable-text="event.name"
+                  e-required
+                  e-placeholder="Enter event name") {{event.name || "No name"}}
+          .row-fluid
+            .event-description.col-lg-12.col-md-12.col-sm-12
+              p(ng-if="!editmode" ng-bind-html="event.desc")
+              .well(ng-if="editmode")
+                text-angular(ng-model="event.desc" ta-toolbar="[['h1','h2','h3', 'h4', 'h5', 'h6', 'p', 'pre', 'quote'], \
+                                                                ['bold','italics', 'underline', 'strikeThrough', 'ul', 'ol'], \
+                                                                ['justifyLeft', 'justifyCenter', 'justifyRight', 'indent', 'outdent'], \
+                                                                ['wordcount', 'charcount']]")      
+      #event-location-modal.modal.fade
+        .modal-dialog
+          .modal-content
+            .modal-header
+              button.btn.close(type="button" data-dismiss="modal" aria-label="Close")
+                span(aria-hidden='true') ×
+              h2.hidden-xs
+                span(ng-if="editmode && event.name") Choose "{{event.name}}"'s venue
+                span(ng-if="editmode && !event.name") Choose venue
+                span(ng-if="!editmode") "{{event.name}}"'s venue
+              h4.visible-xs
+                span(ng-if="editmode && event.name") Choose "{{event.name}}"'s venue
+                span(ng-if="editmode && !event.name") Choose venue
+                span(ng-if="!editmode") "{{event.name}}"'s venue
+            .modal-body
+              .row
+                google-location-search.col-lg-10.col-lg-offset-1(ng-model="event.venue")
+            .modal-footer
+              button.btn.btn-material-light-green(type="button" data-dismiss="modal") Done
+      #event-avatar-modal.modal.fade
+        .modal-dialog
+          .modal-content
+            .modal-header
+              button.btn.close(type="button" data-dismiss="modal" aria-label="Close")
+                span(aria-hidden='true') ×
+              h2.hidden-xs
+                span(ng-if="editmode && event.name") Choose "{{event.name}}"'s logo
+                span(ng-if="editmode && !event.name") Choose logo
+                span(ng-if="!editmode") "{{event.name}}"'s logo
+              h4.visible-xs
+                span(ng-if="editmode && event.name") Choose "{{event.name}}"'s logo
+                span(ng-if="editmode && !event.name") Choose logo
+                span(ng-if="!editmode") "{{event.name}}"'s logo
+            .modal-body
+              .row
+                .col-lg-12.col-md-12.col-sm-12.col-xs-12
+                  cropme(ng-if="global.screenSize !== 'xs'"
+                          width="450"
+                          height="450"
+                          destination-width="450"
+                          destination-height="450")
+                  form.form-inline(ng-if="global.screenSize === 'xs'")
+                    .form-group.col-lg-12.col-md-12.col-sm-12.col-xs-12
+                      .row
+                        label.col-lg-4.col-md-4.col-sm-4.col-xs-12.control-label Select image:
+                        .col-lg-5.col-md-5.col-sm-5.col-xs-12
+                          .form-control-wrapper.fileinput
+                            input.form-control.empty(type="text" readonly)
+                            input#avatar-img-upload(type="file")
+                            .floating-label Browse
+                            span.material-input
+                      .row(ng-if="avatarUploadError")
+                        .alert.alert-warning {{headerUploadError}}
+                      .row(ng-show="avatarIsUploading")
+                        .progress
+                          .progress-bar.progress-bar-material-light-green
+            .modal-footer
+              button.btn(type="button" data-dismiss="modal" ng-click="cancelLogo()") Cancel

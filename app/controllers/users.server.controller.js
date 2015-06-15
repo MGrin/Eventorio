@@ -4,11 +4,9 @@
  * Module dependencies.
  */
 var app; // jshint ignore:line
-var mongoose = require('mongoose');
-var User = mongoose.model('User');
 var passport = require('passport');
-var async = require('async');
-var _ = require('underscore');
+
+var admins = ['mr6r1n@gmail.com'];
 
 exports.init = function (myApp) {
   app = myApp; // jshint ignore:line
@@ -16,6 +14,11 @@ exports.init = function (myApp) {
 
 // saves a new session for a user if authentication was successful
 exports.login = function (req, res) {
+  if (req.user) { // FB and GP login
+    var redirectUrl = req.body.redirect || '/users/' + req.user.id;
+    return res.redirect(redirectUrl);
+  }
+
   passport.authenticate('local', function(err, user, info) {
     if (err) {
       return app.err(err, res);
@@ -24,10 +27,10 @@ exports.login = function (req, res) {
       return app.err(info, res);
     }
     req.logIn(user, function(err) {
-      if (err) {
-        return app.err(err, res);
-      }
-      return res.sendStatus(200);
+      if (err) return app.err(err, res);
+
+      var redirectUrl = req.body.redirect || '/users/' + user.id;
+      return res.redirect(redirectUrl);
     });
   })(req, res);
 };
@@ -36,7 +39,7 @@ exports.signup = function (req, res) {
   var fields = {
     username: req.body.username,
     email: req.body.email,
-    password: req.body.hashedPassword
+    password: req.body.password
   };
 
   app.User.createFromSignup(fields, function (err, user) {
@@ -44,7 +47,9 @@ exports.signup = function (req, res) {
 
     req.logIn(user, function (err) {
       if (err) return app.err(err, res);
-      res.send(200);
+
+      var redirectUrl = req.body.redirect || '/users/' + user.id;
+      res.redirect(redirectUrl);
     });
   });
 };
@@ -68,15 +73,19 @@ exports.restorePassword = function (req, res) {
     if (err) return app.err(err, res);
     return res.sendStatus(200);
   });
-}
+};
 
 exports.changePassword = function (req, res) {
   var user = req.user;
+  var profile = req.profile;
+
+  if (user.id !== profile.id) return app.err('Not authorized', res);
+
   user.changePassword(req.body, function (err) {
     if (err) return app.err(err, res);
     return res.sendStatus(200);
   });
-}
+};
 
 exports.update = function (req, res) {
   var updates = req.body.user;
@@ -87,79 +96,10 @@ exports.update = function (req, res) {
   user.update(updates, function (err, updatedUser) {
     if (err) return app.err(err, res);
     return res.jsonp(updatedUser);
-  })
-}
-
-exports.addFollower = function (req, res) {
-  var me = req.user;
-  var userToFollow = req.profile;
-  if (!userToFollow) return app.err('No user to follow was given!', res);
-
-  me.follow(userToFollow, function (err) {
-    if (err) return app.err(err, res);
-    return res.sendStatus(200);
   });
-}
+};
 
-exports.removeFollower = function (req, res) {
-  var me = req.user;
-  var userToUnfollow = req.profile;
-  if (!userToUnfollow) return app.err('No user to unfollow was given!', res);
-
-  me.unfollow(userToUnfollow, function (err) {
-    if (err) return app.err(err, res);
-    return res.sendStatus(200);
-  });
-}
-
-exports.attend = function (req, res) {
-  var user = req.user;
-  var event = req.event;
-
-  user.attendEvent(event, function (err) {
-    if (err) return app.err(err, res);
-    return res.jsonp(200);
-  });
-}
-
-exports.quit = function (req, res) {
-  var user = req.user;
-  var event = req.event;
-
-  user.quitEvent(event, function (err) {
-    if (err) return app.err(err, res);
-    return res.jsonp(200);
-  });
-}
-
-exports.news = function (req, res) {
-  var user = req.user;
-  var offset = req.query.offset || 0;
-  var quantity = req.query.quantity || 20;
-
-  app.Action.actionsForUser(user, offset, quantity, function (err, actions) {
-    if (err) return app.err(err, res);
-    var result = [];
-
-    _.each(actions, function (action) {
-      var jsonAction = action.toJSON();
-      result.push(jsonAction);
-    });
-
-    return res.jsonp(result);
-  });
-}
-
-exports.connections = function (req, res) {
-  var profile = req.profile;
-  var connections = {
-    followers: profile.followers,
-    following: profile.following
-  }
-  return res.send(connections);
-}
-
-exports.loadUser = function (req, res, next, username) {
+exports.load = function (req, res, next, username) {
   if (username === 'me') {
     if (req.user) {
       req.profile = req.user;
@@ -178,11 +118,12 @@ exports.loadUser = function (req, res, next, username) {
 
   app.User.loadUser(username, function (err, user) {
     if (err) return app.err(err, res);
-    if (!user) return app.err(new Error('No user found: ' + username), res);
+
+    if (!user) return res.redirect('/');
 
     req.profile = user;
     return next();
-  })
+  });
 };
 
 exports.loadByActivationCode = function (req, res, next, activationCode) {
@@ -192,35 +133,52 @@ exports.loadByActivationCode = function (req, res, next, activationCode) {
 
     req.userToActivate = user;
     return next();
-  })
+  });
 };
 
 exports.show = function (req, res) {
+  var user = req.user;
+  if (user) user = user.toJSON();
+
   return res.format({
     html: function () {
-      res.render('app/user.server.jade', {profile: req.profile});
+      res.render('users/user.server.jade', {profile: req.profile, user: user});
     },
     json: function () {
       return res.jsonp(req.profile.toJSON());
     }
   });
-}
+};
 
 /**
  * Logout
  */
 exports.logout = function (req, res) {
   req.logout();
-  res.redirect('/');
+
+  var redirectUrl = req.query.redirect || '/';
+  res.redirect(redirectUrl);
 };
 
 /*
  * Generic require login routing middleware
  */
 exports.requiresLogin = function (req, res, next) {
-  if (req.isAuthenticated()) {
+ if (req.isAuthenticated()) {
+   next();
+ } else {
+   var redirectUrl = req.query.redirect || '/';
+   res.redirect(redirectUrl);
+ }
+};
+
+exports.requiresCompleteProfile = function (req, res, next) {
+  var user = req.user;
+
+  if (user.isComplete || admins.indexOf(user.email) > -1) {
     next();
   } else {
-    res.redirect('/');
+    var redirectUrl = req.query.redirect || '/';
+    res.redirect(redirectUrl);
   }
 };

@@ -42,5 +42,5 @@ gulp.task('clean', function () {
 });
 
 gulp.task('default', ['clean', 'compile', 'compress'], function () {
-  if (ENV === 'production') return;
+
 });

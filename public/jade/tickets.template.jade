@@ -1,0 +1,32 @@
+.table-responsive
+  table.table(ng-if="mode === 'modify'")
+    thead
+      tr
+        th Price
+        th Name
+        th Quantity
+        th
+    tbody
+      tr(ng-repeat="ticket in event.tickets")
+        td.col-lg-3
+          span {{ticket.price}} CHF.-
+        td
+          span {{ticket.name}}
+        td
+          span {{ticket.quantity}}
+        td
+          a.clickable#removeTicketBtn(ng-click="removeTicket($index)")
+            i.mdi-content-clear.mdi-material-red
+      tr
+        td.col-lg-3
+          .input-group
+            input.form-control(type="price", placeholder="CHF.-", ng-model="newTicket.price")
+        td
+          .input-group
+            input.form-control(type="text", placeholder="Ticket type", ng-model="newTicket.name")
+        td
+          .input-group
+            input.form-control(type="number", placeholder="100", min="0", ng-model="newTicket.quantity")
+        td
+          a.clickable#addTicketBtn(ng-click="addTicket()")
+            i.mdi-navigation-check

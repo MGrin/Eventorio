@@ -1,0 +1,11 @@
+form.form.form-horizontal
+  .col-lg-10.col-lg-offset-1
+    .form-group
+      input#venue-input.form-control(type="text" placeholder="Search for a venue")
+      
+#address.alert.alert-info {{event.venue.formatted_address}}
+#map-canvas
+#location-discovery-progress.text-center
+  p(style="color: grey") Looking for your location
+  .progress
+    .progress-bar.progress-bar-material-light-green

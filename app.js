@@ -2,7 +2,6 @@
 var express = require('express');
 var fs = require('fs');
 var async = require('async');
-var  _ = require('underscore');
 var mongoose = require('mongoose');
 var passport = require('passport');
 var boot = require('./lib/boot');
@@ -18,58 +17,9 @@ var color = {
 
 var app = express();
 app.config = require('./config/config.server');
-if (!app.config.mandrill.API_KEY) {
-  console.log("MANDRILL__KEY is not provided");
-}
-if (!app.config.google.clientID) {
-  console.log("GOOGLE_CLIENT_ID is not provided");
-}
-if (!app.config.google.clientSecret) {
-  console.log("GOOGLE_CLIENT_SECRET is not provided");
-}
-if (!app.config.facebook.clientID) {
-  console.log("FACEBOOK_CLIENT_ID is not provided");
-}
-if (!app.config.facebook.clientSecret) {
-  console.log("FACEBOOK_CLIENT_SECRET is not provided");
-}
 
 require('./config/logger.server')(app);
 require('./lib/email')(app);
-require('./lib/pictures')(app);
-
-// app.gm = require('googlemaps');
-// app.gm.config('google-client-id', app.config.google.clientID);
-// app.gm.config('google-client-secret', app.config.google.clientSecret);
-
-app.err = function (err, next) {
-  // error object passed and not a string
-  if (_.isObject(err)) {
-    err = err.message;
-  }
-  if (err) {
-    // add the error into log file
-    app.logger.error(err);
-  }
-
-  // callback given, pass the error to it
-  if (_.isFunction(next)) {
-    return next(err);
-  }
-
-  // response object given, pass the error to it
-  if (_.isObject(next)) {
-    // send error to the client
-    return next.format({
-      html: function () {
-        next.status(500).render('error.server.jade', {status: 500, url: next.originalUrl, error: err});
-      },
-      json: function () {
-        next.status(500).jsonp(err);
-      }
-    });
-  }
-};
 
 exports = module.exports = app;
 
@@ -128,29 +78,6 @@ async.series([
     server.listen(app.config.port);
     app.logger.info('Express app started on port ' + app.config.port);
     cb();
-  },
-  function (cb) {
-    // Creation of default eventorio account
-    app.User.findOne({username: 'Eventorio'}, function (err, user) {
-      if (err || user) {
-        app.Eventorio = user;
-        return cb(err);
-      }
-
-      var Eventorio = new app.User({
-        username: 'Eventorio',
-        name: 'Eventorio',
-        desc: 'Eventorio is a event-oriented social platform that helps you to organize, track and share events around you',
-        email: app.config.EventorioUser.email
-      });
-
-      Eventorio.save(function (err, saved) {
-        if (err) return cb(err);
-        app.Eventorio = saved;
-        app.Eventorio.password = app.config.EventorioUser.password;
-        return cb();
-      });
-    });
   }
 ], function (err) {
   if (err) {
@@ -167,10 +94,4 @@ async.series([
     'The server [' + app.config.name + '] is up and running!' +
     color.default
   );
-  if (app.isDev) {
-    console.log(color.green + 'To debug:' + color.default +
-                ' run ' + color.blue + '$ make debug' + color.default +
-                ' or open url in Chrome ' +
-                color._blue + 'http://localhost:8081/debug?port=5081' + color.default);
-  }
 });

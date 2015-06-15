@@ -1,23 +1,17 @@
-app.directive('googleLocationSearch', [function () {
+'use strict';
+
+app.directive('googleLocationSearch', [function () { // jshint ignore:line
   return {
-    template: '<form class="form-horizontal">' +
-                '<div class="col-lg-10 col-lg-offset-1">' +
-                  '<div class="form-group">' +
-                    '<input id="venue-input" class="form-control" type="text" id="venue-search-input" placeholder="Search for a venue">' +
-                  '</div>' +
-                '</div>' +
-              '</form>' +
-              '<div id="address" class="alert alert-info">{{event.venue.formatted_address}}</div>' +
-              '<div id="map-canvas"></div>' +
-              '<div id="location-discovery-progress" class="text-center">' +
-                '<p style="color: grey"> Looking for your location</p>' +
-                '<div class="progress"><div class="progress-bar progress-bar-material-light-green"></div></div>' +
-              '</div>',
+    templateUrl: '/view/google.location.search.template.html',
     link: function ($scope, element, attrs) {
+      if (typeof google === 'undefined') { // jshint ignore:line
+        console.log('Google maps library is not loaded');
+        return;
+      }
       var defaultLat = attrs.lat || '46.518415';
       var defaultLng = attrs.lng || '6.563989';
 
-      var defaultPosition = new google.maps.LatLng(Number(defaultLat), Number(defaultLng));
+      var defaultPosition = new google.maps.LatLng(Number(defaultLat), Number(defaultLng)); // jshint ignore:line
 
       var map;
       var placesService;
@@ -33,24 +27,25 @@ app.directive('googleLocationSearch', [function () {
         var mapOptions = {
           zoom: 15,
         };
-        map = new google.maps.Map(mapCanvas[0], mapOptions);
+        map = new google.maps.Map(mapCanvas[0], mapOptions);// jshint ignore:line
         map.setCenter(defaultPosition);
-        locationMarker = new google.maps.Marker({
+        locationMarker = new google.maps.Marker({// jshint ignore:line
           map: map,
           position: defaultPosition,
-          icon: app.config.google.currentLocationMarker
+          icon: app.config.google.currentLocationMarker// jshint ignore:line
         });
 
-        placesService = new google.maps.places.PlacesService(map);
+        placesService = new google.maps.places.PlacesService(map);// jshint ignore:line
         return next();
       };
 
       var getVenue = function (next) {
         if (!$scope.event.venue.id) return next();
-        var place = placesService.getDetails({
-          reference: $scope.event.venue.reference,
-          placeId: $scope.event.venue.place_id
-        }, function (place) {
+        var placeObj = {};
+        if ($scope.event.venue.place_id) placeObj.placeId = $scope.event.venue.place_id; // jshint ignore:line
+        else if ($scope.event.venue.reference) placeObj.reference = $scope.event.venue.reference;
+
+        placesService.getDetails(placeObj, function (place) {
           fillTheModel(place);
           return next();
         });
@@ -63,7 +58,7 @@ app.directive('googleLocationSearch', [function () {
         loadingLocation(true);
         locationMarker.setVisible(false);
         navigator.geolocation.getCurrentPosition(function (position) {
-          var pos = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+          var pos = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);// jshint ignore:line
           locationMarker.setPosition(pos);
           locationMarker.setVisible(true);
           loadingLocation(false);
@@ -80,28 +75,28 @@ app.directive('googleLocationSearch', [function () {
           map.setCenter(placeToShow.geometry.location);
         }
         if (!marker) {
-          marker = new google.maps.Marker({
+          marker = new google.maps.Marker({// jshint ignore:line
             map: map,
             visible: false
           });
         }
         marker.setIcon({
           url: placeToShow.icon,
-          size: new google.maps.Size(71, 71),
-          scaledSize: new google.maps.Size(35, 35),
-          origin: new google.maps.Point(0, 0),
-          anchor: new google.maps.Point(17, 34)
+          size: new google.maps.Size(71, 71),// jshint ignore:line
+          scaledSize: new google.maps.Size(35, 35),// jshint ignore:line
+          origin: new google.maps.Point(0, 0),// jshint ignore:line
+          anchor: new google.maps.Point(17, 34)// jshint ignore:line
         });
         marker.setPosition(placeToShow.geometry.location);
         marker.setVisible(true);
       };
 
       var addAutocomplete = function () {
-        var autocomplete = new google.maps.places.Autocomplete(input[0]);
+        var autocomplete = new google.maps.places.Autocomplete(input[0]);// jshint ignore:line
         autocomplete.bindTo('bounds', map);
-        google.maps.event.addListener(autocomplete, 'place_changed', function () {
+        google.maps.event.addListener(autocomplete, 'place_changed', function () {// jshint ignore:line
           if (!marker) {
-            marker = new google.maps.Marker({
+            marker = new google.maps.Marker({// jshint ignore:line
               map: map,
               visible: false
             });
@@ -120,17 +115,17 @@ app.directive('googleLocationSearch', [function () {
           icon: place.icon,
           website: place.website,
           id: place.id,
-          place_id: place.place_id,
+          place_id: place.place_id,// jshint ignore:line
           types: place.types,
           name: place.name,
           reference: place.reference,
-          formatted_address: place.formatted_address
+          formatted_address: place.formatted_address// jshint ignore:line
         };
         $scope.$apply();
         return $scope.event.venue;
       };
 
-      async.series([
+      async.series([// jshint ignore:line
         init,
         getVenue
       ], function () {
@@ -152,7 +147,7 @@ app.directive('googleLocationSearch', [function () {
       });
 
       $('#event-location-modal').on('shown.bs.modal', function () {
-        google.maps.event.trigger(map, 'resize');
+        google.maps.event.trigger(map, 'resize');// jshint ignore:line
         geolocate();
       });
 
@@ -172,9 +167,9 @@ app.directive('googleLocationSearch', [function () {
           progress += direction * delta;
 
           if (locationIsLoading) setTimeout(updateProgress, 50);
-        }
+        };
         updateProgress();
-      }
+      };
     }
   };
 }]);
