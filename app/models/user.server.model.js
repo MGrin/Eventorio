@@ -155,6 +155,10 @@ UserSchema.methods = {
     this.name = updates.name;
     this.desc = updates.desc;
     this.pictureProvider = updates.pictureProvider;
+
+    if (updates.address) this.address = updates.address;
+    if (updates.birthday) this.birthday = moment(updates.birthday).add(1, 'd').utc().toDate();
+
     return this.save(cb);
   },
 

@@ -15,7 +15,8 @@ app.controller('UserController', ['$scope', '$rootScope', 'Global', 'Users', 'gr
 
   $scope.settings = {
     visible: {
-      password: false
+      password: false,
+      additionalInfo: false
     }
   };
 
@@ -32,19 +33,26 @@ app.controller('UserController', ['$scope', '$rootScope', 'Global', 'Users', 'gr
         return;
       }
 
+      $scope.settings.visibility.password = false;
       $scope.credentials = {
         oldPassword: '',
         newPassword: '',
-        newPasswordRepeat: ''
+        newPasswordRepeat: '',
+        error: null
       };
-      delete $scope.credentials.error;
-      $scope.credentials.passwordChanged = true;
-      setTimeout(function () {
-        $scope.credentials.passwordChanged = false;
-        $scope.$apply();
-      }, 3000);
       growl.info('Password successfully changed!');
     });
+  };
+
+
+  $scope.userBirthday = $scope.user.birthday ? new Date($scope.user.birthday) : new Date(1992, 0, 1);
+
+  $scope.updateUserAdditionalInformation = function () {
+    $scope.user.birthday = $scope.userBirthday; // jshint ignore:line
+    $scope.updateUser();
+
+    $scope.userBirthday = $scope.user.birthday;
+    $scope.settings.visible.additionalInfo = false;
   };
 
   $scope.updateUser = function () {
