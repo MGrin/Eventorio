@@ -3,6 +3,7 @@
   "version": "2.0.0",
   "main": "app.js",
   "author": "MGrin",
+  "repository": "https://github.com/MGrin/Eventorio.git",
   "scripts": {
     "postinstall": "bower install && gulp"
   },
