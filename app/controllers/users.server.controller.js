@@ -5,6 +5,7 @@
  */
 var app; // jshint ignore:line
 var passport = require('passport');
+var _ = require('underscore');
 
 var admins = ['mr6r1n@gmail.com'];
 
@@ -88,7 +89,7 @@ exports.changePassword = function (req, res) {
 };
 
 exports.update = function (req, res) {
-  var updates = req.body.user;
+  var updates = _.pick(req.body.user, 'name', 'desc', 'pictureProvider', 'address', 'birthday');
   var user = req.user;
 
   if (req.user.id !== req.profile.id) return app.err('Not authorized!', res);

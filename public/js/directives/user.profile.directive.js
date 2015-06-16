@@ -17,6 +17,12 @@ app.directive('userProfile', ['Global', function (Global) { // jshint ignore:lin
       };
 
       if (Global.screenSize !== 'xs') setupDetailsMargin();
+
+      $('#user-settings-modal').on('hidden.bs.modal', function () {
+          $scope.settings.visible.password = false;
+          $scope.settings.visible.additionalInfo = false;
+          $scope.$apply();
+      });
     },
   };
 }]);

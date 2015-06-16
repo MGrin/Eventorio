@@ -41,7 +41,7 @@ html(lang="en", ng-app="EventorioUser")
     script(src="/cdn/js/directives/user-avatar.directive.js")
     script(src="/cdn/js/directives/header-picture.directive.js")
     script(src="/cdn/js/directives/user.profile.directive.js")
-
+    
   body
     include ../header.server.jade
     
@@ -112,14 +112,18 @@ html(lang="en", ng-app="EventorioUser")
           .row-fluid.hidden-xs(ng-if="global.me")
             .row(ng-if="editable")
               .col-lg-12
-                button.btn.btn-raised.btn-material-deep-orange Create Event!
+                button.btn.btn-raised.btn-info(ng-if="!user.isComplete"
+                                                data-toggle="modal"
+                                                data-target="#user-settings-modal"
+                                                ng-click="settings.visible.additionalInfo = true") Create Event!
+                a.btn.btn-raised.btn-material-deep-orange(ng-if="user.isComplete" href="/events/create") Create Event!
             .row
               .col-lg-12
                 h2 Here will be some information about events
       .row-fluid.visible-xs
         #user-profile-xs.col-xs-12
           .row
-            .user-description.col-lg-8.col-md-8.col-sm-8
+            .user-description.col-xs-12
               p(ng-if="!editable") #{profile.desc || "No description"}
               p(ng-if="editable"
                 blur="submit"
@@ -130,6 +134,13 @@ html(lang="en", ng-app="EventorioUser")
                 e-required
                 e-placeholder="Tell us something about you"
                 onaftersave="updateUser()") {{user.desc || "Tell us something about you"}}
+          .row
+            .col-xs-12
+              button.btn.btn-raised.btn-info(ng-if="!user.isComplete"
+                                              data-toggle="modal"
+                                              data-target="#user-settings-modal"
+                                              ng-click="settings.visible.additionalInfo = true") Create Event!
+              a.btn.btn-raised.btn-material-deep-orange(ng-if="user.isComplete" href="/events/create") Create Event!
           .row-fluid.text-center(ng-if="editable")
             .btn.btn-flat.btn-default.btn-xs(data-toggle="modal" data-target="#user-settings-modal")
               i.mdi-action-settings
@@ -227,8 +238,6 @@ html(lang="en", ng-app="EventorioUser")
                             .col-lg-10.visible-lg
                               .alert.alert-warning(ng-show="credentials.error")
                                 p {{credentials.error}}
-                              .alert.alert-success(ng-show="credentials.passwordChanged")
-                                p Password changed successfully
                             .col-lg-2.col-md-2.col-sm-2.col-xs-2
                               button.btn.btn-raised.btn-material-light-green(ng-click="changePassword()"
                                 ng-disabled="credentials.oldPassword.length === 0 || \
@@ -239,8 +248,33 @@ html(lang="en", ng-app="EventorioUser")
                             .col-md-10.col-sm-10.col-xs-10.hidden-lg
                               .alert.alert-warning(ng-show="credentials.error")
                                 p {{credentials.error}}
-                              .alert.alert-success(ng-show="credentials.passwordChanged")
-                                p Password changed successfully
+                  li
+                    legend.btn.btn-flat.full-width(ng-click="settings.visible.additionalInfo = !settings.visible.additionalInfo") Complete your profile
+                    .row-fluid(ng-show="settings.visible.additionalInfo")
+                      form.form-horizontal
+                        fieldset
+                          .form-group
+                            label.control-label.col-lg-4(for="birthday") Birthday
+                            .col-lg-8
+                              input#birthday.form-control(type="date"
+                                ng-model="userBirthday")
+                          .form-group
+                            label.control-label.col-lg-4(for="address") Address
+                            .col-lg-8
+                              input#new-password-input.form-control(type="text"
+                                placeholder="Street, No, ZIP, Country"
+                                ng-model="user.address")
+                          .form-group
+                            .col-lg-10.visible-lg
+                              .alert.alert-warning(ng-show="error")
+                                p {{error}}
+                            .col-lg-2.col-md-2.col-sm-2.col-xs-2
+                              button.btn.btn-raised.btn-material-light-green(ng-click="updateUserAdditionalInformation()")
+                                i.mdi-action-done
+                            .col-md-10.col-sm-10.col-xs-10.hidden-lg
+                              .alert.alert-warning(ng-show="error")
+                                p {{error}}
+
                 .clearfix
                 .hide
                   legend Connected accounts
