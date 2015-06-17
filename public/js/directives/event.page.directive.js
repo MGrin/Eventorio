@@ -12,13 +12,22 @@ app.directive('eventPage', ['$window', 'Global', 'Pictures', 'growl', function (
         element.find('.event-avatar-picture').each(function () {
           avatarHeight = $(this).height();
         });
-        if (avatarHeight < 10) return setTimeout(setupDetailsMargin, 250);
+        if (avatarHeight < 100) return setTimeout(setupDetailsMargin, 250);
         var margin;
-        if (Global.screenSize !== 'xs') {
-          margin = -avatarHeight/2;
+        if ($scope.editmode) {
+          if (Global.screenSize === 'xs') {
+            margin = 0;
+          } else {
+            margin = -avatarHeight - 50;
+          }
         } else {
-          margin = -avatarHeight/2;
+          if (Global.screenSize === 'xs') {
+            margin = 0;
+          } else {
+            margin = -avatarHeight;
+          }
         }
+
         element.find('#event-details').each(function () {
           $(this).css({
             'margin-top': margin
@@ -26,17 +35,7 @@ app.directive('eventPage', ['$window', 'Global', 'Pictures', 'growl', function (
         });
       };
 
-      $scope.$watch('editmode', function(newVal) {
-        if (!newVal) {
-          setupDetailsMargin();
-        } else {
-          element.find('#event-details').each(function () {
-            $(this).css({
-              'margin-top': -300
-            });
-          });
-        }
-      });
+      setupDetailsMargin();
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
