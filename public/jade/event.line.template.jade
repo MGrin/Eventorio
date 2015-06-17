@@ -1,0 +1,11 @@
+.row
+  a(ng-href="/events/{{event.id}}")
+    .panel.panel-default
+      .panel-body
+        .col-lg-12.col-md-12.col-sm-12.col-xs-12
+          .row(style="padding-left: 10px; padding-right: 10px")
+            event-avatar.col-lg-3.col-md-4.col-sm-4.col-xs-4(item="event" ajust-padding="true")
+            .col-lg-9.col-md-8.col-sm-8.col-xs-8
+              h4 {{event.name}}
+              p {{event.venue.name}}
+              p {{event.date.format('DD MMM YYYY, HH:mm')}}

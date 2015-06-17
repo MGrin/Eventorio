@@ -13,5 +13,21 @@ app.factory('Users', ['$resource', '$http', 'Global', function ($resource, $http
       });
   };
 
+  user.queryEvents = function (query, cb) {
+    var href = '/events?';
+    if (query.organizator) href += 'organizator=' + query.organizator + '&';
+    if (query.participant) href += 'participant=' + query.participant + '&';
+    if (query.limit) href += 'limit=' + query.limit + '&';
+    if (query.sortF && query.sortV) href += 'sortF=' + query.sortF + '&sortV=' + query.sortV + '&';
+    if (query.offset) href += 'offset=' + query.offset;
+
+    $http.get(href)
+      .success(function (events) {
+        return cb(null, events[0]);
+      }).error(function (response) {
+        return cb(response);
+      });
+  };
+
   return user;
 }]);

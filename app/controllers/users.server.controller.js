@@ -137,6 +137,10 @@ exports.loadByActivationCode = function (req, res, next, activationCode) {
   });
 };
 
+exports.query = function (req, res) {
+  return res.sendStatus(200);
+};
+
 exports.show = function (req, res) {
   var user = req.user;
   if (user) user = user.toJSON();

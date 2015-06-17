@@ -98,6 +98,38 @@ EventSchema.statics = {
       if (err) console.log(err);
       return cb(err, savedEvent);
     });
+  },
+
+  query: function (params, cb) {
+    var query = {};
+    var limit = params.limit || 20;
+    var offset = params.offset || 0;
+    var sort = {created: -1};
+
+    if (params.sortF) sort[params.sortF] = params.sortV || -1;
+
+    if (params.organizator) query.organizator = params.organizator;
+    if (params.participant) query.participant = params.participant;
+
+    app.Event
+      .find(query)
+      .sort(sort)
+      .skip(offset)
+      .limit(limit)
+      .populate('organizator')
+      .exec(function (err, events) {
+        if (err) return cb(err);
+        var res = {
+          organized: [],
+          participated: []
+        };
+        _.each(events, function (event) {
+          if (event.organizator.id === query.organizator) return res.organized.push(event.toJSON());
+          res.participated.push(event.toJSON());
+        });
+
+        return cb(null, res);
+      });
   }
 };
 
