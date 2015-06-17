@@ -155,13 +155,17 @@ html(lang="en", ng-app="EventorioUser")
                                               data-target="#user-settings-modal"
                                               ng-click="settings.visible.additionalInfo = true") Create Event!
               a.btn.btn-raised.btn-material-deep-orange(ng-if="user.isComplete" href="/events/create") Create Event!
-          .row(ng-if="user.events && user.events.organized.length > 0")
+          .row-fluid.text-center(ng-if="user.events")
+            ul.nav.nav-pills
+              li#nav-tickets(ng-if="user.events.participated.length > 0" ng-click="switchEventsView('participated')")
+                h4.clickable Your tickets
+              li#nav-organized(ng-if="user.events.organized.length > 0" ng-click="switchEventsView('organized')")
+                h4.clickable Organized events
+          .row-fluid(ng-if="user.events && user.events.organized.length > 0")
             .col-xs-12
-              h2 Organized events
               event-line(ng-repeat="event in user.events.organized", event="event")
-          .row(ng-if="editable && user.events && user.events.participated.length > 0")
+          .row-fluid(ng-if="editable && user.events && user.events.participated.length > 0")
             .col-xs-12
-              h2 Your tickets
               ticket(ng-repeat="event in user.events.participated", event="event")
               
           .row-fluid.text-center(ng-if="editable")
