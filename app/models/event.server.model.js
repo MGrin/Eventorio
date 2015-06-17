@@ -18,6 +18,15 @@ exports.initModel = function (myApp) {
   app = myApp;
 };
 
+var TicketTypeSchema = new Schema({
+  name: String,
+  price: Number,
+  quantity: Number,
+  purchased: {
+    type: Number,
+    default: 0
+  }
+});
 /**
  * Events Schema
  */
@@ -30,6 +39,7 @@ var EventSchema = exports.Schema = new Schema({
     ref: 'User'
   },
   date: Date,
+  tickets: [TicketTypeSchema]
 });
 
 EventSchema
@@ -44,7 +54,7 @@ EventSchema.methods = {
   modify: function (updates, user, cb) {
     if (this.organizator.id !== user.id) return cb(new Error('Not authorized'));
 
-    updates = _.pick(updates, 'name', 'desc', 'date', 'picture', 'headerPicture', 'venue');
+    updates = _.pick(updates, 'name', 'desc', 'date', 'picture', 'headerPicture', 'venue', 'tickets');
 
     var event = this;
     _.each(_.keys(updates), function (key) {
@@ -52,7 +62,7 @@ EventSchema.methods = {
     });
     event.save(cb);
   },
-  
+
   toJSON: function () {
     var resEvent = this.toObject({virtuals: true});
     delete resEvent._id;
@@ -79,7 +89,7 @@ EventSchema.statics = {
 
   create: function (fields, creator, cb) {
     fields.date = moment(fields.date).utc(); //jshint ignore:line
-    fields = _.pick(fields, 'name', 'desc', 'date', 'picture', 'headerPicture', 'venue'); // jshint ignore: line
+    fields = _.pick(fields, 'name', 'desc', 'date', 'picture', 'headerPicture', 'venue', 'tickets'); // jshint ignore: line
 
     var event = new app.Event(fields);
     event.organizator = creator;

@@ -22,6 +22,9 @@ exports.create = function (req, res) {
   var event = req.body;
   var creator = req.user;
 
+  var errors = app.validator.validateEvent(event);
+  if (errors) app.err(errors[0], res);
+
   app.Event.create(event, creator, function (err, event) {
     if (err) return app.err(err, res);
     res.jsonp(event.toJSON());
@@ -31,6 +34,9 @@ exports.create = function (req, res) {
 exports.update = function (req, res) {
   var updates = req.body.event;
   
+  var errors = app.validator.validateEvent(updates);
+  if (errors) app.err(errors[0], res);
+
   req.event.modify(updates, req.user, function (err, event) {
     if (err) return app.err(err, res);
     return res.jsonp(event.toJSON());

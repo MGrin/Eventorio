@@ -10,7 +10,7 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
     if (!event.desc) event.desc='';
 
     if (!event.tickets) event.tickets = [];
-    
+
     return event;
   };
 
@@ -31,8 +31,18 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
     $scope.$apply();
   });
 
+  $scope.$on('event:save:error', function (info, errors) {
+    _.each(errors, function (err) { // jshint ignore:line
+      growl.error(err);
+    });
+  });
+
+  $scope.$on('ticket:purchase', function (info, ticket) {
+    $scope.purchasingTicket = ticket;
+  });
+
   $scope.save = function () {
-    var errors = $scope.validate($scope.event);
+    var errors = app.validator.validateEvent($scope.event); // jshint ignore:line
 
     if (errors) return $scope.$broadcast('event:save:error', errors);
 
@@ -44,7 +54,7 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
     } else {
       Events.update({_id: $scope.event.id, event: $scope.event}, function (event) {
         var venue = $scope.event.venue;
-        $scope.event = $scope.fixEvent(event);
+        $scope.event = fixEvent(event);
         $scope.event.venue = venue;
         $scope.editmode = false;
       });
@@ -61,19 +71,6 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
 
   $scope.cancelLogo = function () {
     $scope.$broadcast('cropme:cancel');
-  };
-
-  $scope.validate = function (event) {
-    var errors = [];
-    var nameError = app.validator.validateEventName(event.name); // jshint ignore:line
-    var dateError = app.validator.validateEventDate(event.date); // jshint ignore:line
-    var venueError = app.validator.validateEventVenue(event.venue); // jshint ignore:line
-
-    if (nameError) errors.push({field: 'name', message: nameError});
-    if (dateError) errors.push({field: 'date', message: dateError});
-    if (venueError) errors.push({field: 'venue', message: venueError});
-
-    return errors.length === 0 ? null : errors;
   };
 
   $scope.enterEditMode = function () {

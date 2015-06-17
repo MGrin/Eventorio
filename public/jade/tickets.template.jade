@@ -1,16 +1,17 @@
 .row-fluid.padding-xs(ng-if="mode === 'modify'")
   .row.alert.alert-material-blue-100(ng-repeat="ticket in event.tickets").text-left.tickets-alert
     .row-fluid
-      .col-lg-12.col-md-12.col-sm-12.col-xs-12
-        span {{ticket.name}}
+      .col-lg-10.col-md-10.col-sm-10.col-xs-10
+        h4 {{ticket.name}}
+      .col-lg-2.col-md-2.col-sm-2.col-xs-2.pull-right
+        button.btn.btn-flat.btn-warning.btn-xs.pull-right#removeTicketBtn(ng-click="removeTicket($index)")
+          i.mdi-content-clear.mdi-material-red
     .row-fluid
       .col-lg-5.col-md-5.col-sm-5.col-xs-5.pull-left
-        span Price: {{ticket.price}} CHF
+        span Price: {{ticket.price}} CHF.-
       .col-lg-5.col-md-5.col-sm-2.col-xs-5.pull-left
         span Quantity: {{ticket.quantity}}
-      .col-lg-2.col-mg-2.col-sm-2.col-xs-2.pull-right
-        a.clickable#removeTicketBtn(ng-click="removeTicket($index)")
-          i.mdi-content-clear.mdi-material-red
+
   .row-fluid
     .col-lg-12.col-md-12.col-sm-12.col-xs-12.input-group
       textarea.form-control(placeholder="Ticket name" rows="1", ng-model="newTicket.name")
@@ -19,39 +20,26 @@
       input.form-control(type="number", placeholder="CHF.-", ng-model="newTicket.price", min="0", max="999")
     .col-lg-4.col-md-4.col-sm-4.col-xs-4.col-lg-offset-1.col-md-offset-1.col-sm-offset-1.input-group.pull-left
       input.form-control(type="number", placeholder="Quantity", ng-model="newTicket.quantity", min="0", max="50000")
-    .col-lg-3.col-mg-3.col-sm-3.col-xs-3.pull-right
-      a.clickable#addTicketBtn(ng-click="addTicket()")
+    .col-lg-2.col-mg-2.col-sm-2.col-xs-2
+      button.btn.btn-flat.btn-success.btn-xs#addTicketBtn(ng-click="addTicket()"
+                                ng-disabled="!newTicket.name || newTicket.name === '' || !newTicket.price || newTicket.price < 1 || !newTicket.quantity || newTicket.quantity < 1")
         i.mdi-navigation-check
-        
-//- .table-responsive
-//-   table.table(ng-if="mode === 'modify'")
-//-     thead
-//-       tr
-//-         th Price
-//-         th Name
-//-         th Quantity
-//-         th
-//-     tbody
-//-       tr(ng-repeat="ticket in event.tickets")
-//-         td.col-lg-3
-//-           span {{ticket.price}} CHF.-
-//-         td
-//-           span {{ticket.name}}
-//-         td
-//-           span {{ticket.quantity}}
-//-         td
-//-           a.clickable#removeTicketBtn(ng-click="removeTicket($index)")
-//-             i.mdi-content-clear.mdi-material-red
-//-       tr
-//-         td.col-lg-3
-//-           .input-group
-//-             input.form-control(type="price", placeholder="CHF.-", ng-model="newTicket.price")
-//-         td
-//-           .input-group
-//-             textarea.form-control(placeholder="Ticket type", ng-model="newTicket.name")
-//-         td
-//-           .input-group
-//-             input.form-control(type="number", placeholder="100", min="0", ng-model="newTicket.quantity")
-//-         td
-//-           a.clickable#addTicketBtn(ng-click="addTicket()")
-//-             i.mdi-navigation-check
+
+.row-fluid.padding-xs(ng-if="mode === 'monitor'")
+  .row.alert.alert-material-blue-100(ng-repeat="ticket in event.tickets").text-left.tickets-alert
+    .row-fluid
+      .col-lg-10.col-md-10.col-sm-10.col-xs-10
+        span {{ticket.name}},
+          strong {{ticket.price}} CHF.-
+    .row-fluid.text-right
+      .col-lg-9.col-md-9.col-sm-9.col-xs-9.col-lg-offset-3.col-md-offset-3.col-sm-offset-3.col-xs-offset-3
+        span Purchased: {{ticket.purchased}}/{{ticket.quantity}}
+
+.row-fluid.padding-xs(ng-if="mode === 'purchase'")
+  .row(ng-repeat="ticket in event.tickets").text-left
+    .row-fluid
+      .col-lg-12.col-md-12.col-sm-12.col-xs-12
+        h4.pull-left {{ticket.name}}
+        button.btn.btn-raised.btn-material-orange.pull-right(ng-if="ticket.purchased < ticket.quantity && !user" data-toggle="modal" data-target="#login-modal") Buy for {{ticket.price}}CHF.-
+        button.btn.btn-raised.btn-material-orange.pull-right(ng-if="ticket.purchased < ticket.quantity && user" data-toggle="modal" data-target="#ticket-purchase-modal" ng-click="purchaseTicket($index)") Buy for {{ticket.price}}CHF.-
+        button.btn.btn-raised.btn-material-grey.pull-right(ng-if="ticket.purchased >= ticket.quantity" disabled) Sold out

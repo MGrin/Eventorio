@@ -8,6 +8,8 @@ app.directive('tickets', [function () { // jshint ignore:line
     },
     templateUrl: '/view/tickets.template.html',
     link: function ($scope) {
+      $scope.user = $scope.$parent.global.me;
+
       $scope.newTicket = {
         price: null,
         name: null,
@@ -33,6 +35,11 @@ app.directive('tickets', [function () { // jshint ignore:line
 
       $scope.removeTicket = function (index) {
         $scope.event.tickets.splice(index, 1);
+      };
+
+      $scope.purchaseTicket = function (index) {
+        var ticket = $scope.event.tickets[index];
+        $scope.$emit('ticket:purchase', ticket);
       };
     }
   };

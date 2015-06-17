@@ -225,3 +225,21 @@ html(lang="en", ng-app="EventorioEvent")
                           .progress-bar.progress-bar-material-light-green
             .modal-footer
               button.btn(type="button" data-dismiss="modal" ng-click="cancelLogo()") Cancel
+              
+      #ticket-purchase-modal.modal.fade
+        .modal-dialog
+          .modal-content
+            .modal-header
+              button.btn.close(type="button" data-dismiss="modal" aria-label="Close")
+                span(aria-hidden='true') ×
+              h2.hidden-xs
+                span Purchase ticket for {{event.name}}!
+              h4.visible-xs
+                span Purchase ticket for {{event.name}}!
+            .modal-body
+              .row
+                p Ticket name: {{purchasingTicket.name}}
+                p Ticket price: {{purchasingTicket.price}}
+                span PayPal or Stripe here
+            .modal-footer
+              button.btn(type="button" data-dismiss="modal") Cancel
