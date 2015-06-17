@@ -89,9 +89,9 @@ html(lang="en", ng-app="EventorioEvent")
                     .progress
                       .progress-bar.progress-bar-material-light-green
       .row-fluid
-        #event-details.col-lg-4.col-lg-offset-1.col-md-4.col-sm-4.col-xs-12
+        #event-details.col-lg-3.col-lg-offset-1.col-md-4.col-sm-4.col-xs-12
           .row-fluid
-            .well.col-lg-8.col-lg-offset-2.col-md-10.col-md-offset-1.col-sm-12.col-xs-12
+            .well.col-lg-12.col-md-12.col-sm-12.col-xs-12
               .row-fluid
                 event-avatar.event-avatar-picture.col-lg-12.col-md-12.col-sm-12.col-xs-12(item="event")
                   #edit-avatar-btn.pull-right.well.clickable(ng-if="editmode"
@@ -128,7 +128,7 @@ html(lang="en", ng-app="EventorioEvent")
           .well.col-lg-12.col-md-12.col-sm-12.col-xs-12
             .row
               h3.text-center Tickets:
-              .text-center.event-tickets.col-lg-12.col-md-12.col-sm-12.col-xs-12.no-padding
+              .text-center.event-tickets.col-lg-12.col-md-12.col-sm-12.col-xs-12
                 tickets(mode="!isEditable ? 'purchase' : (editmode ? 'modify' : 'monitor')" event="event")
           #event-content-xs.row-fluid.visible-xs
             .row
@@ -149,7 +149,7 @@ html(lang="en", ng-app="EventorioEvent")
                 .btn.btn-default(ng-click="enterEditMode()")
                   span.mdi-editor-mode-edit
                   span  Edit
-        #event-content.col-lg-7.col-md-8.col-sm-8.hidden-xs
+        #event-content.col-lg-8.col-md-8.col-sm-8.hidden-xs
           .row-fluid
             .event-name.well.col-lg-12.col-md-12.col-sm-12
               h1(ng-if="!editmode") {{event.name}}
