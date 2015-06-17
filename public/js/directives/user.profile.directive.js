@@ -23,6 +23,40 @@ app.directive('userProfile', ['Global', function (Global) { // jshint ignore:lin
           $scope.settings.visible.additionalInfo = false;
           $scope.$apply();
       });
+
+      $scope.settings = {
+        visible: {
+          password: false,
+          additionalInfo: false
+        }
+      };
+
+      $scope.eventsView = 'organized';
+      if ($scope.editable) $scope.eventsView = 'participated';
+
+      $scope.$on('user:events', function (info, events) {
+        if (!$scope.editable || ($scope.editable && events.participated.length === 0)) $scope.eventsView = 'organized';
+        else if ($scope.editable && events.participated.length > 0)$scope.eventsView = 'participated';
+        addActiveClassToEventView();
+      });
+
+      var addActiveClassToEventView = function () {
+        if ($scope.eventsView === 'organized') {
+          $('#nav-tickets').removeClass('active');
+          $('#nav-organized').addClass('active');
+        }
+
+        if ($scope.eventsView === 'participated') {
+          $('#nav-tickets').addClass('active');
+          $('#nav-organized').removeClass('active');
+          console.log(2);
+        }
+      };
+      $scope.switchEventsView = function (newView) {
+        if ($scope.eventsView === newView) return;
+        $scope.eventsView = newView;
+        addActiveClassToEventView();
+      };
     },
   };
 }]);

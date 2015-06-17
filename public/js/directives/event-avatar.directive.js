@@ -7,11 +7,15 @@ app.directive('eventAvatar', [function () { // jshint ignore:line
     },
     link: function ($scope, element, attrs) {
       var ajustPadding = attrs.ajustPadding;
+      var removePadding = attrs.removePadding;
 
       var setupHeight = function () {
         var padding = 0;
         if (ajustPadding) {
           padding = parseInt($(element).css('padding-left')) + parseInt($(element).css('padding-right'));
+        }
+        if (removePadding) {
+          padding = - parseInt($(element).css('padding-left')) - parseInt($(element).css('padding-right'));
         }
         $(element).css('height', $(element).width() + padding);
       };

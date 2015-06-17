@@ -13,12 +13,18 @@ app.controller('UserController', ['$scope', '$rootScope', 'Global', 'Users', 'gr
     if (Global.me.id === $scope.user.id) $scope.editable = true;
   }
 
-  $scope.settings = {
-    visible: {
-      password: false,
-      additionalInfo: false
-    }
+  var eventsQuery = {
+    organizator: $scope.user.id
   };
+
+  if ($scope.editable) eventsQuery.participant = $scope.user.id;
+
+  Users.queryEvents(eventsQuery, function (err, events) {
+    if (err) return growl.error(err);
+
+    $scope.user.events = events;
+    $scope.$broadcast('user:events', events);
+  });
 
   $scope.credentials = {
     oldPassword: '',
@@ -56,7 +62,10 @@ app.controller('UserController', ['$scope', '$rootScope', 'Global', 'Users', 'gr
   };
 
   $scope.updateUser = function () {
+    var events = $scope.user.events;
+
     Users.update({_id: $scope.user.id, user: $scope.user}, function (user) {
+      user.events = events;
       $scope.user = user;
     });
   };

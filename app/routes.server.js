@@ -45,6 +45,7 @@ module.exports = function (app, passport) {
     .get(users.logout);
 
   app.route('/users')
+    .get(users.query)
     .post(users.signup);
 
   app.get('/auth/facebook',
@@ -84,6 +85,7 @@ module.exports = function (app, passport) {
     .get(users.requiresLogin, users.requiresCompleteProfile, events.showCreationPage);
 
   app.route('/events')
+    .get(events.query)
     .post(users.requiresLogin, users.requiresCompleteProfile, events.create);
   app.route('/events/:eventId')
     .get(events.show)

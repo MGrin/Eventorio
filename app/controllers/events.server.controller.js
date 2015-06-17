@@ -33,7 +33,7 @@ exports.create = function (req, res) {
 
 exports.update = function (req, res) {
   var updates = req.body.event;
-  
+
   var errors = app.validator.validateEvent(updates);
   if (errors) app.err(errors[0], res);
 
@@ -48,6 +48,17 @@ exports.getParticipants = function (req, res) {
   event.getPeople(function (err, people) {
     if (err) return app.err(err, res);
     return res.jsonp(people);
+  });
+};
+
+exports.query = function (req, res) {
+  var params = req.query;
+
+  if (params.participant && (!req.user || !req.profile || req.user.id !== req.profile.id)) delete params.participant;
+
+  app.Event.query(params, function (err, events) {
+    if (err) return app.err(err, res);
+    return res.jsonp([events]);
   });
 };
 

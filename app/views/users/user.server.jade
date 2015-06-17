@@ -18,7 +18,8 @@ html(lang="en", ng-app="EventorioUser")
 
     script(src="/lib/jquery/dist/jquery.min.js")
     script(src="/lib/underscore/underscore-min.js")
-  
+    script(src="/lib/moment/moment.js")
+    
     script(src="/lib/bootstrap/dist/js/bootstrap.min.js")
     script(src="/lib/bootstrap-material-design/dist/js/material.min.js")
     script(src="/lib/angular/angular.min.js")
@@ -39,8 +40,10 @@ html(lang="en", ng-app="EventorioUser")
     script(src="/cdn/js/controllers/user.client.controller.js")
 
     script(src="/cdn/js/directives/user-avatar.directive.js")
+    script(src="/cdn/js/directives/event-avatar.directive.js")
     script(src="/cdn/js/directives/header-picture.directive.js")
     script(src="/cdn/js/directives/user.profile.directive.js")
+    script(src="/cdn/js/directives/event.line.directive.js")
     
   body
     include ../header.server.jade
@@ -97,29 +100,40 @@ html(lang="en", ng-app="EventorioUser")
             .user-username.well.col-lg-12.col-md-12.col-sm-12.col-xs-12
               h1.hidden-xs #{profile.username}
               h4.text-center.visible-xs #{profile.username}
-          .row-fluid.hidden-xs
-            .user-description.col-lg-8.col-md-8.col-sm-8
-              h4(ng-if="!editable") #{profile.desc || "No description"}
-              h4(ng-if="editable"
-                blur="submit"
-                buttons="no"
-                editable-textarea="user.desc"
-                e-rows="5"
-                e-cols="60"
-                e-required
-                e-placeholder="Tell us something about you"
-                onaftersave="updateUser()") {{user.desc || "Tell us something about you"}}
-          .row-fluid.hidden-xs(ng-if="global.me")
-            .row(ng-if="editable")
-              .col-lg-12
-                button.btn.btn-raised.btn-info(ng-if="!user.isComplete"
-                                                data-toggle="modal"
-                                                data-target="#user-settings-modal"
-                                                ng-click="settings.visible.additionalInfo = true") Create Event!
-                a.btn.btn-raised.btn-material-deep-orange(ng-if="user.isComplete" href="/events/create") Create Event!
-            .row
-              .col-lg-12
-                h2 Here will be some information about events
+          .hidden-xs
+            .row-fluid
+              .user-description.col-lg-8.col-md-8.col-sm-8
+                h4(ng-if="!editable") #{profile.desc || "No description"}
+                h4(ng-if="editable"
+                  blur="submit"
+                  buttons="no"
+                  editable-textarea="user.desc"
+                  e-rows="5"
+                  e-cols="60"
+                  e-required
+                  e-placeholder="Tell us something about you"
+                  onaftersave="updateUser()") {{user.desc || "Tell us something about you"}}
+            .row-fluid(ng-if="editable")
+              .row
+                .col-lg-12
+                  button.btn.btn-raised.btn-info(ng-if="!user.isComplete"
+                                                  data-toggle="modal"
+                                                  data-target="#user-settings-modal"
+                                                  ng-click="settings.visible.additionalInfo = true") Create Event!
+                  a.btn.btn-raised.btn-material-deep-orange(ng-if="user.isComplete" href="/events/create") Create Event!
+            .row.text-center(ng-if="user.events")
+              ul.nav.nav-pills
+                li#nav-tickets(ng-if="user.events.participated.length > 0" ng-click="switchEventsView('participated')")
+                  h4.clickable Your tickets
+                li#nav-organized(ng-if="user.events.organized.length > 0" ng-click="switchEventsView('organized')")
+                  h4.clickable Organized events
+            .row(ng-if="user.events.organized.length > 0" ng-show="eventsView === 'organized'")
+              .col-lg-8.col-md-8.col-sm-8
+                event-line(ng-repeat="event in user.events.organized", event="event")
+            .row(ng-if="editable && user.events.participated.length > 0" ng-show="eventsView === 'participated'")
+              .col-lg-8.col-md-8.col-sm-8
+                event-line(ng-repeat="event in user.events.participated", event="event")
+                
       .row-fluid.visible-xs
         #user-profile-xs.col-xs-12
           .row
@@ -134,13 +148,22 @@ html(lang="en", ng-app="EventorioUser")
                 e-required
                 e-placeholder="Tell us something about you"
                 onaftersave="updateUser()") {{user.desc || "Tell us something about you"}}
-          .row
+          .row(ng-if="editable")
             .col-xs-12
               button.btn.btn-raised.btn-info(ng-if="!user.isComplete"
                                               data-toggle="modal"
                                               data-target="#user-settings-modal"
                                               ng-click="settings.visible.additionalInfo = true") Create Event!
               a.btn.btn-raised.btn-material-deep-orange(ng-if="user.isComplete" href="/events/create") Create Event!
+          .row(ng-if="user.events && user.events.organized.length > 0")
+            .col-xs-12
+              h2 Organized events
+              event-line(ng-repeat="event in user.events.organized", event="event")
+          .row(ng-if="editable && user.events && user.events.participated.length > 0")
+            .col-xs-12
+              h2 Your tickets
+              ticket(ng-repeat="event in user.events.participated", event="event")
+              
           .row-fluid.text-center(ng-if="editable")
             .btn.btn-flat.btn-default.btn-xs(data-toggle="modal" data-target="#user-settings-modal")
               i.mdi-action-settings
