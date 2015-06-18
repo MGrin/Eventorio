@@ -5,15 +5,12 @@
 nav#header.navbar.navbar-fixed.navbar-fixed-top.navbar-material-indigo-300(ng-controller="HeaderController", role="navigation")
   .container-fluid
     .navbar-header
-      button.navbar-toggle.collapsed(ng-if="global.me" type="button", data-toggle="collapse", data-target="#navbar")
+      button.navbar-toggle.collapsed(type="button", data-toggle="collapse", data-target="#navbar")
         span.icon-bar
         span.icon-bar
         span.icon-bar
 
-      a.navbar-brand.hidden-xs(style="padding-top: 12px", ng-href="/")
-        img.img-circle.pull-left(alt="Eventorio", style="height: 30px; margin-right: 10px", src="/img/logo_white.png")
-        span Eventorio
-      a.navbar-brand.visible-xs(style="padding-top: 12px", ng-href="/")
+      a.navbar-brand(style="padding-top: 12px", ng-href="/")
         img.img-circle.pull-left(alt="Eventorio", style="height: 30px; margin-right: 10px", src="/img/logo_white.png")
         span Eventorio
 
@@ -50,9 +47,8 @@ nav#header.navbar.navbar-fixed.navbar-fixed-top.navbar-material-indigo-300(ng-co
                 
     - if (!user)    
       #navbar.collapse.navbar-collapse
-        ul.nav.navbar-nav.navbar-right
-          button#login-btn.btn.btn-success.hidden-xs(data-toggle="modal" data-target="#login-modal") Login
-          button#login-btn.btn.btn-default.visible-xs(data-toggle="modal" data-target="#login-modal") Login
+        ul.nav.navbar-nav.navbar-right.text-center
+          button#login-btn.btn.btn-success(data-toggle="modal" data-target="#login-modal") Login
 - if (!user)
   div(ng-controller="HeaderController")
     #login-modal.modal.fade(tabindex="-1" role="dialog")

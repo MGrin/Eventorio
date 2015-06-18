@@ -22,7 +22,7 @@ app.directive('eventPage', ['$window', 'Global', 'Pictures', 'growl', function (
           }
         } else {
           if (Global.screenSize === 'xs') {
-            margin = 0;
+            margin = -avatarHeight/2;
           } else {
             margin = -avatarHeight;
           }
