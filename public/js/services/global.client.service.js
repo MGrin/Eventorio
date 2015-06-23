@@ -25,7 +25,10 @@ app.factory('Global', function () { // jshint ignore:line
           height: 450
         }
       }
-    }
+    },
+
+    // userContentServer: 'http://usercontent.eventorio.me' // production version
+    userContentServer: 'http://localhost:7896' // dev version, to be removed!!!
   };
 
   app.Global = Global; // jshint ignore:line

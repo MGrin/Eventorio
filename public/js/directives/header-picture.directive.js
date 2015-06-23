@@ -1,6 +1,6 @@
 'use strict';
 
-app.directive('headerPicture', [function () { // jshint ignore:line
+app.directive('headerPicture', ['Global', function (Global) { // jshint ignore:line
   return {
     scope: {
       item: '='
@@ -11,7 +11,7 @@ app.directive('headerPicture', [function () { // jshint ignore:line
         if (!newVal) {
           imageURL = '/img/default_header.png';
         } else {
-          imageURL = '/pictures/' + $scope.item.id + '/header_' + newVal;
+          imageURL = Global.userContentServer + '/' + $scope.item.id + '/header' + newVal;
         }
 
         element.css({

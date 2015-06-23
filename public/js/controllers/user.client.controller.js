@@ -1,7 +1,7 @@
 'use strict';
 
-app.controller('UserController', ['$scope', '$rootScope', 'Global', 'Users', 'growl', // jshint ignore:line
-  function ($scope, $rootScope, Global, Users, growl) { // jshint ignore:line
+app.controller('UserController', ['$scope', '$rootScope', 'Global', 'Users', 'growl', 'Pictures', // jshint ignore:line
+  function ($scope, $rootScope, Global, Users, growl, Pictures) { // jshint ignore:line
   $scope.global = Global;
   $scope.changePasswordView = false;
 
@@ -61,12 +61,43 @@ app.controller('UserController', ['$scope', '$rootScope', 'Global', 'Users', 'gr
     $scope.settings.visible.additionalInfo = false;
   };
 
-  $scope.updateUser = function () {
+  $scope.updateUser = function (cb) {
     var events = $scope.user.events;
 
     Users.update({_id: $scope.user.id, user: $scope.user}, function (user) {
       user.events = events;
       $scope.user = user;
+      if (cb) return cb();
+    });
+  };
+
+  $scope.uploadHeader = function(event){
+    var files = event.target.files;
+    if (!files.length === 0) return 
+    if (files.length > 1) return growl.error('You can not upload more than one header image!');
+
+    var picture = files[0];
+
+    var err = app.validator.validateImageExt(picture);
+    if (err) return growl.error(err);
+
+    $scope.$broadcast('header:uploading:start');
+
+    if ($scope.user.headerPicture) {
+      Pictures.remove($scope.user.id, 'header', $scope.user.headerPicture, function (err) {
+        if (err) growl.error("Failed to remove your old header. Do not worry =)");
+      });
+    }
+    Pictures.upload(picture, $scope.user.id, 'header', function (err, name) {
+      if (err || !name) {
+        growl.error("Failed to upload the header picture");
+        return $scope.$broadcast('header:uploading:stop');
+      }
+      
+      $scope.user.headerPicture = name;
+      $scope.updateUser(function () {
+        $scope.$broadcast('header:uploading:stop');
+      });
     });
   };
 }]);
