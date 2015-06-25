@@ -36,6 +36,20 @@ var initValidator = function (app) {
     }
   };
 
+  var imageFormats = ['jpg', 'jpeg', 'png'];
+  var imageMimes = ['image/png', 'image/jpg', 'image/jpeg'];
+
+  app.validator.validateImageExt = function (file) {
+    if (!file.type) {
+      var ext = file.name.split('.').pop().toLowerCase();
+      if (imageFormats.indexOf(ext) < 0) return 'Only JPEG and PNG formats are supported for header images!';
+    } else {
+      if (imageMimes.indexOf(file.type) < 0) return 'Only JPEG and PNG formats are supported for header images!';
+    }
+
+    return null;
+  };
+
   app.validator.validateEvent = function (event) {
     var errors = [];
     var nameError = app.validator.validateEventName(event.name); // jshint ignore:line

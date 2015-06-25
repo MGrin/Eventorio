@@ -4,6 +4,7 @@ var gulp = require('gulp');
 var jsmin = require('gulp-jsmin');
 var stylus = require('gulp-stylus');
 var jade = require('gulp-jade');
+var nodemon = require('gulp-nodemon');
 
 var fs = require('fs-extra');
 
@@ -42,5 +43,10 @@ gulp.task('clean', function () {
 });
 
 gulp.task('default', ['clean', 'compile', 'compress'], function () {
+  if (process.env.NODE_ENV === 'production') return;
 
+  nodemon({
+    script: 'app.js',
+    tasks: ['clean', 'compile', 'compress']
+  });
 });

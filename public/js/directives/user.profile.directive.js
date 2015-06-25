@@ -1,5 +1,15 @@
 'use strict';
 
+app.directive('customOnChange', function() {
+  return {
+    restrict: 'A',
+    link: function (scope, element, attrs) {
+      var onChangeHandler = scope.$eval(attrs.customOnChange);
+      element.bind('change', onChangeHandler);
+    }
+  };
+});
+
 app.directive('userProfile', ['Global', function (Global) { // jshint ignore:line
   return {
     link: function ($scope, element) {
@@ -57,6 +67,40 @@ app.directive('userProfile', ['Global', function (Global) { // jshint ignore:lin
         $scope.eventsView = newView;
         addActiveClassToEventView();
       };
+
+      $scope.showHeaderPictureChooser = function () {
+        $('#headerFileInput').click();
+      };
+
+      var headerIsLoading = false;
+      var progress = 0;
+      var direction = -1;
+      var delta = 1;
+
+      var headerLoading = $('#headerLoading');
+      var progressBar = headerLoading.find('.progress');
+
+      var loadingHeader = function (state) {
+        headerIsLoading = state;
+        if (!headerIsLoading) return headerLoading.addClass('hide');
+
+        headerLoading.removeClass('hide');
+        var updateProgress = function () {
+          progressBar.css('width', progress + '%');
+          if (progress === 100 || progress === 0) direction *= -1;
+          progress += direction * delta;
+
+          if (headerIsLoading) setTimeout(updateProgress, 50);
+        };
+        updateProgress();
+      };
+
+      $scope.$on('header:uploading:start', function (info) {
+        loadingHeader(true);
+      });
+      $scope.$on('header:uploading:stop', function (info) {
+        loadingHeader(false);
+      });
     },
   };
 }]);

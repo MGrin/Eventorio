@@ -89,7 +89,7 @@ exports.changePassword = function (req, res) {
 };
 
 exports.update = function (req, res) {
-  var updates = _.pick(req.body.user, 'name', 'desc', 'pictureProvider', 'address', 'birthday');
+  var updates = _.pick(req.body.user, 'name', 'desc', 'pictureProvider', 'headerPicture', 'address', 'birthday');
   var user = req.user;
 
   if (req.user.id !== req.profile.id) return app.err('Not authorized!', res);

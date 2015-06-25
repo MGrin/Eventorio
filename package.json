@@ -52,5 +52,8 @@
     "stylus": "latest",
     "underscore": "latest",
     "winston": "latest"
+  },
+  "devDependencies": {
+    "gulp-nodemon": "^2.0.3"
   }
 }

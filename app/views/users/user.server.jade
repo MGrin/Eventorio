@@ -33,9 +33,11 @@ html(lang="en", ng-app="EventorioUser")
       app.user = !{user ? JSON.stringify(user) : 'undefined'};
       app.profile = !{JSON.stringify(profile)};
       
+    script(src="/cdn/js/shared/validator.shared.js")
     script(src="/cdn/js/services/global.client.service.js")
     script(src="/cdn/js/services/user.client.service.js")
-
+    script(src="/cdn/js/services/pictures.client.service.js")
+      
     script(src="/cdn/js/controllers/header.client.controller.js")
     script(src="/cdn/js/controllers/user.client.controller.js")
 
@@ -47,12 +49,20 @@ html(lang="en", ng-app="EventorioUser")
     
   body
     include ../header.server.jade
-    
     div(growl)
     user-profile#user-profile(ng-controller="UserController")
+      input(type="file" id="headerFileInput" custom-on-change="uploadHeader")
       .row-fluid#user-header-picture
         .row-fluid
-          header-picture.col-lg-12.col-md-12.col-sm-12.col-xs-12(item="user")
+          header-picture.col-lg-12.col-md-12.col-sm-12.col-xs-12(item="user"
+            ng-mouseenter="showEditHeaderButton = true"
+            ng-mouseleave="showEditHeaderButton = false")
+            #edit-header-btn.well.clickable(ng-if="editable" ng-show="showEditHeaderButton" ng-click="showHeaderPictureChooser()").pull-right
+              span.mdi-image-edit
+            #headerLoading.well.text-center.hide
+              p Loading
+              .progress.progress-material-light-green
+                .progress-bar
       .row-fluid
         #user-details.col-lg-3.col-lg-offset-1.col-md-3.col-sm-4.col-xs-6
           .row-fluid

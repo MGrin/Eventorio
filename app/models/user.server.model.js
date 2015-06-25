@@ -47,6 +47,7 @@ var UserSchema = exports.Schema = new Schema({
   facebook: Object,
   google: Object,
 
+  headerPicture: String,
   pictureProvider: String,
   hashPassword: {type: String, select: false},
   salt: {type: String, select: false},
@@ -155,7 +156,8 @@ UserSchema.methods = {
     this.name = updates.name;
     this.desc = updates.desc;
     this.pictureProvider = updates.pictureProvider;
-
+    this.headerPicture = updates.headerPicture;
+    
     if (updates.address) this.address = updates.address;
     if (updates.birthday) this.birthday = moment(updates.birthday).add(1, 'd').utc().toDate();
 
