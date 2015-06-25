@@ -12,7 +12,7 @@ app.factory('Pictures', ['Global', function (Global) { // jshint ignore:line
   var sendXHR = function (url, blob, method, success, fail) {
     var xhr = new XMLHttpRequest();
     xhr.withCredentials = true;
-    url = url + '?' + getCookie('connect.sid');
+    url = url + '?connect.sid=' + getCookie('connect.sid');
     xhr.open(method, url, true);
 
     xhr.onreadystatechange = function() {
