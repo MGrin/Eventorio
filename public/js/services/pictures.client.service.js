@@ -43,7 +43,7 @@ app.factory('Pictures', ['Global', function (Global) { // jshint ignore:line
       sendXHR(url, null, 'DELETE', function () {
         return cb();
       }, function (err) {
-        return cb();
+        return cb(err);
       });
     }
   };

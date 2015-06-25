@@ -54,7 +54,6 @@
     "winston": "latest"
   },
   "devDependencies": {
-    "gulp-livereload": "^3.8.0",
     "gulp-nodemon": "^2.0.3"
   }
 }

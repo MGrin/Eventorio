@@ -25,12 +25,15 @@ app.factory('Global', function () { // jshint ignore:line
           height: 450
         }
       }
-    },
-
-    // userContentServer: 'http://usercontent.eventorio.me' // production version
-    userContentServer: 'http://localhost:7896' // dev version, to be removed!!!
+    }
   };
 
+  if(window.location.host.indexOf('localhost') === 0) {
+    Global.userContentServer = 'http://localhost:7896';
+  } else {
+    Global.userContentServer = 'http://usercontent.eventorio.me'; // production version
+  }
+  
   app.Global = Global; // jshint ignore:line
   return Global;
 });
