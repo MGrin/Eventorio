@@ -45,6 +45,9 @@ app.directive('eventPage', ['$window', 'Global', 'Pictures', 'growl', function (
         });
       };
 
+      $scope.$watch('editmode', function () {
+        setupDetailsMargin();
+      });
       setupDetailsMargin();
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -100,62 +103,28 @@ app.directive('eventPage', ['$window', 'Global', 'Pictures', 'growl', function (
         $('#cropme-ok').addClass('btn btn-material-light-green');
       });
       $scope.$on('cropme:done', function (info, result) {
-        Pictures.upload(result.croppedImage, $scope.event, 'avatar', function (err, img) {
-          if (err) return showError(err);
-          $scope.event.picture = img;
-          $scope.$apply();
-          $('#event-avatar-modal').modal('hide');
-        });
-      });
-
-      // XS uplaod process
-      var cleanFileAvatarXS = function () {
-        element.find('#event-avatar-modal input[type="text"]').each(function () {
-          $(this).val();
-          $(this).addClass('.empty');
-        });
-      };
-
-      var handleAvatarUpload = function (evt) {
-        var file = evt.currentTarget.files[0];
-        if (file.type.split('/')[0] !== 'image') {
-          $scope.newAvatarPicture = null;
-          cleanFileAvatarXS();
-          $scope.headerAvatarError = 'File is not an image!';
-
-          return;
+        // Remove all previously uploaded pictures in the edit mode
+        if ($scope.event.picture !== $scope.event.originalPicture) {
+          Pictures.remove($scope.event.id || 'temp', 'avatar', $scope.event.picture, function (err) {
+            if (err) growl.error('Failed to remove your old avatar. Do not worry =)');
+          });
         }
-        element.find('#event-avatar-modal > input[type="text"]').each(function () {
-          $(this).removeClass('empty');
-          $(this).val(file.name);
-        });
-        $scope.newAvatarPicture = file;
-        $scope.avatarIsUploading = true;
+        Pictures.upload(result.croppedImage, $scope.event.id, 'avatar', function (err, name) {
+          if (err || !name) {
+            growl.error('Failed to upload event\'s avatar');
+            return;
+          }
 
-        Pictures.upload(file, $scope.event, 'avatar', function (err, img) {
-          if (err) return growl.error(err);
-          $scope.event.picture = img;
-          $scope.avatarIsUploading = false;
+          $scope.event.picture = name;
           $scope.$apply();
-          cleanFileAvatarXS();
           $('#event-avatar-modal').modal('hide');
+          $scope.$broadcast('cropme:cancel');
         });
-      };
-      element.on('change', '#avatar-img-upload', handleAvatarUpload);
-
-      var updateAvatarUpdateProgress = function () {
-        if (!$scope.avatarIsUploading) return;
-        element.find('#event-avatar-modal .progress-bar').each(function () {
-          $(this).css('width', progress + '%');
-          if (progress === 100 || progress === 0) direction *= -1;
-          progress += direction * delta;
-        });
-        if ($scope.avatarIsUploading) setTimeout(updateAvatarUpdateProgress, 50);
-      };
-
-      $scope.$watch('avatarIsUploading', function (newV) {
-        if (newV) updateAvatarUpdateProgress();
       });
+
+      $scope.showAvatarPictureChooser = function () {
+        $('#avatarFileInput').click();
+      };
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

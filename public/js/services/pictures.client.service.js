@@ -16,8 +16,10 @@ app.factory('Pictures', ['Global', function (Global) { // jshint ignore:line
       }
     };
     var formData = new FormData();
-    if (blob) {
+    if (blob && blob.filename) {
       formData.append('picture', blob);
+    } else if (blob && !blob.filename) {
+      formData.append('picture', blob, 'avatar.jpg');
     }
     xhr.send(formData);
   };

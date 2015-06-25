@@ -68,6 +68,7 @@ html(lang="en", ng-app="EventorioEvent")
     div(growl)
     event-page#event-page(ng-controller="EventController")
       input(type="file" id="headerFileInput" custom-on-change="uploadHeader")
+      input(type="file" id="avatarFileInput" custom-on-change="uploadAvatar")
       .row-fluid#event-header-picture
         .row-fluid
           header-picture.col-lg-12.col-md-12.col-sm-12.col-xs-12(item="event")
@@ -83,9 +84,12 @@ html(lang="en", ng-app="EventorioEvent")
             .well.col-lg-12.col-md-12.col-sm-12.col-xs-12
               .row-fluid
                 event-avatar.event-avatar-picture.col-lg-12.col-md-12.col-sm-12.col-xs-12(item="event" ajust-padding="true")
-                  #edit-avatar-btn.pull-right.well.clickable(ng-if="editmode"
+                  #edit-avatar-btn.pull-right.well.clickable.hidden-xs(ng-if="editmode"
                     data-toggle="modal"
                     data-target="#event-avatar-modal")
+                    span.mdi-image-edit
+                  #edit-avatar-btn-xs.pull-right.well.clickable.visible-xs(ng-if="editmode"
+                    ng-click="showAvatarPictureChooser()")
                     span.mdi-image-edit
               .row-fluid.visible-xs
                 .event-name.col-xs-12.text-center

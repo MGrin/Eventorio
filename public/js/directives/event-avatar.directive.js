@@ -1,6 +1,6 @@
 'use strict';
 
-app.directive('eventAvatar', [function () { // jshint ignore:line
+app.directive('eventAvatar', ['Global', function (Global) { // jshint ignore:line
   return {
     scope: {
       item: '='
@@ -25,7 +25,7 @@ app.directive('eventAvatar', [function () { // jshint ignore:line
         if (!newVal) {
           imageURL = '/img/default_event_logo.png';
         } else {
-          imageURL = '/pictures/' + $scope.item.id + '/avatar_' + newVal;
+          imageURL = Global.userContentServer + '/' + ($scope.item.id || 'temp') + '/avatar' + newVal;
         }
         element.css({
           'background-image': 'url(' + imageURL + ')',

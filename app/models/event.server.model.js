@@ -41,6 +41,7 @@ var EventSchema = exports.Schema = new Schema({
   date: Date,
   tickets: [TicketTypeSchema],
 
+  picture: String,
   headerPicture: String
 });
 
@@ -56,7 +57,7 @@ EventSchema.methods = {
   modify: function (updates, user, cb) {
     if (this.organizator.id !== user.id) return cb(new Error('Not authorized'));
 
-    updates = _.pick(updates, 'name', 'desc', 'date', 'picture', 'headerPicture', 'venue', 'tickets', 'headerPicture');
+    updates = _.pick(updates, 'name', 'desc', 'date', 'picture', 'headerPicture', 'venue', 'tickets', 'picture', 'headerPicture');
 
     var event = this;
     _.each(_.keys(updates), function (key) {
@@ -91,7 +92,7 @@ EventSchema.statics = {
 
   create: function (fields, creator, cb) {
     fields.date = moment(fields.date).utc(); //jshint ignore:line
-    fields = _.pick(fields, 'name', 'desc', 'date', 'picture', 'headerPicture', 'venue', 'tickets', 'headerPicture'); // jshint ignore: line
+    fields = _.pick(fields, 'name', 'desc', 'date', 'picture', 'headerPicture', 'venue', 'tickets', 'picture', 'headerPicture'); // jshint ignore: line
 
     var event = new app.Event(fields);
     event.organizator = creator;
