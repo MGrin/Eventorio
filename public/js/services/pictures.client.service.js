@@ -2,11 +2,17 @@
 
 app.factory('Pictures', ['Global', function (Global) { // jshint ignore:line
   var userContentServer = Global.userContentServer;
+  var getCookie = function (name) {
+    var matches = document.cookie.match(new RegExp(
+      "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + '=([^;]*)'
+    ));
+    return matches ? decodeURIComponent(matches[1]) : undefined;
+  };
 
   var sendXHR = function (url, blob, method, success, fail) {
     var xhr = new XMLHttpRequest();
     xhr.withCredentials = true;
-    url = url + '?' + document.cookie.split(';')[0];
+    url = url + '?' + getCookie('connect.sid');
     xhr.open(method, url, true);
 
     xhr.onreadystatechange = function() {
