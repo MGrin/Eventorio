@@ -11,7 +11,7 @@ app.directive('headerPicture', ['Global', function (Global) { // jshint ignore:l
         if (!newVal) {
           imageURL = '/img/default_header.png';
         } else {
-          imageURL = Global.userContentServer + '/' + $scope.item.id + '/header' + newVal;
+          imageURL = Global.userContentServer + '/' + ($scope.item.id || 'temp') + '/header' + newVal;
         }
 
         element.css({

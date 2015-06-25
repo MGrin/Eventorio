@@ -67,27 +67,16 @@ html(lang="en", ng-app="EventorioEvent")
     include ../header.server.jade
     div(growl)
     event-page#event-page(ng-controller="EventController")
+      input(type="file" id="headerFileInput" custom-on-change="uploadHeader")
       .row-fluid#event-header-picture
         .row-fluid
           header-picture.col-lg-12.col-md-12.col-sm-12.col-xs-12(item="event")
-        .row-fluid(ng-if="editmode")
-          .col-lg-4.col-lg-offset-5.col-md-6.col-md-offset-5.col-sm-6.col-sm-offset-5.col-xs-12
-            .well.row#header-upload-well
-              form.form-inline
-                .form-group.col-lg-12.col-md-12.col-sm-12.col-xs-12
-                  .row
-                    label.col-lg-4.col-md-4.col-sm-4.col-xs-12.control-label Select header image:
-                    .col-lg-5.col-md-5.col-sm-5.col-xs-12
-                      .form-control-wrapper.fileinput
-                        input.form-control.empty(type="text" readonly)
-                        input#header-img-upload(type="file")
-                        .floating-label Browse
-                        span.material-input
-                  .row(ng-if="headerUploadError")
-                    .alert.alert-warning {{headerUploadError}}
-                  .row(ng-show="headerIsUploading")
-                    .progress
-                      .progress-bar.progress-bar-material-light-green
+            #edit-header-btn.well.clickable(ng-if="editmode" ng-click="showHeaderPictureChooser()").pull-right
+              span.mdi-image-edit
+            #headerLoading.well.text-center.hide
+              p Loading
+              .progress.progress-material-light-green
+                .progress-bar
       .row-fluid
         #event-details.col-lg-3.col-lg-offset-1.col-md-4.col-sm-4.col-xs-12
           .row-fluid

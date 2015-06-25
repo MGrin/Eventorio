@@ -1,7 +1,7 @@
 'use strict';
 
-app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'Events', 'growl', // jshint ignore:line
-  function ($scope, $rootScope, Global, Users, Events, growl) { // jshint ignore:line
+app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'Events', 'growl', 'Pictures', // jshint ignore:line
+  function ($scope, $rootScope, Global, Users, Events, growl, Pictures) { // jshint ignore:line
 
   var fixEvent = function (event) {
     if (event.date) event.date = moment(event.date); // jshint ignore:line
@@ -46,9 +46,15 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
 
     if (errors) return $scope.$broadcast('event:save:error', errors);
 
+    if ($scope.event.originalHeaderPicture && $scope.event.originalHeaderPicture !== $scope.event.headerPicture) {
+      Pictures.remove($scope.event.id || 'temp', 'header', $scope.event.originalHeaderPicture, function (err) {
+        if (err) growl.error('Failed to remove your old header. Do not worry =)');
+      });
+    }
     if ($scope.isNew) {
       var event = new Events($scope.event);
       event.$save(function (event) {
+        Pictures.confirm(event.id, 'header', event.headerPicture, function () {});
         window.location.href = '/events/' + event.id;
       });
     } else {
@@ -62,6 +68,13 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
   };
 
   $scope.cancel = function () {
+    if ($scope.event.headerPicture !== $scope.event.originalHeaderPicture) {
+      Pictures.remove($scope.event.id || 'temp', 'header', $scope.event.headerPicture, function (err) {
+        if (err) growl.error('Failed to remove your old header. Do not worry =)');
+      });
+    }
+    $scope.event.headerPicture = $scope.event.originalHeaderPicture;
+
     if ($scope.isNew) {
       window.location.href = '/';
       return;
@@ -74,6 +87,37 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
   };
 
   $scope.enterEditMode = function () {
+    if ($scope.event.headerPicture) $scope.event.originalHeaderPicture = $scope.event.headerPicture;
     $scope.editmode = true;
+  };
+
+  $scope.uploadHeader = function(event){
+    var files = event.target.files;
+    if (files.length === 0) return;
+    if (files.length > 1) return growl.error('You can not upload more than one header image!');
+
+    var picture = files[0];
+
+    var err = app.validator.validateImageExt(picture); // jshint ignore:line
+    if (err) return growl.error(err);
+
+    $scope.$broadcast('header:uploading:start');
+
+    // Remove all previously uploaded pictures in the edit mode
+    if ($scope.event.headerPicture !== $scope.event.originalHeaderPicture) {
+      Pictures.remove($scope.event.id || 'temp', 'header', $scope.event.headerPicture, function (err) {
+        if (err) growl.error('Failed to remove your old header. Do not worry =)');
+      });
+    }
+    Pictures.upload(picture, $scope.event.id, 'header', function (err, name) {
+      if (err || !name) {
+        growl.error('Failed to upload the header picture');
+        return $scope.$broadcast('header:uploading:stop');
+      }
+
+      $scope.event.headerPicture = name;
+      $scope.$apply();
+      $scope.$broadcast('header:uploading:stop');
+    });
   };
 }]);

@@ -1,5 +1,15 @@
 'use strict';
 
+app.directive('customOnChange', function() { // jshint ignore:line
+  return {
+    restrict: 'A',
+    link: function (scope, element, attrs) {
+      var onChangeHandler = scope.$eval(attrs.customOnChange);
+      element.bind('change', onChangeHandler);
+    }
+  };
+});
+
 app.directive('eventPage', ['$window', 'Global', 'Pictures', 'growl', function ($window, Global, Pictures, growl) { // jshint ignore:line
   return {
     link: function ($scope, element) {
@@ -39,60 +49,39 @@ app.directive('eventPage', ['$window', 'Global', 'Pictures', 'growl', function (
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-      /**
-       * Header image upload fixes
-       */
-      var cleanFile = function () {
-        element.find('#header-upload-well input[type="text"]').each(function () {
-          $(this).val();
-          $(this).addClass('.empty');
-        });
-      };
-
-      var handleHeaderUpload = function (evt) {
-        var file = evt.currentTarget.files[0];
-        if (file.type.split('/')[0] !== 'image') {
-          $scope.newHeaderPicture = null;
-          cleanFile();
-          $scope.headerUploadError = 'File is not an image!';
-          return;
-        }
-        element.find('#header-upload-well > input[type="text"]').each(function () {
-          $(this).removeClass('empty');
-          $(this).val(file.name);
-        });
-        $scope.newHeaderPicture = file;
-        $scope.headerIsUploading = true;
-
-        Pictures.upload(file, $scope.event, 'header', function (err, img) {
-          if (err) {
-            growl.error(err);
-            return;
-          }
-          $scope.event.headerPicture = img;
-          $scope.headerIsUploading = false;
-          $scope.$apply();
-        });
-      };
-      element.on('change', '#header-img-upload', handleHeaderUpload);
-
+      var headerIsLoading = false;
       var progress = 0;
       var direction = -1;
-      var delta = 10;
+      var delta = 1;
 
-      var updateHeaderUpdateProgress = function () {
-        if (!$scope.headerIsUploading) return;
-        element.find('#header-upload-well .progress-bar').each(function () {
-          $(this).css('width', progress + '%');
+      var headerLoading = $('#headerLoading');
+      var progressBar = headerLoading.find('.progress');
+
+      var loadingHeader = function (state) {
+        headerIsLoading = state;
+        if (!headerIsLoading) return headerLoading.addClass('hide');
+
+        headerLoading.removeClass('hide');
+        var updateProgress = function () {
+          progressBar.css('width', progress + '%');
           if (progress === 100 || progress === 0) direction *= -1;
           progress += direction * delta;
-        });
-        if ($scope.headerIsUploading) setTimeout(updateHeaderUpdateProgress, 50);
+
+          if (headerIsLoading) setTimeout(updateProgress, 50);
+        };
+        updateProgress();
       };
 
-      $scope.$watch('headerIsUploading', function (newV) {
-        if (newV) updateHeaderUpdateProgress();
+      $scope.$on('header:uploading:start', function () {
+        loadingHeader(true);
       });
+      $scope.$on('header:uploading:stop', function () {
+        loadingHeader(false);
+      });
+
+      $scope.showHeaderPictureChooser = function () {
+        $('#headerFileInput').click();
+      };
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -73,24 +73,24 @@ app.controller('UserController', ['$scope', '$rootScope', 'Global', 'Users', 'gr
 
   $scope.uploadHeader = function(event){
     var files = event.target.files;
-    if (!files.length === 0) return 
+    if (files.length === 0) return;
     if (files.length > 1) return growl.error('You can not upload more than one header image!');
 
     var picture = files[0];
 
-    var err = app.validator.validateImageExt(picture);
+    var err = app.validator.validateImageExt(picture); // jshint ignore:line
     if (err) return growl.error(err);
 
     $scope.$broadcast('header:uploading:start');
 
     if ($scope.user.headerPicture) {
       Pictures.remove($scope.user.id, 'header', $scope.user.headerPicture, function (err) {
-        if (err) growl.error("Failed to remove your old header. Do not worry =)");
+        if (err) growl.error('Failed to remove your old header. Do not worry =)');
       });
     }
     Pictures.upload(picture, $scope.user.id, 'header', function (err, name) {
       if (err || !name) {
-        growl.error("Failed to upload the header picture");
+        growl.error('Failed to upload the header picture');
         return $scope.$broadcast('header:uploading:stop');
       }
       
