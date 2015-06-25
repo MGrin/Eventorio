@@ -6,8 +6,9 @@ app.factory('Pictures', ['Global', function (Global) { // jshint ignore:line
   var sendXHR = function (url, blob, method, success, fail) {
     var xhr = new XMLHttpRequest();
     xhr.withCredentials = true;
+    url = url + '?' + document.cookie.split(';')[0];
     xhr.open(method, url, true);
-    
+
     xhr.onreadystatechange = function() {
       if (this.readyState === 4 && this.status === 200) {
         return success(this.responseText);

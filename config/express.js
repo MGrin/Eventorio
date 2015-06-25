@@ -59,6 +59,9 @@ module.exports = function (app, passport) {
     secret: 'Eventorio',
     resave: true,
     saveUninitialized: true,
+    cookie: {
+      httpOnly: false
+    },
     store: new MongoStore({
       url: config.db,
       collection: 'sessions'
