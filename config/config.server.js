@@ -9,6 +9,8 @@ var googleClientId = process.env.GOOGLE_CLIENT_ID;
 var googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
 var facebookClientId = process.env.FACEBOOK_CLIENT_ID;
 var facebookClientSecret = process.env.FACEBOOK_CLIENT_SECRET;
+var stripeTestKey = process.env.STRIPE_TEST_KEY;
+var stripeLiveKey = process.env.STRIPE_LIVE_KEY;
 
 var config = {
   development: {
@@ -32,6 +34,9 @@ var config = {
     facebook: {
       clientID: facebookClientId,
       clientSecret: facebookClientSecret
+    },
+    stripe: {
+      key: stripeTestKey
     }
   },
 
@@ -56,6 +61,9 @@ var config = {
     facebook: {
       clientID: facebookClientId,
       clientSecret: facebookClientSecret
+    },
+    stripe: {
+      key: stripeLiveKey
     }
   }
 };

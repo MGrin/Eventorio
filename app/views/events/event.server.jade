@@ -63,7 +63,6 @@ html(lang="en", ng-app="EventorioEvent")
     script(src="/cdn/js/directives/datetimepicker.directive.js")
     script(src="/cdn/js/directives/google.location.search.directive.js")
     script(src="/cdn/js/directives/tickets.directive.js")
-    
   body
     include ../header.server.jade
     div(growl)
@@ -234,6 +233,8 @@ html(lang="en", ng-app="EventorioEvent")
               .row
                 p Ticket name: {{purchasingTicket.name}}
                 p Ticket price: {{purchasingTicket.price}}
-                span PayPal or Stripe here
+                form.purchase-form(action="/tickets/purchase" method="POST")
+                  input(type="hidden" name="ticketId" value="{{purchasingTicket.id}}")
+                  .stripe-script
             .modal-footer
               button.btn(type="button" data-dismiss="modal") Cancel

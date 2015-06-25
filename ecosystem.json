@@ -9,7 +9,9 @@
         "GOOGLE_CLIENT_ID":"777903649350-2qekprt60e60u24sk2q43pl98bkb4duj.apps.googleusercontent.com",
         "GOOGLE_CLIENT_SECRET": "a5nCr6hMOKz6Jz-R6LutghWb",
         "FACEBOOK_CLIENT_ID": "1553150044916218",
-        "FACEBOOK_CLIENT_SECRET": "82f2d464661fdb77be507cfc729cb046"
+        "FACEBOOK_CLIENT_SECRET": "82f2d464661fdb77be507cfc729cb046",
+        "STRIPE_TEST_KEY": "sk_test_4f0Pi1VEmzHXKbwiSVKuLrT2",
+        "STRIPE_LIVE_KEY": "sk_live_2z60HkKILXz5UVCNN4bTytDH"
       },
       env_production : {
 	      PORT: 7000,

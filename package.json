@@ -49,6 +49,7 @@
     "rimraf": "latest",
     "sanitize-html": "latest",
     "serve-favicon": "latest",
+    "stripe": "^3.5.0",
     "stylus": "latest",
     "underscore": "latest",
     "winston": "latest"
