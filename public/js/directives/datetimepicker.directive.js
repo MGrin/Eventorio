@@ -1,11 +1,11 @@
 'use strict';
 
-app.directive('clockpicker', ['$rootScope', 'Global', function ($rootScope, Global) { // jshint ignore:line
+app.directive('datetimepicker', ['$rootScope', 'Global', function ($rootScope, Global) { // jshint ignore:line
   return {
     scope: {
       event: '=event'
     },
-    templateUrl: '/view/clockpicker.template.html',
+    templateUrl: '/view/datetimepicker.template.html',
     link: function ($scope, element) {
       element.find('.clockpicker').each(function () {
         $(this).clockpicker({
@@ -25,6 +25,24 @@ app.directive('clockpicker', ['$rootScope', 'Global', function ($rootScope, Glob
             $rootScope.$broadcast('clockpicker:time', hours, minutes);
           });
         });
+      });
+
+      element.find('.datepicker').each(function () {
+        $(this).datepicker({
+          autoclose: true,
+          format: 'ddth M yyyy'
+        });
+
+        var momentFormat = 'Do MMM YYYY';
+        if ($scope.event.date) $(this).val($scope.event.date.format(momentFormat));
+        else $(this).val(moment().format(momentFormat)); // jshint ignore:line
+      }).on('changeDate', function (e) {
+        var date, month, year;
+        date = e.date.getDate();
+        month = e.date.getMonth();
+        year = e.date.getYear() + 1900;
+
+        $rootScope.$broadcast('datepicker:date', date, month, year);
       });
     },
   };

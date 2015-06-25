@@ -14,6 +14,7 @@ html(lang="en", ng-app="EventorioEvent")
     link(rel="stylesheet", href="/lib/textAngular/src/textAngular.css")
     link(rel="stylesheet", href="/lib/components-font-awesome/css/font-awesome.min.css")
     link(rel="stylesheet", href="/lib/clockpicker/dist/bootstrap-clockpicker.min.css")
+    link(rel="stylesheet", href="/lib/bootstrap-datepicker/dist/css/bootstrap-datepicker3.min.css")
     link(rel="stylesheet", href="/lib/angular-cropme/cropme.css")
 
     link(rel="stylesheet", href="/css/header.css")
@@ -26,7 +27,7 @@ html(lang="en", ng-app="EventorioEvent")
     script(src="/lib/bootstrap/dist/js/bootstrap.min.js")
     script(src="/lib/bootstrap-material-design/dist/js/material.min.js")
     script(src="/lib/clockpicker/dist/bootstrap-clockpicker.min.js")
-
+    script(src="/lib/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js")
     script(src="/lib/angular/angular.min.js")
     script(src="/lib/angular-resource/angular-resource.min.js")
     script(src="/lib/angular-growl-v2/build/angular-growl.min.js")
@@ -59,7 +60,7 @@ html(lang="en", ng-app="EventorioEvent")
     script(src="/cdn/js/directives/event-avatar.directive.js")
     script(src="/cdn/js/directives/header-picture.directive.js")
     script(src="/cdn/js/directives/event.page.directive.js")
-    script(src="/cdn/js/directives/clockpicker.directive.js")
+    script(src="/cdn/js/directives/datetimepicker.directive.js")
     script(src="/cdn/js/directives/google.location.search.directive.js")
     script(src="/cdn/js/directives/tickets.directive.js")
     
@@ -108,7 +109,7 @@ html(lang="en", ng-app="EventorioEvent")
                 .col-lg-12.col-md-12.col-sm-12.col-xs-12
                   .text-center.event-datetime
                     p(ng-if="!editmode") {{event.date.format('DD MMM YYYY, HH:mm')}}
-                    clockpicker.col-lg-6.col-lg-offset-3(ng-if="editmode" event="event")
+                    datetimepicker.col-lg-12(ng-if="editmode" event="event")
               .row-fluid
                 .text-center.event-location.col-lg-12.col-md-12.col-sm-12.col-xs-12
                   div(ng-if="editmode")
