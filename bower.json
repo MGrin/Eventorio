@@ -7,16 +7,16 @@
     "angular-growl-v2": "latest",
     "angular-sanitize": "latest",
     "angular-xeditable": "latest",
-    "angular-cropme" : "latest",
+    "angular-cropme": "latest",
     "textAngular": "latest",
     "bootstrap": "latest",
     "bootstrap-material-design": "latest",
-
     "async": "latest",
     "clockpicker": "latest",
     "components-font-awesome": "latest",
     "moment": "latest",
     "jquery": "latest",
-    "underscore": "latest"
+    "underscore": "latest",
+    "bootstrap-datepicker": "~1.4.0"
   }
 }

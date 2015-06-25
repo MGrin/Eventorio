@@ -31,6 +31,14 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
     $scope.$apply();
   });
 
+  $scope.$on('datepicker:date', function (info, date, month, year) {
+    if (!$scope.event.date) $scope.event.date = moment(); // jshint ignore:line
+
+    $scope.event.date.date(date);
+    $scope.event.date.month(month);
+    $scope.event.date.year(year);
+  });
+
   $scope.$on('event:save:error', function (info, errors) {
     _.each(errors, function (err) { // jshint ignore:line
       growl.error(err);
