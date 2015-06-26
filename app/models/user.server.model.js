@@ -148,7 +148,32 @@ UserSchema.methods = {
     delete res.password;
     delete res.hashPassword;
     delete res.salt;
-    delete res.activationCode;
+    delete res.activationCode; 
+
+    _.each(supportedProviders, function (provider) {
+      var providerObj = res[provider];
+      if (providerObj) {
+        delete res[provider];
+        switch (provider) {
+          case 'google': {
+            res.google = {
+              _json: {
+                image: {
+                  url: providerObj._json.image.url
+                }
+              }
+            };
+            break;
+          }
+          case 'facebook': {
+            res.facebook = {
+              id: providerObj.id
+            };
+          }
+        }
+      }
+    });
+    
     return res;
   },
 
