@@ -37,9 +37,7 @@ var UserSchema = exports.Schema = new Schema({
     enum: supportedProviders
   }],
 
-  // Complete profile fields:
-  address: String,
-  birthday: Date,
+  stripeCustomerId: String,
 
   gender: String, // male or female
   locale: String,
@@ -87,16 +85,9 @@ UserSchema
   });
 
 UserSchema
-  .virtual('age')
-  .get(function () {
-    if (!this.birthday) return null;
-    return moment().subtract(this.birthday).year();
-  });
-
-UserSchema
   .virtual('isComplete')
   .get(function () {
-    return this.address && this.age;
+    return true;
   });
 
 UserSchema.index({name: 'text', username: 'text'}); // for fulltext search
@@ -233,6 +224,21 @@ UserSchema.methods = {
     if (supportedProviders.indexOf(provider) < 0) return cb(new Error('Provider is not supported: ' + provider));
     // TODO get updates from provider
     return cb();
+  },
+
+  updateStripeCustomer: function (token, cb) {
+    var that = this;
+    if (this.stripeCustomerId) return cb();
+    
+    app.stripe.customers.create({
+      description: that.id,
+      source: token.id
+    }, function (err, customer) {
+      if (err) return cb(err);
+
+      that.stripeCustomerId = customer.id;
+      that.save(cb);
+    });
   }
 };
 

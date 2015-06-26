@@ -153,6 +153,29 @@ app.directive('eventPage', ['$window', 'Global', 'Pictures', 'growl', function (
         if (typeof error === 'object') return growl.error('Error in ' + error.field + ': ' + error.message);
       };
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+      $('#stripe-checkout').click(function (e) {
+        $scope.stripe.open({
+          name: $scope.event.name + '@Eventorio',
+          description: $scope.purchasingTicket.name + ', ' + $scope.purchasingTicket.price + 'CHF.-',
+          currency: 'chf',
+          amount: $scope.purchasingTicket.price*100
+        });
+        e.preventDefault();
+      });
+
+      $(window).on('popstate', function() {
+        $scope.stripe.close();
+      });
+
+
+      $scope.$on('stripe:closed', function () {
+
+      });
+      $scope.$on('stripe:purchased', function () {
+        
+      });
     }
   };
 }]);

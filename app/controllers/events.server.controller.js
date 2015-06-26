@@ -1,6 +1,7 @@
 'use strict';
 
 var app;
+var _ = require('underscore');
 
 exports.init = function (myApp) {
   app = myApp;
@@ -16,6 +17,18 @@ exports.load = function (req, res, next, id) {
     req.event = event;
     return next();
   });
+};
+
+exports.loadTicket = function (req, res, next, id) {
+  if (!req.event) return app.err(new Error('Event not found'));
+  var ticket = _.find(req.event.tickets, function (t) {
+    return t.id === id;
+  });
+
+  if (!ticket) return app.err(new Error('Ticket not found'));
+
+  req.ticket = ticket;
+  return next();
 };
 
 exports.create = function (req, res) {

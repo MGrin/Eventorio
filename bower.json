@@ -17,6 +17,6 @@
     "moment": "latest",
     "jquery": "latest",
     "underscore": "latest",
-    "bootstrap-datepicker": "~1.4.0"
+    "bootstrap-datepicker": "latest"
   }
 }

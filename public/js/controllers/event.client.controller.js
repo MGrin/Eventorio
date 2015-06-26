@@ -1,7 +1,7 @@
 'use strict';
 
-app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'Events', 'growl', 'Pictures', // jshint ignore:line
-  function ($scope, $rootScope, Global, Users, Events, growl, Pictures) { // jshint ignore:line
+app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'Events', 'growl', 'Pictures', 'Tickets', // jshint ignore:line
+  function ($scope, $rootScope, Global, Users, Events, growl, Pictures, Tickets) { // jshint ignore:line
 
   var fixEvent = function (event) {
     if (event.date) event.date = moment(event.date); // jshint ignore:line
@@ -16,6 +16,23 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
 
   $scope.global = Global;
   $scope.event = fixEvent(app.event); // jshint ignore:line
+  $scope.user = app.user; // jshint ignore:line
+
+  var Stripe = StripeCheckout.configure({ // jshint ignore:line
+    key: 'pk_test_prt49PcNq8L0JjDHk1dMJHMP',
+    image: '/img/default_event_logo.png',
+    zipCode: true,
+    email: $scope.user ? $scope.user.email : undefined,
+    token: function (token) {
+      Tickets.sendStripeToken(token, $scope.event.id, $scope.purchasingTicket.id, function (err) {
+        if (err) return growl.error(err);
+        $scope.$broadcast('stripe:purchased');
+      });
+    },
+    closed: function () {
+      $scope.$broadcast('stripe:closed');
+    }
+  });
 
   $scope.isNew = $scope.event.id ? false : true;
   $scope.isEditable = Global.me ? (Global.me.id === $scope.event.organizator.id) : false;
@@ -47,6 +64,13 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
 
   $scope.$on('ticket:purchase', function (info, ticket) {
     $scope.purchasingTicket = ticket;
+    Stripe.open({
+      name: $scope.event.name + '@Eventorio',
+      description: ticket.name,
+      currency: 'chf',
+      amount: ticket.price*100,
+      ticketId: ticket.id
+    });
   });
 
   $scope.save = function () {
