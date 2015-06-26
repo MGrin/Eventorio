@@ -26,7 +26,7 @@
         i.mdi-navigation-check
 
 .row-fluid.padding-xs(ng-if="mode === 'monitor'")
-  .row.alert.alert-material-blue-100(ng-repeat="ticket in event.tickets" ng-if="event.tickets.length > 0").text-left.tickets-alert
+  .row.alert.alert-material-blue-100(ng-repeat="ticket in event.tickets").text-left.tickets-alert
     .row-fluid
       .col-lg-10.col-md-10.col-sm-10.col-xs-10
         span {{ticket.name}},

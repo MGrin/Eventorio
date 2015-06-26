@@ -71,9 +71,13 @@ EventSchema.methods = {
     delete resEvent._id;
     delete resEvent.__v;
     delete resEvent.modified;
-    delete resEvent.tickets;
-    resEvent.organizator = this.organizator.toJSON();
-
+    delete resEvent.organizator._id;
+    delete resEvent.organizator.__v;
+    delete resEvent.organizator.modified;
+    delete resEvent.organizator.password;
+    delete resEvent.organizator.activationCode;
+    delete resEvent.organizator.hashPassword;
+    delete resEvent.organizator.salt;
     return resEvent;
   }
 };
@@ -107,7 +111,6 @@ EventSchema.statics = {
 
     if (params.sortF) sort[params.sortF] = params.sortV || -1;
 
-    if (!params.organizator && !params.participant) return cb(null, {organized: [], participated: []});
     if (params.organizator) query.organizator = params.organizator;
     if (params.participant) query.participant = params.participant;
 

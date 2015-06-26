@@ -45,7 +45,7 @@ html(lang="en", ng-app="EventorioEvent")
     script.
       app.user = !{user ? JSON.stringify(user) : 'undefined'};
       app.event = !{event ? JSON.stringify(event) : 'undefined'};
-      if (app.event) app.event.tickets = !{JSON.stringify(event.tickets)}
+      
     script(src="/cdn/js/shared/validator.shared.js")
 
     script(src="/cdn/js/services/global.client.service.js")
@@ -119,7 +119,7 @@ html(lang="en", ng-app="EventorioEvent")
                         span(ng-if="!event.venue.name") Choose venue
                   div(ng-if="!editmode")
                     a.clickable(data-toggle="modal" data-target="#event-location-modal") {{event.venue.name}}
-          .well.col-lg-12.col-md-12.col-sm-12.col-xs-12(ng-show="editmode || event.tickets.length > 0")
+          .well.col-lg-12.col-md-12.col-sm-12.col-xs-12
             .row
               h3.text-center Tickets:
               .text-center.event-tickets.col-lg-12.col-md-12.col-sm-12.col-xs-12

@@ -37,6 +37,10 @@ var UserSchema = exports.Schema = new Schema({
     enum: supportedProviders
   }],
 
+  // Complete profile fields:
+  address: String,
+  birthday: Date,
+
   gender: String, // male or female
   locale: String,
 
@@ -92,7 +96,7 @@ UserSchema
 UserSchema
   .virtual('isComplete')
   .get(function () {
-    return true;
+    return this.address && this.age;
   });
 
 UserSchema.index({name: 'text', username: 'text'}); // for fulltext search
@@ -145,10 +149,6 @@ UserSchema.methods = {
     delete res.hashPassword;
     delete res.salt;
     delete res.activationCode;
-
-    _.each(supportedProviders, function (provider) {
-      if (res[provider]) delete res[provider];
-    });
     return res;
   },
 
