@@ -23,7 +23,7 @@ var initValidator = function (app) {
   };
 
   app.validator.validateEventTickets = function (tickets) {
-    if (tickets.length === 0) return 'You should create at least one ticket for this event!';
+    if (tickets.length === 0) return null;
 
     for (var i = 0; i < tickets.length; i++) {
       var ticket = tickets[i];

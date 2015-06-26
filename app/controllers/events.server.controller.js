@@ -66,15 +66,12 @@ exports.show = function (req, res) {
   var user = req.user;
   var event = req.event;
 
-  if (user) user = user.toJSON();
-  if (event) event = event.toJSON();
-
   res.format({
     html: function () {
       return res.render('events/event.server.jade', {event: event, user: user});
     },
     json: function () {
-      return res.jsonp(event);
+      return res.jsonp(event.toJSON());
     }
   });
 };
