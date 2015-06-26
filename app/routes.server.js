@@ -4,6 +4,7 @@ module.exports = function (app, passport) {
   var index = app.controllers.Index;
   var users = app.controllers.Users;
   var events = app.controllers.Events;
+  var tickets = app.controllers.Tickets;
 
   var authWithRedirectURL = function (provider, params) {
     return function (req, res, next) {
@@ -90,8 +91,11 @@ module.exports = function (app, passport) {
   app.route('/events/:eventId')
     .get(events.show)
     .put(events.update);
+  app.route('/events/:eventId/stripe/:ticketId')
+    .post(users.requiresLogin, tickets.processStripeToken);
 
   /** Parameters **/
   app.param('userId', users.load);
   app.param('eventId', events.load);
+  app.param('ticketId', events.loadTicket);
 };

@@ -155,21 +155,26 @@ app.directive('eventPage', ['$window', 'Global', 'Pictures', 'growl', function (
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-      /**
-       * Stripe script tag setup
-       */
-      $scope.$watch('purchasingTicket', function (ticket) {
-        if (!ticket) return;
-        var stripeScriptHTML = '<script src="https://checkout.stripe.com/checkout.js"' +
-                                'class="stripe-button"' +
-                                'data-key="pk_test_prt49PcNq8L0JjDHk1dMJHMP"' +
-                                'data-image="/img/default_event_logo.png"' +
-                                'data-amount="' + ticket.price*100 + '"' +
-                                'data-name="' + $scope.event.name + '"' +
-                                'data-description="' + ticket.name +'"' +
-                                'data-currency="CHF"' +
-                                '/>';
-        element.find('.stripe-script').html(stripeScriptHTML);
+      $('#stripe-checkout').click(function (e) {
+        $scope.stripe.open({
+          name: $scope.event.name + '@Eventorio',
+          description: $scope.purchasingTicket.name + ', ' + $scope.purchasingTicket.price + 'CHF.-',
+          currency: 'chf',
+          amount: $scope.purchasingTicket.price*100
+        });
+        e.preventDefault();
+      });
+
+      $(window).on('popstate', function() {
+        $scope.stripe.close();
+      });
+
+
+      $scope.$on('stripe:closed', function () {
+
+      });
+      $scope.$on('stripe:purchased', function () {
+        
       });
     }
   };

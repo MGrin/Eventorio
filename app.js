@@ -21,7 +21,7 @@ app.config = require('./config/config.server');
 require('./config/logger.server')(app);
 require('./lib/email')(app);
 require('./public/js/shared/validator.shared.js')(app);
-require('./lib/payments')(app);
+app.stripe = require('stripe')(app.config.stripe.key);
 
 exports = module.exports = app;
 
