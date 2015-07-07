@@ -62,7 +62,7 @@ html(lang="en", ng-app="EventorioEvent")
     script(src="/cdn/js/directives/event.page.directive.js")
     script(src="/cdn/js/directives/datetimepicker.directive.js")
     script(src="/cdn/js/directives/google.location.search.directive.js")
-    script(src="/cdn/js/directives/tickets.directive.js")
+    //- script(src="/cdn/js/directives/tickets.directive.js")
     
   body
     include ../header.server.jade
@@ -110,20 +110,21 @@ html(lang="en", ng-app="EventorioEvent")
                   .text-center.event-datetime
                     p(ng-if="!editmode") {{event.date.format('DD MMM YYYY, HH:mm')}}
                     datetimepicker.col-lg-12(ng-if="editmode" event="event")
-              .row-fluid
-                .text-center.event-location.col-lg-12.col-md-12.col-sm-12.col-xs-12
-                  div(ng-if="editmode")
-                    p {{event.venue.name}}
-                      a.clickable(data-toggle="modal" data-target="#event-location-modal")
-                        span(ng-if="event.venue.name")  Modify venue
-                        span(ng-if="!event.venue.name") Choose venue
-                  div(ng-if="!editmode")
-                    a.clickable(data-toggle="modal" data-target="#event-location-modal") {{event.venue.name}}
+              //- .row-fluid
+              //-   .text-center.event-location.col-lg-12.col-md-12.col-sm-12.col-xs-12
+              //-     div(ng-if="editmode")
+              //-       p {{event.venue.name}}
+              //-         a.clickable(data-toggle="modal" data-target="#event-location-modal")
+              //-           span(ng-if="event.venue.name")  Modify venue
+              //-           span(ng-if="!event.venue.name") Choose venue
+              //-     div(ng-if="!editmode")
+              //-       a.clickable(data-toggle="modal" data-target="#event-location-modal") {{event.venue.name}}
           .well.col-lg-12.col-md-12.col-sm-12.col-xs-12
-            .row
-              h3.text-center Tickets:
-              .text-center.event-tickets.col-lg-12.col-md-12.col-sm-12.col-xs-12
-                tickets(mode="!isEditable ? 'purchase' : (editmode ? 'modify' : 'monitor')" event="event")
+            .row-fluid
+              //- h3.text-center Tickets:
+              //- .text-center.event-tickets.col-lg-12.col-md-12.col-sm-12.col-xs-12
+              //-   tickets(mode="!isEditable ? 'purchase' : (editmode ? 'modify' : 'monitor')" event="event")
+              google-location-search.col-lg-10.col-lg-offset-1(ng-model="event.venue")
           #event-content-xs.row-fluid.visible-xs
             .row
               .event-description.col-xs-12
@@ -161,25 +162,25 @@ html(lang="en", ng-app="EventorioEvent")
                                                                 ['bold','italics', 'underline', 'strikeThrough', 'ul', 'ol'], \
                                                                 ['justifyLeft', 'justifyCenter', 'justifyRight', 'indent', 'outdent'], \
                                                                 ['wordcount', 'charcount']]")      
-      #event-location-modal.modal.fade
-        .modal-dialog
-          .modal-content
-            .modal-header
-              button.btn.close(type="button" data-dismiss="modal" aria-label="Close")
-                span(aria-hidden='true') ×
-              h2.hidden-xs
-                span(ng-if="editmode && event.name") Choose "{{event.name}}"'s venue
-                span(ng-if="editmode && !event.name") Choose venue
-                span(ng-if="!editmode") "{{event.name}}"'s venue
-              h4.visible-xs
-                span(ng-if="editmode && event.name") Choose "{{event.name}}"'s venue
-                span(ng-if="editmode && !event.name") Choose venue
-                span(ng-if="!editmode") "{{event.name}}"'s venue
-            .modal-body
-              .row
-                google-location-search.col-lg-10.col-lg-offset-1(ng-model="event.venue")
-            .modal-footer
-              button.btn.btn-material-light-green(type="button" data-dismiss="modal") Done
+      //- #event-location-modal.modal.fade
+      //-   .modal-dialog
+      //-     .modal-content
+      //-       .modal-header
+      //-         button.btn.close(type="button" data-dismiss="modal" aria-label="Close")
+      //-           span(aria-hidden='true') ×
+      //-         h2.hidden-xs
+      //-           span(ng-if="editmode && event.name") Choose "{{event.name}}"'s venue
+      //-           span(ng-if="editmode && !event.name") Choose venue
+      //-           span(ng-if="!editmode") "{{event.name}}"'s venue
+      //-         h4.visible-xs
+      //-           span(ng-if="editmode && event.name") Choose "{{event.name}}"'s venue
+      //-           span(ng-if="editmode && !event.name") Choose venue
+      //-           span(ng-if="!editmode") "{{event.name}}"'s venue
+      //-       .modal-body
+      //-         .row
+      //-           google-location-search.col-lg-10.col-lg-offset-1(ng-model="event.venue")
+      //-       .modal-footer
+      //-         button.btn.btn-material-light-green(type="button" data-dismiss="modal") Done
       #event-avatar-modal.modal.fade
         .modal-dialog
           .modal-content
@@ -220,20 +221,20 @@ html(lang="en", ng-app="EventorioEvent")
             .modal-footer
               button.btn(type="button" data-dismiss="modal" ng-click="cancelLogo()") Cancel
               
-      #ticket-purchase-modal.modal.fade
-        .modal-dialog
-          .modal-content
-            .modal-header
-              button.btn.close(type="button" data-dismiss="modal" aria-label="Close")
-                span(aria-hidden='true') ×
-              h2.hidden-xs
-                span Purchase ticket for {{event.name}}!
-              h4.visible-xs
-                span Purchase ticket for {{event.name}}!
-            .modal-body
-              .row
-                p Ticket name: {{purchasingTicket.name}}
-                p Ticket price: {{purchasingTicket.price}}
-                span PayPal or Stripe here
-            .modal-footer
-              button.btn(type="button" data-dismiss="modal") Cancel
+      //- #ticket-purchase-modal.modal.fade
+      //-   .modal-dialog
+      //-     .modal-content
+      //-       .modal-header
+      //-         button.btn.close(type="button" data-dismiss="modal" aria-label="Close")
+      //-           span(aria-hidden='true') ×
+      //-         h2.hidden-xs
+      //-           span Purchase ticket for {{event.name}}!
+      //-         h4.visible-xs
+      //-           span Purchase ticket for {{event.name}}!
+      //-       .modal-body
+      //-         .row
+      //-           p Ticket name: {{purchasingTicket.name}}
+      //-           p Ticket price: {{purchasingTicket.price}}
+      //-           span PayPal or Stripe here
+      //-       .modal-footer
+      //-         button.btn(type="button" data-dismiss="modal") Cancel

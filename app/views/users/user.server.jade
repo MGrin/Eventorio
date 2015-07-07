@@ -285,51 +285,6 @@ html(lang="en", ng-app="EventorioUser")
                             .col-md-10.col-sm-10.col-xs-10.hidden-lg
                               .alert.alert-warning(ng-show="credentials.error")
                                 p {{credentials.error}}
-                  li
-                    legend.btn.btn-flat.full-width(ng-click="settings.visible.additionalInfo = !settings.visible.additionalInfo") Complete your profile
-                    .row-fluid(ng-show="settings.visible.additionalInfo")
-                      form.form-horizontal
-                        fieldset
-                          .form-group
-                            label.control-label.col-lg-4(for="birthday") Birthday
-                            .col-lg-8
-                              input#birthday.form-control(type="date"
-                                ng-model="userBirthday")
-                          .form-group
-                            label.control-label.col-lg-4(for="address") Address
-                            .col-lg-8
-                              input#new-password-input.form-control(type="text"
-                                placeholder="Street, No, ZIP, Country"
-                                ng-model="user.address")
-                          .form-group
-                            .col-lg-10.visible-lg
-                              .alert.alert-warning(ng-show="error")
-                                p {{error}}
-                            .col-lg-2.col-md-2.col-sm-2.col-xs-2
-                              button.btn.btn-raised.btn-material-light-green(ng-click="updateUserAdditionalInformation()")
-                                i.mdi-action-done
-                            .col-md-10.col-sm-10.col-xs-10.hidden-lg
-                              .alert.alert-warning(ng-show="error")
-                                p {{error}}
 
-                .clearfix
-                .hide
-                  legend Connected accounts
-                  form.form-horizontal
-                    fieldset
-                      .form-group
-                        .col-lg-6.col-lg-offset-1
-                          .togglebutton
-                            label
-                              input(type="checkbox" ng-checked="user.providers.indexOf['facebook'] > -1" disabled)
-                              span.toggle
-                              | Facebook
-                      .form-group
-                        .col-lg-6.col-lg-offset-1
-                          .togglebutton
-                            label
-                              input(type="checkbox" ng-checked="user.providers.indexOf['google'] > -1" disabled)
-                              span.toggle
-                              | Google
             .modal-footer
               button.btn.btn-default(type="button" data-dismiss="modal") Close
