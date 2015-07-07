@@ -96,7 +96,8 @@ UserSchema
 UserSchema
   .virtual('isComplete')
   .get(function () {
-    return this.address && this.age;
+    // return this.address && this.age;
+    return true
   });
 
 UserSchema.index({name: 'text', username: 'text'}); // for fulltext search
