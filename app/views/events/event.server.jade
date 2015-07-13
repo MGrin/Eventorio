@@ -16,7 +16,7 @@ html(lang="en", ng-app="EventorioEvent")
     link(rel="stylesheet", href="/lib/clockpicker/dist/bootstrap-clockpicker.min.css")
     link(rel="stylesheet", href="/lib/bootstrap-datepicker/dist/css/bootstrap-datepicker3.min.css")
     link(rel="stylesheet", href="/lib/angular-cropme/cropme.css")
-
+    link(rel="stylesheet", href="/lib/jqcloud2/dist/jqcloud.min.css")
     link(rel="stylesheet", href="/css/header.css")
     link(rel="stylesheet", href="/css/event.css")
 
@@ -38,6 +38,8 @@ html(lang="en", ng-app="EventorioEvent")
     script(src="/lib/angular-touch/angular-touch.min.js")
     script(src="/lib/angular-superswipe/superswipe.js")
     script(src="/lib/angular-cropme/cropme.js")
+    script(src="/lib/angular-jqcloud/angular-jqcloud.js")
+    script(src="/lib/jqcloud2/dist/jqcloud.min.js")
     script(src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places")
 
     script(src="/cdn/js/event.client.js")
@@ -62,6 +64,7 @@ html(lang="en", ng-app="EventorioEvent")
     script(src="/cdn/js/directives/event.page.directive.js")
     script(src="/cdn/js/directives/datetimepicker.directive.js")
     script(src="/cdn/js/directives/google.location.search.directive.js")
+    script(src="/cdn/js/directives/tags-input.directive.js")
     //- script(src="/cdn/js/directives/tickets.directive.js")
     
   body
@@ -124,7 +127,11 @@ html(lang="en", ng-app="EventorioEvent")
               //- h3.text-center Tickets:
               //- .text-center.event-tickets.col-lg-12.col-md-12.col-sm-12.col-xs-12
               //-   tickets(mode="!isEditable ? 'purchase' : (editmode ? 'modify' : 'monitor')" event="event")
-              google-location-search.col-lg-10.col-lg-offset-1(ng-model="event.venue")
+              google-location-search.col-lg-12(ng-model="event.venue")
+          .well.col-lg-12.col-md-12.col-sm-12.col-xs-12(ng-if="editmode || (event.tags && event.tags.length > 0)")
+            .row-fluid
+              jqcloud(ng-show="event.tags && event.tags.length > 0" height="200" words="event.tags" shape="rectangular")
+              tags-input(event="event", ng-if="editmode")
           #event-content-xs.row-fluid.visible-xs
             .row
               .event-description.col-xs-12

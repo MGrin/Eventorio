@@ -1,6 +1,6 @@
 'use strict';
 
-var app = window.exports = angular.module('EventorioEvent', ['ngResource', 'angular-growl', 'xeditable', 'textAngular', 'cropme']);
+var app = window.exports = angular.module('EventorioEvent', ['ngResource', 'angular-growl', 'xeditable', 'textAngular', 'cropme', 'angular-jqcloud']);
 
 $(document).ready(function () {
   $('.redirect').each(function () {
