@@ -11,6 +11,8 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
 
     if (!event.tickets) event.tickets = [];
 
+    if (!event.tags) event.tags = [];
+
     return event;
   };
 
@@ -52,6 +54,7 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
   $scope.save = function () {
     var errors = app.validator.validateEvent($scope.event); // jshint ignore:line
 
+    console.log($scope.event);
     if (errors) return $scope.$broadcast('event:save:error', errors);
 
     if ($scope.event.originalHeaderPicture && $scope.event.originalHeaderPicture !== $scope.event.headerPicture) {
