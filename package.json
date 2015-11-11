@@ -5,6 +5,7 @@
   "author": "MGrin",
   "repository": "https://github.com/MGrin/Eventorio.git",
   "scripts": {
+    "start": "NODE_ENV=production gulp",
     "postinstall": "bower install"
   },
   "dependencies": {

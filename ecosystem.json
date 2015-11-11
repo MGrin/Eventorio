@@ -24,9 +24,9 @@
       user : "admin",
       host : "eventorio.me",
       ref  : "origin/master",
-      repo : "https://github.com/MGrin/Eventorio.git",
+      repo : "ssh://git@github.com/MGrin/Eventorio.git",
       path : "/home/eventorio",
-      "post-deploy" : "npm install && NODE_ENV=production gulp && pm2 startOrRestart ecosystem.json --env production"
+      "post-deploy" : ". /home/admin/.profile && npm install && npm start && pm2 startOrRestart ecosystem.json --env production"
     },
     dev : {
       user : "admin",
