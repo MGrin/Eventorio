@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "async": "latest",
-    "bcrypt": "latest",
+    "bcrypt": "^0.8.5",
     "body-parser": "latest",
     "bower": "latest",
     "compression": "latest",
@@ -54,6 +54,6 @@
     "winston": "latest"
   },
   "devDependencies": {
-    "gulp-nodemon": "^2.0.3"
+    "gulp-nodemon": "latest"
   }
 }
