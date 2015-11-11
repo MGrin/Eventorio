@@ -15,10 +15,57 @@ html
   script(src="/lib/bootstrap/dist/js/bootstrap.min.js")
   script(src="/lib/bootstrap-material-design/dist/js/material.min.js")
   script(src="/js/authorize.js")
-  body
+
+  body(style="background: url('/img/landing.1.jpg') top fixed no-repeat; background-size: 100% auto;")
     .container-fluid
-      .row-fluid
-        .col-lg-6
-          include users/signup.server.jade
-        .col-lg-6
-          include users/login.server.jade
+      .row-fluid.affix.hidden-xs(style="width: 100%; z-index: 20")
+        .jumbotron.col-lg-4.col-lg-offset-4.col-md-6.col-md-offset-3.col-sm-8.col-sm-offset-2
+          img.img-responsive.pull-left.hidden-xs(src="/img/default_event_logo.png" style="width:70px;")
+          h1(style="margin: 0") Eventorio
+          h4.pull-right Plan your journey. No more, no less.
+      .row-fluid.visible-xs(style="width: 100%; z-index: 20")
+        .jumbotron.text-center.col-xs-12
+          img.img-responsive.pull-left.visible-xs(src="/img/default_event_logo.png" style="width:80px;")
+          h1(style="margin: 0") Eventorio
+          h4.pull-right Plan your journey. No more, no less.
+      .row-fluid.hidden-xs(style="margin-top: 250px")
+        .thumbnail.col-lg-4.col-md-4.col-sm-6
+          img#signup-img.responsive(src="/img/discover1.jpg" style="cursor: pointer")
+          #signup(style="display: none; margin-top: 10px")
+            include users/signup.server.jade
+        .thumbnail.col-lg-4.col-lg-offset-4.col-md-4.col-md-offset-4.col-sm-6
+          img#login-img.responsive(src="/img/use.jpg" style="cursor: pointer")
+          #login(style="display: none; margin-top: 10px")
+            include users/login.server.jade
+      .row-fluid.visible-xs
+        button.btn.btn-material-grey.col-xs-5(data-toggle="modal" data-target="#signup-modal") Discover Eventorio
+        .col-xs-1
+        button.btn.btn-material-grey.col-xs-5.pull-right(data-toggle="modal" data-target="#login-modal") Enjoy Eventorio
+    #signup-modal.modal.fade
+      .modal-dialog
+        .modal-content
+          .modal-header
+            button.btn.close(data-dismiss="modal" aria-label="close")
+              span(aria-hidden="true") x
+            h4.modal-title Sign up
+          .modal-body
+            include users/signup.server.jade
+    #login-modal.modal.fade
+      .modal-dialog
+        .modal-content
+          .modal-header
+            button.btn.close(data-dismiss="modal" aria-label="close")
+              span(aria-hidden="true") x
+            h4.modal-title Login
+          .modal-body
+            include users/login.server.jade
+    script.
+      $('#signup-img').mouseenter(function () {
+        $('#signup').css('display', 'block');
+        $('#login').css('display', 'none');
+      });
+
+      $('#login-img').mouseenter(function () {
+        $('#login').css('display', 'block');
+        $('#signup').css('display', 'none');
+      });
