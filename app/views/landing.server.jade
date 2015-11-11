@@ -16,7 +16,7 @@ html
   script(src="/lib/bootstrap-material-design/dist/js/material.min.js")
   script(src="/js/authorize.js")
 
-  body(style="background: url('/img/landing.1.jpg') top fixed no-repeat; background-size: 100% auto;")
+  body(style="background: url('/img/landing.1.jpg') center fixed no-repeat; background-size: cover;")
     .container-fluid
       .row-fluid.affix.hidden-xs(style="width: 100%; z-index: 20")
         .jumbotron.col-lg-4.col-lg-offset-4.col-md-6.col-md-offset-3.col-sm-8.col-sm-offset-2
@@ -38,9 +38,10 @@ html
           #login(style="display: none; margin-top: 10px")
             include users/login.server.jade
       .row-fluid.visible-xs
-        button.btn.btn-material-grey.col-xs-5(data-toggle="modal" data-target="#signup-modal") Discover Eventorio
+        button.btn.btn-material-grey.col-xs-5(data-toggle="modal" data-target="#signup-modal") Signup
         .col-xs-1
-        button.btn.btn-material-grey.col-xs-5.pull-right(data-toggle="modal" data-target="#login-modal") Enjoy Eventorio
+        button.btn.btn-material-grey.col-xs-5.pull-right(data-toggle="modal" data-target="#login-modal") Login
+
     #signup-modal.modal.fade
       .modal-dialog
         .modal-content

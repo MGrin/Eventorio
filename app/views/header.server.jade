@@ -48,7 +48,7 @@ nav#header.navbar.navbar-fixed.navbar-fixed-top.navbar-material-indigo-300(ng-co
     - if (!user)    
       #navbar.collapse.navbar-collapse
         ul.nav.navbar-nav.navbar-right.text-center
-          button#login-btn.btn.btn-success(data-toggle="modal" data-target="#login-modal") Login
+          button#login-btn.btn.btn-material-grey-300(data-toggle="modal" data-target="#login-modal") Login/Signup
 - if (!user)
   div(ng-controller="HeaderController")
     #login-modal.modal.fade(tabindex="-1" role="dialog")
