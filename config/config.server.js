@@ -12,7 +12,7 @@ var facebookClientSecret = process.env.FACEBOOK_CLIENT_SECRET;
 
 var config = {
   development: {
-    db: 'mongodb://localhost/Eventorio-dev',
+    db: 'mongodb://192.168.99.100/Eventorio-dev',
     root: rootPath,
     port: 7000,
     serverUrl: 'http://localhost:7000/',

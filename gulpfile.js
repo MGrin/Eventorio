@@ -47,6 +47,7 @@ gulp.task('default', ['clean', 'compile', 'compress'], function () {
 
   nodemon({
     script: 'app.js',
+    ignore: ['./public/cdn', './public/css'],
     tasks: ['clean', 'compile', 'compress']
   });
 });
