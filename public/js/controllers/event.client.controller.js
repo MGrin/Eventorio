@@ -47,14 +47,14 @@ app.controller('EventController', ['$scope', '$rootScope', 'Global', 'Users', 'E
     });
   });
 
-  $scope.$on('ticket:purchase', function (info, ticket) {
-    $scope.purchasingTicket = ticket;
-  });
+  // $scope.$on('ticket:purchase', function (info, ticket) {
+  //   $scope.purchasingTicket = ticket;
+  // });
 
   $scope.save = function () {
     var errors = app.validator.validateEvent($scope.event); // jshint ignore:line
 
-    console.log($scope.event);
+    // console.log($scope.event);
     if (errors) return $scope.$broadcast('event:save:error', errors);
 
     if ($scope.event.originalHeaderPicture && $scope.event.originalHeaderPicture !== $scope.event.headerPicture) {
