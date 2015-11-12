@@ -113,25 +113,23 @@ html(lang="en", ng-app="EventorioEvent")
                   .text-center.event-datetime
                     p(ng-if="!editmode") {{event.date.format('DD MMM YYYY, HH:mm')}}
                     datetimepicker.col-lg-12(ng-if="editmode" event="event")
-              //- .row-fluid
-              //-   .text-center.event-location.col-lg-12.col-md-12.col-sm-12.col-xs-12
-              //-     div(ng-if="editmode")
-              //-       p {{event.venue.name}}
-              //-         a.clickable(data-toggle="modal" data-target="#event-location-modal")
-              //-           span(ng-if="event.venue.name")  Modify venue
-              //-           span(ng-if="!event.venue.name") Choose venue
-              //-     div(ng-if="!editmode")
-              //-       a.clickable(data-toggle="modal" data-target="#event-location-modal") {{event.venue.name}}
           .well.col-lg-12.col-md-12.col-sm-12.col-xs-12
             .row-fluid
-              //- h3.text-center Tickets:
-              //- .text-center.event-tickets.col-lg-12.col-md-12.col-sm-12.col-xs-12
-              //-   tickets(mode="!isEditable ? 'purchase' : (editmode ? 'modify' : 'monitor')" event="event")
               google-location-search.col-lg-12(ng-model="event.venue")
           .well.col-lg-12.col-md-12.col-sm-12.col-xs-12(ng-if="editmode || (event.tags && event.tags.length > 0)")
             .row-fluid
-              jqcloud(ng-show="event.tags && event.tags.length > 0" height="200" words="event.tags" shape="rectangular")
+              jqcloud(ng-show="event.tags && event.tags.length > 0"
+                      height="200"
+                      words="event.tags"
+                      shape="rectangular")
               tags-input(event="event", ng-if="editmode")
+              a.clickable(ng-click="showAllTags = !showAllTags")
+                span(ng-show="!showAllTags") Show all tags
+                span(ng-show="showAllTags") Hide all tags
+              p(ng-if="showAllTags")
+                span(ng-repeat="tag in event.tags")
+                  a(href="#" ){{tag.text}}
+                  | , 
           #event-content-xs.row-fluid.visible-xs
             .row
               .event-description.col-xs-12
@@ -169,25 +167,6 @@ html(lang="en", ng-app="EventorioEvent")
                                                                 ['bold','italics', 'underline', 'strikeThrough', 'ul', 'ol'], \
                                                                 ['justifyLeft', 'justifyCenter', 'justifyRight', 'indent', 'outdent'], \
                                                                 ['wordcount', 'charcount']]")      
-      //- #event-location-modal.modal.fade
-      //-   .modal-dialog
-      //-     .modal-content
-      //-       .modal-header
-      //-         button.btn.close(type="button" data-dismiss="modal" aria-label="Close")
-      //-           span(aria-hidden='true') ×
-      //-         h2.hidden-xs
-      //-           span(ng-if="editmode && event.name") Choose "{{event.name}}"'s venue
-      //-           span(ng-if="editmode && !event.name") Choose venue
-      //-           span(ng-if="!editmode") "{{event.name}}"'s venue
-      //-         h4.visible-xs
-      //-           span(ng-if="editmode && event.name") Choose "{{event.name}}"'s venue
-      //-           span(ng-if="editmode && !event.name") Choose venue
-      //-           span(ng-if="!editmode") "{{event.name}}"'s venue
-      //-       .modal-body
-      //-         .row
-      //-           google-location-search.col-lg-10.col-lg-offset-1(ng-model="event.venue")
-      //-       .modal-footer
-      //-         button.btn.btn-material-light-green(type="button" data-dismiss="modal") Done
       #event-avatar-modal.modal.fade
         .modal-dialog
           .modal-content
