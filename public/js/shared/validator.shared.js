@@ -5,7 +5,7 @@ var initValidator = function (app) {
 
   app.validator.validateEventName = function (name) {
     if (!name || name === '') return 'Name should not be empty';
-    if (name.length < 4 || name.length > 20) return 'Name should not be shorter 4 symbols and not longer 20 symbols';
+    if (name.length < 4 || name.length > 40) return 'Name should not be shorter 4 symbols and not longer 20 symbols';
 
     return null;
   };
@@ -55,12 +55,12 @@ var initValidator = function (app) {
     var nameError = app.validator.validateEventName(event.name); // jshint ignore:line
     var dateError = app.validator.validateEventDate(event.date); // jshint ignore:line
     var venueError = app.validator.validateEventVenue(event.venue); // jshint ignore:line
-    var ticketsError = app.validator.validateEventTickets(event.tickets); // jshint ignore:line
+    // var ticketsError = app.validator.validateEventTickets(event.tickets); // jshint ignore:line
 
     if (nameError) errors.push({field: 'name', message: nameError});
     if (dateError) errors.push({field: 'date', message: dateError});
     if (venueError) errors.push({field: 'venue', message: venueError});
-    if (ticketsError) errors.push({field: 'tickets', message: ticketsError});
+    // if (ticketsError) errors.push({field: 'tickets', message: ticketsError});
 
     return errors.length === 0 ? null : errors;
   };

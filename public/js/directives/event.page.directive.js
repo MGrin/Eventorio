@@ -13,43 +13,6 @@ app.directive('customOnChange', function() { // jshint ignore:line
 app.directive('eventPage', ['$window', 'Global', 'Pictures', 'growl', function ($window, Global, Pictures, growl) { // jshint ignore:line
   return {
     link: function ($scope, element) {
-////////////////////////////////////////////////////////////////////////////////////////////////////
-      /**
-       * Event logo and most important details visual fixes
-       */
-      var setupDetailsMargin = function () {
-        var avatarHeight = 0;
-        element.find('.event-avatar-picture').each(function () {
-          avatarHeight = $(this).height();
-        });
-        if (avatarHeight < 100) return setTimeout(setupDetailsMargin, 250);
-        var margin;
-        if ($scope.editmode) {
-          if (Global.screenSize === 'xs') {
-            margin = 0;
-          } else {
-            margin = -avatarHeight - 50;
-          }
-        } else {
-          if (Global.screenSize === 'xs') {
-            margin = -avatarHeight/2;
-          } else {
-            margin = -avatarHeight;
-          }
-        }
-
-        element.find('#event-details').each(function () {
-          $(this).css({
-            'margin-top': margin
-          });
-        });
-      };
-
-      $scope.$watch('editmode', function () {
-        setupDetailsMargin();
-      });
-      setupDetailsMargin();
-////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
       var headerIsLoading = false;
